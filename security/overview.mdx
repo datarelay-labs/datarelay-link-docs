@@ -5,124 +5,34 @@ description: "Understand enrollment trust, management identity, secret handling,
 
 # Security Overview
 
-Data Relay Link separates **Data Relay Link tunnel authentication** from **management-plane trust**. Keeping those responsibilities separate is important when troubleshooting or reviewing risk.
+## Enrollment trust
 
-## Security model at a glance
+Zero-Touch tickets are single-use, time-bounded credentials. Raw ticket material is not a normal redisplayable Server secret.
 
-```mermaid
-flowchart TB
-    subgraph TUNNEL[Data Relay Link tunnel plane]
-      FT[Data Relay Link token]
-      FC[Data Relay Link native TLS or WSS]
-    end
+## Agent identity
 
-    subgraph MGMT[Enrollment / management plane]
-      EC[Enrollment Code / Bootstrap Ticket]
-      CA[Project private CA]
-      MI[Persistent client management identity]
-    end
+Managed Host identity is based on enrolled Agent/machine identity, not merely hostname, display label, or observed source IP.
 
-    EC --> CA --> MI
-    FT --> FC
-```
+## Policy semantics
 
-The Data Relay Link token is **not** an Enrollment Code, Bootstrap Ticket, or management API credential.
+Remote Access, Internet Access, and AI Access use BLACKLIST or WHITELIST Mode plus ENABLED or DISABLED enforcement.
 
-## Trust establishment
+Rules are unordered and do not carry per-rule actions.
 
-```mermaid
-sequenceDiagram
-    participant C as New client
-    participant S as Server
+Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL. Reset removes Mode and Rules.
 
-    C->>S: Short-lived enrollment credential
-    S-->>C: CA bootstrap / expected trust material
-    C->>C: Verify CA fingerprint and certificate
-    C->>S: Verified HTTPS enrollment
-    S-->>C: Persistent ECDSA management identity + config
-    C->>S: Signed management requests thereafter
-```
+## Internet Access safety
 
-Enrollment and signed client management use verified HTTPS. There is no supported production plain-HTTP fallback.
+Internet Access must not become an open proxy. Destination validation, protocol/port validation, safe DNS resolution, rebinding resistance, SSRF protection, and audit are part of the security boundary.
 
-## Data Relay Link tunnel plane
+## AI authentication
 
-- Direct mode uses Data Relay Link native TLS for control.
-- Enterprise single-443 carries Data Relay Link control over WSS.
-- The Data Relay Link token authenticates the tunnel.
-- Published service traffic is forwarded through Data Relay Link after the proxy is registered.
+An AI display name is not authentication. Supported integrations use verified OAuth or another explicitly supported credential path. Authentication remains mandatory even when AI Access policy enforcement is disabled.
 
-## Persistent management identity
+## Secret handling
 
-After enrollment, the client keeps a persistent ECDSA P-256 management identity. The private key stays on the client.
+Configuration export, support bundles, logs, and AI copy/paste workflows must redact enrollment tickets, OAuth or bearer secrets, private keys, and equivalent protected values.
 
-Signed management requests bind request data to freshness/replay protections such as timestamp/nonce handling so stale or replayed requests can be rejected.
+## External boundary
 
-## Zero-Touch credential properties
-
-A Bootstrap Ticket is designed to be:
-
-- high entropy
-- short-lived
-- first-machine bound
-- single-use after successful enrollment
-- hashed at rest on the server
-- sensitive until used, expired, or revoked
-
-Do not paste generated bootstrap commands into public issue trackers, public chat, analytics, or long-lived logs.
-
-## Secrets to protect
-
-| Secret | Why it matters |
-| --- | --- |
-| Data Relay Link server token | authenticates Data Relay Link tunnel clients |
-| Enrollment Code | first-time manual enrollment secret |
-| Bootstrap Ticket | first-time Zero-Touch secret |
-| Client management private key | persistent management identity |
-| Management MAC material | management request authentication |
-| CA private key | project management trust root |
-| TLS private key | server-side TLS identity where applicable |
-| Generated Data Relay Link config containing token | can expose tunnel credential |
-
-## Security boundaries
-
-```mermaid
-flowchart LR
-    P[Data Relay Link protects] --> A[Enrollment trust]
-    P --> B[Credential separation]
-    P --> C[Identity consistency]
-    P --> D[Fail-closed management behavior]
-
-    O[Outside product boundary] --> E[Compromised local root]
-    O --> F[External firewall policy]
-    O --> G[DNS provider]
-    O --> H[SSH account/key policy]
-    O --> I[Application authentication/TLS]
-```
-
-The product does not claim to protect secrets from a fully compromised root account on the server or client.
-
-## Published stable access-control boundary
-
-The current published stable release is **v2.2.1**. In that release, Data Relay Link does **not** provide a built-in per-service source-IP allowlist policy or an application-style RBAC layer for published TCP services.
-
-For v2.2.1, restrict who can reach a published service with the controls that own that boundary, such as the external firewall/security group, target-host ACLs, SSH keys/accounts, database ACLs, or the target application's own authentication and authorization.
-
-<Note>
-  The product `main` / release-preparation tree contains later Access Control Pack work, but that must not be treated as part of the published stable contract until a release containing it is actually tagged and published.
-</Note>
-
-## Fail closed
-
-Conditions such as unknown identity, invalid signatures, CA mismatch, corrupted registry state, or ambiguous client selectors should fail rather than silently guess.
-
-<Warning>
-  Do not "fix" trust failures by using `curl -k`, disabling TLS verification, using plain HTTP enrollment, or copying secrets between clients.
-</Warning>
-
-## Related pages
-
-- [Architecture](/reference/architecture)
-- [Zero-Touch Enrollment](/guides/zero-touch)
-- [Lifecycle Semantics](/operations/lifecycle)
-- [Backup & Restore](/operations/backup-restore)
+DataRelay Link does not weaken target OS authentication, application credentials, TLS certificates, cloud firewalls, or external NAT/DNS controls.

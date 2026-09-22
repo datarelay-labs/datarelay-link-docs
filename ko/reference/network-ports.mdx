@@ -7,62 +7,22 @@ icon: "ethernet"
 
 # 네트워크 포트
 
-Data Relay Link의 현재 stable core scope는 **TCP**입니다. 기본 published service range는 `6000-6098`입니다.
+## Direct
 
-## 한눈에 보기
-
-```mermaid
-flowchart LR
-    I[Internet] -->|443| S[Data Relay Link Server]
-    I -->|6099 Direct only| S
-    I -->|6000-6098| S
-    S -->|Data Relay Link tunnel| C[Remote Client]
-    C --> T[Target TCP services]
-```
-
-## Direct mode
-
-| 목적 | 기본 public TCP | 기본 listen TCP |
-| --- | ---: | ---: |
-| Data Relay Link control | 443 | 443 |
-| Enrollment / management HTTPS | 6099 | 6099 |
-| Published services | 6000-6098 | 6000-6098 |
-
-`TCP/22`는 Data Relay Link product path가 아니라 서버 자체 관리용 SSH일 뿐입니다.
+| 용도 | 일반적인 listener |
+| --- | --- |
+| Relay control | TCP/443 |
+| Management / Enrollment HTTPS | TCP/6099 |
+| 기본 Remote Service endpoint pool | TCP/6000-6098 |
 
 ## Enterprise single-443
 
-| 목적 | Public TCP | 내부/backend TCP |
-| --- | ---: | ---: |
-| Enrollment HTTPS + Data Relay Link control over WSS | 443 | allocator 6099 + relay backend 7000 loopback |
-| Published services | 6000-6098 | 6000-6098 |
+| 용도 | listener |
+| --- | --- |
+| Public management/enrollment + Relay control | TCP/443 |
+| Remote Service endpoint pool | 설정된 public range |
+| Internal allocator / relay backend | loopback only |
 
-```mermaid
-flowchart LR
-    I[Internet] -->|443 HTTPS/WSS| P[443 Frontend]
-    P -->|Enrollment| A[Allocator :6099 loopback]
-    P -->|Data Relay Link control| F[relay backend :7000 loopback]
-    I -->|6000-6098| F
-```
+Fixed TCP는 별도 설정된 endpoint pool을 사용합니다. Service Object의 destination port와 public endpoint port는 동일한 개념이 아닙니다.
 
-<Warning>
-  single-443의 allocator/relay backend port는 Internet에 직접 노출하는 포트가 아닙니다.
-</Warning>
-
-## NAT 배포
-
-Control/enrollment 외부 포트는 방화벽에서 translation할 수 있지만, published service는 가능하면 1:1을 권장합니다.
-
-```text
-Public 6005 -> Internal 6005
-```
-
-이렇게 해야 registry의 persistent reservation과 실제 사용자가 접속하는 포트가 일치합니다.
-
-## 현재 범위
-
-- SSH — TCP
-- HTTP — TCP
-- HTTPS — TCP passthrough
-- Custom TCP — TCP
-- UDP — 현재 stable core scope 아님
+Installer는 cloud firewall, 외부 NAT, DNS policy를 자동 변경하지 않습니다.

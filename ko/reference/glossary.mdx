@@ -1,6 +1,6 @@
 ---
 title: "용어집"
-description: "Data Relay Link에서 자주 사용하는 용어를 쉬운 말로 정리합니다."
+description: "DataRelay Link에서 자주 사용하는 용어를 쉬운 말로 정리합니다."
 sidebarTitle: "용어집"
 icon: "book-open"
 ---
@@ -9,30 +9,19 @@ icon: "book-open"
 
 | 용어 | 의미 |
 | --- | --- |
-| **Relay engine** | Data Relay Link 내부에서 Secure Remote Access의 연결을 중계하는 bundled runtime |
-| **Server** | relay runtime과 enrollment/management layer가 실행되는 Linux 공인 진입점 |
-| **Client** | 보통 NAT/방화벽 뒤에서 Data Relay Link Client runtime을 실행하는 원격 장비 |
-| **CLIENT ID** | 서버가 관리 기준으로 사용하는 변경되지 않는 장비 identity |
-| **Label** | 사람이 보기 쉬운 이름. 바꿔도 CLIENT ID는 바뀌지 않음 |
-| **Service** | 외부에 게시하는 TCP target 하나 |
-| **Service ID** | `ssh`, `web-admin` 같은 stable 서비스 식별자 |
-| **Target host/port** | 클라이언트가 최종적으로 연결할 `127.0.0.1:22` 또는 `10.10.20.30:443` 같은 주소 |
-| **Public service port** | 인터넷 사용자가 접속하는 Data Relay Link 서버의 공개 TCP 포트. persistent reservation으로 취급 |
-| **Enrollment** | 새 클라이언트를 서버와 안전하게 최초 등록하는 과정 |
-| **Enrollment Code** | 수동 등록 시 사용하는 단기 secret |
-| **Bootstrap Ticket** | Zero-Touch에서 사용하는 단기 secret |
-| **Zero-Touch** | 서버가 프로필을 준비하고 원격 사용자는 생성된 한 줄 명령만 실행하는 등록 방식 |
-| **Allocator** | Enrollment/management HTTPS와 서비스 포트 할당을 담당하는 서버 구성요소 |
-| **Project private CA** | 관리 HTTPS 신뢰를 수립/검증하기 위해 프로젝트가 유지하는 CA |
-| **Relay transport token** | Secure Remote Access tunnel 인증용 credential. enrollment credential과 별개 |
-| **Direct** | Data Relay Link control과 enrollment HTTPS를 별도 public endpoint로 운영하는 기본 모드 |
-| **single-443** | Enrollment HTTPS와 Data Relay Link control/WSS를 public TCP/443으로 통합하는 모드 |
-| **Public hostname** | 게시 서비스 접속에 사용할 수 있는 선택적 DNS 별칭 |
-| **Disable** | 서비스를 잠시 중지하지만 public-port 예약은 유지 |
-| **Release** | public-port 예약을 pool로 반환 |
-| **Revoke** | management identity 또는 active enrollment credential을 차단 |
-| **Doctor** | 설치/신뢰/상태/서비스/네트워크를 읽기 전용으로 검사하는 `drlink` 진단 |
-
-<Note>
-  가장 자주 혼동되는 것은 **CLIENT ID와 label/hostname**, **disable과 release**, **Data Relay Link token과 enrollment/management credential**입니다.
-</Note>
+| DRLink Server | 중앙 control/policy authority와 public relay entry |
+| Managed Host | DRLink Agent로 등록·관리되는 실제 Host |
+| DRLink Agent | Managed Host에서 실행되는 runtime |
+| Network Object / Group | IP, CIDR, FQDN, Managed Host selector와 Group |
+| Service Object / Group | TCP, UDP, Fixed TCP 서비스 정의와 Group |
+| Permission Object / Group | AI 작업 권한과 Group |
+| AI Identity | AI Access에서 인증된 identity |
+| Remote Service | destination과 Service Object를 연결하는 Agent-owned connectivity |
+| Relay Host | 다른 LAN destination으로 중계하는 Agent Host |
+| Remote Access | Remote Service inbound 사용 권한 |
+| Internet Access | 통제된 outbound destination 권한 |
+| AI Access | AI Identity에서 target Permission으로의 권한 |
+| BLACKLIST | Rule 일치 DENY, 미일치 ALLOW |
+| WHITELIST | Rule 일치 ALLOW, 미일치 DENY |
+| ConfigurationBundle | 여러 리소스를 validate/diff/apply하는 설정 문서 |
+| DEGRADED | 설정은 존재하지만 runtime/sync health가 불완전한 상태 |

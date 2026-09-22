@@ -1,104 +1,44 @@
 ---
 title: "SSH"
-description: "Publish SSH through Data Relay Link and connect using the assigned public service port."
+description: "Publish SSH through DataRelay Link and connect using the assigned public service port."
 ---
 
-# SSH
+# SSH Remote Service
 
-SSH is the most common Data Relay Link service.
+SSH is a normal TCP service, usually destination port 22.
 
-## Local SSH on the client
+## Service Object
 
-```mermaid
-flowchart LR
-    U[Operator laptop] -->|ssh -p 6000| S[Data Relay Link Server]
-    S -->|Data Relay Link tunnel| C[Remote Client]
-    C -->|127.0.0.1:22| D[sshd]
-```
-
-Typical target:
+On the Server:
 
 ```text
-Target host : 127.0.0.1
-Target port : 22
-SSH user    : existing-user
+set service-object ssh type tcp port 22
 ```
 
-The SSH account and `sshd` must already exist. Data Relay Link does not create users, passwords, keys, `authorized_keys`, or `sshd_config`.
+## Remote Service
+
+On the owning Agent Host:
+
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
+```
+
+For a reachable LAN target, select that destination instead of this-host.
+
+## Optional authorization
+
+On the Server, use Remote Access policy to restrict who may use the Remote Service.
+
+```text
+set remote-access office-ssh mode whitelist source office-admin destination <managed-host> service ssh enabled
+test remote-access source office-admin destination <managed-host> service ssh
+```
 
 ## Connect
 
-After enrollment, the SSH service receives a persistent public port.
-
 ```bash
-ssh -p <public-port> <ssh-user>@<server-public-IP>
+ssh -p <public-port> <user>@<public-hostname>
 ```
 
-With a public service hostname:
-
-```bash
-ssh -p <public-port> <ssh-user>@fw.example.com
-```
-
-The hostname is an access alias. It does not change CLIENT ID, Service ID, or the service-port reservation.
-
-## Publish SSH on another LAN host
-
-```mermaid
-flowchart LR
-    U[Operator] -->|public port| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
-    C -->|10.10.20.30:22| H[LAN Server]
-```
-
-Example:
-
-```text
-Target host : 10.10.20.30
-Target port : 22
-SSH user    : admin
-```
-
-The Data Relay Link client must already have normal network reachability to `10.10.20.30:22`.
-
-## Verify each hop
-
-```mermaid
-flowchart TD
-    A[SSH fails] --> B{Is sshd listening on target?}
-    B -->|No| C[Fix target SSH service]
-    B -->|Yes| D{Can Data Relay Link Client reach target:22?}
-    D -->|No| E[Fix LAN routing / firewall / ACL]
-    D -->|Yes| F{Does server show service + public port?}
-    F -->|No| G[Fix service config / apply]
-    F -->|Yes| H{Is public port reachable externally?}
-    H -->|No| I[Fix server firewall / NAT / SG]
-    H -->|Yes| J[Inspect SSH auth / key / account]
-```
-
-On the target/client:
-
-```bash
-ss -lntp | grep ':22'
-```
-
-On the client:
-
-```bash
-sudo drlink show services
-sudo drlink show info
-sudo drlink doctor
-```
-
-On the server:
-
-```bash
-sudo drlink show client <CLIENT-ID> services
-```
-
-## Disable vs release
-
-- **Disable** SSH when you want to stop publication temporarily but keep the public port.
-- **Release** when you intentionally want to return that port to the pool.
-
-See [Lifecycle Semantics](/operations/lifecycle).
+DataRelay Link does not create the SSH account, SSH keys, or sshd configuration.

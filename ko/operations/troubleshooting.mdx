@@ -5,152 +5,54 @@ description: "등록, 터널, 서비스, DNS 문제를 순서대로 진단하는
 
 # 문제 해결
 
-문제가 생기면 generated config/registry/identity 파일을 먼저 수정하지 말고 **read-only evidence**부터 확인하세요.
-
-## 첫 번째 Decision Tree
-
-```mermaid
-flowchart TD
-    A[문제가 있음] --> B[Server/Client에서\nshow status + doctor]
-    B --> C{Server의 show clients에\nClient가 보이나요?}
-    C -->|아니오| E[Enrollment / management path 확인]
-    C -->|예| F{Service와 public port가\n보이나요?}
-    F -->|아니오| G[Service config / apply 확인]
-    F -->|예| H{Client에서 target을\n직접 연결할 수 있나요?}
-    H -->|아니오| I[Target app / LAN routing / ACL]
-    H -->|예| J{외부에서 server public port에\n접속 가능한가요?}
-    J -->|아니오| K[Firewall / NAT / cloud security policy]
-    J -->|예| L{IP는 되는데 hostname만\n실패하나요?}
-    L -->|예| M[DNS / hairpin NAT / TLS hostname]
-    L -->|아니오| N[Data Relay Link tunnel / target protocol 상세 확인]
-```
-
-## 1. 최소 증거 수집
+## 1. Server / Agent health
 
 Server:
 
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show clients
-sudo drlink show enrollments
-sudo drlink doctor
+```text
+show status
+system diagnostics
 ```
 
-Client:
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink show info
-sudo drlink doctor
-```
-
-<Note>
-  `doctor`는 읽기 전용입니다. Generated Data Relay Link config, registry, identity, PKI를 수동 수정하기 전에 먼저 실행하세요.
-</Note>
-
-## 증상: 새 Client가 Server에 안 보임
-
-다음 순서로 봅니다.
-
-1. Server가 출력한 Zero-Touch 명령을 정확히 실행했는가
-2. Bootstrap/Enrollment credential이 아직 유효한가
-3. Client가 **public enrollment HTTPS endpoint**에 도달 가능한가
-4. Client 시간 오차가 과도하지 않은가
-5. TLS trust/certificate 검증이 성공하는가
-6. 다른 네트워크에서 private server IP를 잘못 사용하고 있지 않은가
-
-Direct 기본에서는 Client가 보통 TCP `443`, `6099`로 outbound 가능해야 합니다.
-
-## 증상: Client는 보이는데 SSH/Web이 안 됨
-
-```mermaid
-flowchart LR
-    U[Internet user] --> P[Server public service port]
-    P --> F[Data Relay Link proxy/tunnel]
-    F --> C[Client]
-    C --> T[Target host:port]
-```
-
-모든 hop을 확인합니다.
-
-- `show client <ID> services`에서 public port 확인
-- 외부 firewall/cloud security policy가 해당 port 허용
-- Client Data Relay Link 상태 정상
-- Client가 target host/port에 직접 연결 가능
-- Target application 실제 listen 중
-
-Client 자신의 SSH라면:
-
-```bash
-ss -lntp | grep ':22'
-```
-
-## 증상: LAN target만 안 됨
-
-Data Relay Link 없이 Client에서 target으로 먼저 직접 연결 가능해야 합니다.
+Agent Host:
 
 ```text
-Client -> 10.10.20.30:22
+show status
+show agent
+system info
+system diagnostics
 ```
 
-이게 실패하면 routing, ACL, target firewall, bind address, application 상태를 먼저 고치세요.
-
-## 증상: TCP는 연결되는데 TLS가 reset됨
-
-일부 enterprise network는 non-standard TCP port의 handshake는 허용하지만 TLS를 reset할 수 있습니다.
-
-`curl -k`, plain HTTP enrollment, TLS verification disable로 우회하지 마세요. [배포 모드](/deployment/modes)의 Enterprise single-443 설계를 검토해야 합니다.
-
-## 증상: IP는 되는데 hostname만 실패
-
-```mermaid
-flowchart TD
-    A[IP + public port는 성공] --> B{Hostname이 올바른\npublic entry point로 resolve?}
-    B -->|아니오| D[DNS 수정]
-    B -->|예| C{내부 LAN 사용자만 실패?}
-    C -->|예| H[Hairpin NAT / split DNS]
-    C -->|아니오| T{HTTPS certificate warning?}
-    T -->|예| X[Target app certificate SAN 확인]
-```
-
-Data Relay Link는 hostname을 사용하지만 DNS record를 자동 생성하지 않습니다.
-
-## 증상: HTTPS certificate warning
-
-Published HTTPS는 TCP passthrough입니다. Browser가 보는 certificate는 **target application**의 certificate입니다.
-
-`https://fw.example.com:6005`로 접속시 target certificate가 `fw.example.com`에 적합해야 합니다.
-
-## 증상: Server가 NAT 뒤
-
-다음 매핑을 명시적으로 확인하세요.
+## 2. Enrollment / management
 
 ```text
-public control       -> Data Relay Link control listen
-public enrollment    -> allocator/enrollment listen
-public service port  -> same Data Relay Link service port (1:1 권장)
+show enrollments
+show managed-hosts
 ```
 
-## 처음부터 하면 안 되는 것
+## 3. Remote Service
 
-- Port 한 개 안 된다고 Client를 바로 delete/re-enroll
-- 일시 중지가 목적인데 `release`
-- verified HTTPS 대신 plain HTTP
-- production fix로 `curl -k`
-- Client 간 secret file 복사
-- recovery 절차 없이 registry/identity/PKI 수동 수정
+Agent Host에서:
 
-## Escalation 시 준비할 정보
+```text
+show remote-services
+show remote-service <NAME>
+```
 
-- Server/Client `show version`
-- Server/Client `show status`
-- 관련 `doctor` output
-- deployment mode
-- public ↔ internal port mapping
-- CLIENT ID / Service ID (secret은 제외)
-- target host/port
-- IP는 되는지, hostname만 실패하는지
-- Client에서 target 직접 연결이 되는지
+DEGRADED는 configuration이 존재하지만 runtime health 또는 synchronization이 일시적으로 불완전할 수 있음을 의미합니다.
+
+## 4. Policy
+
+```text
+test remote-access ...
+test internet-access ...
+test ai-access ...
+```
+
+Remote Service health만 보고 authorization을 추정하지 않습니다.
+
+## 5. AI Access
+
+AI 인증/identity → permission policy → target Agent/OS permission 순으로 확인합니다. MCP는 이 계층을 우회하지 않습니다.
+
+필요하면 sanitized support bundle을 사용하고 ticket, OAuth/bearer secret, private key는 노출하지 않습니다.

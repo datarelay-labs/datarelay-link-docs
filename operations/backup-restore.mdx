@@ -1,104 +1,25 @@
 ---
 title: "Backup & Restore"
-description: "Protect Data Relay Link identity, PKI, registry, and configuration before disaster recovery or major maintenance."
+description: "Protect DataRelay Link identity, PKI, registry, and configuration before disaster recovery or major maintenance."
 ---
 
 # Backup & Restore
 
-The Data Relay Link server contains state that is more important than the software binaries themselves. Backups protect the trust and reservation data needed to keep existing clients working after recovery.
+Use the product backup/restore workflow rather than copying selected live files by hand.
 
-## What you are protecting
-
-```mermaid
-flowchart TB
-    B[Server backup]
-    B --> C[Configuration]
-    B --> P[Project PKI / CA]
-    B --> T[Data Relay Link token]
-    B --> R[Client registry]
-    B --> E[Enrollment state where applicable]
-
-    P --> X[Existing client trust]
-    R --> Y[CLIENT IDs + service metadata]
-    R --> Z[Persistent public-port reservations]
-```
-
-## Create a backup
-
-```bash
-sudo drlink create backup
-```
-
-Store the resulting backup as sensitive infrastructure material.
-
-## Important persistent state
-
-At minimum, understand these locations:
+## Server commands
 
 ```text
-/etc/data-relay-link/config.json
-/etc/data-relay-link/pki/
-/etc/data-relay-link/relay_token
-/var/lib/data-relay-link/registry.json
+system backup
+system restore <FILE>
 ```
 
-The supported backup format also handles related state according to the installed release.
+The v2.4 Server authoritative state includes the control-plane SQLite database plus required trust, secret, and configuration material.
 
-## Restore
+A live WAL database must be backed up with a consistent SQLite backup or snapshot method. Naive copying of a live database file is not the canonical backup method.
 
-```bash
-sudo drlink restore backup <path>
-```
+## Restore rules
 
-Restore is not a blind `cp -r`. The supported flow is designed around validation and rollback behavior.
+Restore is a configuration mutation. The product validates compatibility, integrity, and activation. If automatic rollback cannot fully recover a failure, diagnostics must report that truthfully rather than claiming success.
 
-```mermaid
-flowchart LR
-    A[Validate archive] --> B[Snapshot current state]
-    B --> C[Restore saved state]
-    C --> D[Restart required services]
-    D --> E[Run health checks / doctor]
-    E -->|success| F[Recovered]
-    E -->|failure| G[Rollback / fail safely]
-```
-
-## Why the CA matters
-
-Existing clients trust the project's private CA. Losing the CA private key can force advanced trust recovery or re-establishment. A normal reinstall/update should not intentionally rotate that CA.
-
-## When to create a backup
-
-- before high-risk maintenance or migration
-- before a restore test
-- before changing topology if rollback matters
-- on a regular operational schedule appropriate for your environment
-- after meaningful stable changes to client/service inventory when recovery point matters
-
-## After restore
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show clients
-sudo drlink doctor
-```
-
-Then verify one or more representative public service paths.
-
-```mermaid
-flowchart LR
-    U[Internet user] -->|expected public port| S[Restored server]
-    S --> C[Existing client]
-    C --> T[Target service]
-```
-
-## What not to do
-
-- do not treat the PKI directory as disposable configuration
-- do not restore only `relay-server.toml` and expect identity/port state to follow
-- do not copy registry fragments manually between unrelated servers
-- do not store backups in a public location
-
-<Warning>
-  Backups can contain highly sensitive trust and authentication material. Protect them at least as carefully as the production server state they represent.
-</Warning>
+After restore, verify Managed Hosts, Objects and Groups, Remote Services visible from Server state, policies, AI Identities, revisions, and runtime health.

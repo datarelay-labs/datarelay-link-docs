@@ -1,29 +1,20 @@
 ---
 title: "Known Limits"
-description: "Current product boundaries and unsupported assumptions for Data Relay Link."
+description: "Current product boundaries and unsupported assumptions for DataRelay Link."
 ---
 
 # Known Limits
 
-Data Relay Link is intentionally focused on lightweight remote-access management for a small number to a few dozen systems.
+DataRelay Link intentionally does not try to be every network/security platform.
 
-## Current boundaries
-
-- TCP services only
-- The Data Relay Link server remains Linux-based
-- v2.2.1 stable client validation includes Linux real hosts, macOS Apple Silicon, and Windows 10 / PowerShell 5.1
-- Amazon Linux 2 is portability/CI-only in the current release qualification; PowerShell 7 is CI-validated unless a real host actually has `pwsh` installed
-- Published-service NAT is designed around keeping the same Data Relay Link service port on the public and internal sides
-- External cloud firewalls, security groups, host firewalls, and NAT rules are not configured automatically
-- In published stable **v2.2.1**, there is no built-in per-service source-IP allowlist policy or application-style RBAC layer for published TCP services; use external firewall/ACL controls and the target service's own authentication/authorization
-- SSH accounts, passwords, SSH keys, and `sshd` configuration are not managed automatically
-- HTTPS application publishing is TCP passthrough; the application owns its TLS certificate
-- Some SELinux, ARM64 systemd, and older OpenSSL environments have separate validation classifications
-- Project bootstrap scripts are checksummed but are not currently cryptographically signed by the project
-- This is not a 100+ endpoint fleet-orchestration platform
-
-## Design target
-
-The product is aimed at operators who need to make remote systems behind NAT/firewalls reachable without building a full VPN or enterprise remote-management stack.
-
-When requirements grow into large-scale policy orchestration, endpoint compliance, inventory CMDB, or hundreds/thousands of agents, use tooling designed for that scope rather than stretching Data Relay Link beyond its intended operating model.
+- Target scale is roughly a few systems to a few dozen Managed Hosts.
+- It is not a VPN mesh or full-network overlay.
+- It is not a full SWG/SASE/TLS-inspection product.
+- It does not automatically configure customer cloud firewalls, external NAT/DNAT, or DNS-provider records.
+- Remote Service supports TCP and Fixed TCP Service Objects; UDP and Service Groups are rejected for that use.
+- Internet Access v2.4 is TCP/HTTP/HTTPS CONNECT oriented; UDP is rejected.
+- Internet Access destination cannot be a Managed Host, directly or indirectly through a Network Group.
+- Dual-role host behavior is outside the current supported scope.
+- Server and Agent ConfigurationBundles are independently atomic; there is no distributed Server plus multi-Agent transaction.
+- MCP/AI Access does not bypass target OS permissions or Agent identity.
+- Stable support claims require release-specific qualification evidence.

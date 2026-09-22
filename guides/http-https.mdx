@@ -1,95 +1,28 @@
 ---
 title: "HTTP & HTTPS"
-description: "Publish HTTP and HTTPS applications through Data Relay Link using TCP forwarding."
+description: "Publish HTTP and HTTPS applications through DataRelay Link using TCP forwarding."
 ---
 
-# HTTP & HTTPS
+# HTTP & HTTPS Remote Services
 
-Data Relay Link publishes HTTP and HTTPS as **TCP services**. It is not an application-layer reverse proxy for the published service.
-
-## HTTP path
-
-```mermaid
-flowchart LR
-    B[Browser] -->|http://server:6001| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
-    C -->|127.0.0.1:80| W[HTTP App]
-```
-
-Example targets:
+Create normal TCP Service Objects for the destination ports:
 
 ```text
-127.0.0.1:80
-10.10.20.40:80
+set service-object http type tcp port 80
+set service-object https type tcp port 443
 ```
 
-## HTTPS path: TLS stays encrypted through Data Relay Link
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant S as Data Relay Link Server
-    participant C as Data Relay Link Client
-    participant W as HTTPS App
-
-    B->>S: TLS connection to public service port
-    S->>C: encrypted TCP stream
-    C->>W: encrypted TCP stream
-    W-->>B: target application's certificate + TLS response
-```
-
-Data Relay Link does **not** terminate, replace, or automatically issue the target application's TLS certificate.
-
-## DNS hostname and certificate
-
-Suppose:
+On the Agent Host:
 
 ```text
-Public service hostname : fw.example.com
-Public service port     : 6005
-Target                   : 127.0.0.1:443
+set remote-service web-http destination this-host service http enabled
+set remote-service web-https destination this-host service https enabled
 ```
 
-Users connect to:
+## HTTPS behavior
 
-```text
-https://fw.example.com:6005
-```
+Remote Service forwarding is TCP transport. DataRelay Link does not terminate or replace the target application's HTTPS certificate.
 
-The certificate presented by the **target application** must be valid for `fw.example.com` where hostname verification applies.
+If a browser reaches an HTTPS target through a DataRelay Link endpoint, certificate-name validation still belongs to the application/TLS endpoint design.
 
-## Multiple web services on one client
-
-```mermaid
-flowchart LR
-    U[Users]
-    S[Data Relay Link Server]
-    C[Client A]
-    A[web-admin\n127.0.0.1:443]
-    B[api\n127.0.0.1:8080]
-    D[lan-ui\n10.10.20.50:8443]
-
-    U -->|6001| S
-    U -->|6002| S
-    U -->|6003| S
-    S --> C
-    C --> A
-    C --> B
-    C --> D
-```
-
-Give each service a stable Service ID so later lifecycle and target changes remain unambiguous.
-
-## Common failure patterns
-
-| Symptom | Likely layer to check |
-| --- | --- |
-| Connection timeout | public firewall/NAT/service port |
-| Data Relay Link path works but target returns connection refused | target listener/bind address |
-| IP works, hostname does not | DNS/hairpin NAT |
-| HTTPS certificate warning | target app certificate/SAN |
-| LAN web target fails only | client-to-LAN routing/ACL |
-
-<Tip>
-  First prove the target is reachable from the Data Relay Link client. Then prove the public service port is reachable. Treat DNS and TLS hostname validation as later layers.
-</Tip>
+Use Remote Access policy separately when the service should not be reachable by every source.

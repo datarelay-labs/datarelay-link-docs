@@ -5,75 +5,22 @@ description: "Default public and internal TCP ports used by Direct and Enterpris
 
 # Network Ports
 
-Data Relay Link publishes **TCP** services. Default published service range: **6000-6098**.
-
-## Port direction at a glance
-
-```mermaid
-flowchart LR
-    C[Remote client]
-    S[Data Relay Link server]
-    U[Internet user]
-
-    C -->|outbound Data Relay Link control| S
-    C -->|outbound enrollment / management HTTPS| S
-    U -->|inbound published service port| S
-```
-
-The remote client normally initiates its connections outbound. The server/public firewall must still accept the required inbound endpoints.
-
 ## Direct mode
 
-| Purpose | Who initiates | Default public TCP | Default server listen TCP |
-| --- | --- | --: | --: |
-| Data Relay Link control | Client → Server | 443 | 443 |
-| Enrollment / management HTTPS | Client → Server | 6099 | 6099 |
-| Published service | User → Server | 6000-6098 | 6000-6098 |
-
-TCP/22 is optional for your own administrative SSH access to the server and is not part of the Data Relay Link product path.
+| Purpose | Typical listener |
+| --- | --- |
+| Relay control | TCP/443 |
+| Management / enrollment HTTPS | TCP/6099 |
+| Default Remote Service endpoint pool | TCP/6000-6098 |
 
 ## Enterprise single-443
 
-```mermaid
-flowchart LR
-    C[Remote client] -->|HTTPS + WSS TCP 443| FE[Public frontend]
-    FE -->|enrollment| A[127.0.0.1:6099]
-    FE -->|Data Relay Link control| F[127.0.0.1:7000]
-    U[Internet user] -->|6000-6098| P[Published services]
-```
+| Purpose | Typical listener |
+| --- | --- |
+| Public management/enrollment + Relay control | TCP/443 |
+| Remote Service endpoint pool(s) | configured public ranges |
+| Internal allocator / relay backends | loopback only |
 
-| Purpose | Public TCP | Internal/backend TCP |
-| --- | ---: | ---: |
-| HTTPS enrollment + Data Relay Link control over WSS | 443 | allocator 6099 + relay backend 7000 on loopback |
-| Published services | 6000-6098 | 6000-6098 |
+Fixed TCP uses a dedicated configured endpoint pool. The Service Object destination port is not the public endpoint port.
 
-<Warning>
-  In single-443 mode, allocator backend `6099` and Data Relay Link backend `7000` are not intended to be Internet-exposed.
-</Warning>
-
-## NAT deployments
-
-The public control/enrollment ports may be translated by an external firewall.
-
-Example Direct mapping:
-
-```text
-Public 8443  -> Server 443
-Public 9443  -> Server 6099
-Public 6001  -> Server 6001
-```
-
-Published service ports should normally stay 1:1 so the persistent Data Relay Link reservation matches the port users actually connect to.
-
-## TCP only
-
-Current stable core scope:
-
-```text
-SSH
-HTTP
-HTTPS passthrough
-Custom TCP
-```
-
-UDP is not part of the current stable core product scope.
+The installer does not modify external cloud firewall, NAT, or DNS policy. Expose only the ports required by the selected deployment and configured endpoint pools.

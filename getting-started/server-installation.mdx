@@ -1,137 +1,42 @@
 ---
 title: "Server Installation"
-description: "Install and verify the Data Relay Link server using the current stable release."
+description: "Install and verify the DataRelay Link server using the current stable release."
 ---
 
 # Server Installation
 
-The Data Relay Link server is the public entry point. It runs the bundled relay-server runtime plus enrollment, registry, lifecycle, and `drlink` management components.
-
-## Recommended first environment
-
-For the simplest first deployment, use an **Ubuntu 24.04 x86_64** server with a direct public IP. Ubuntu 24.04 is the clearest Real E2E-validated server baseline for the stable release; Ubuntu 22.04 has automated portability coverage but is not presented as an equivalent real-host validation claim.
-
-<Tip>
-  If you do not already have a static public IP or spare Linux server, use the screenshot-based [OCI Free Tier Server Preparation](/getting-started/oci-free-tier-server) guide to prepare an Always Free-eligible Ubuntu VM with a Reserved Public IPv4 address first.
-</Tip>
-
-Other Linux families have different validation levels; see [Supported Platforms](/reference/platforms).
-
-## Choose the topology first
-
-The original field guide summarized the three common network layouts in one diagram. Use it as a visual map before choosing the actual product mode.
-
-![Data Relay Link deployment layouts: Direct, NAT, and Enterprise single-443](/images/guides/51.png)
-
 <Note>
-  The diagram shows **Direct**, **Direct behind NAT**, and **Enterprise single-443** as network layouts. NAT itself is not a third product mode; the product modes are Direct and Enterprise single-443.
+  The latest published stable release is **v2.3.0**. This site documents the current **v2.4.0 development target**. Use an immutable release tag for stable deployment or an exact qualified SHA/artifact for v2.4 testing.
 </Note>
 
-```mermaid
-flowchart TD
-    A[Start] --> B{Can the server receive\npublic Internet traffic?}
-    B -->|Direct public IP| C[Direct mode\n443 + 6099 + service range]
-    B -->|Behind firewall/NAT| D[Configure DNAT\npublic endpoints -> internal server]
-    C --> E{Does the client network\nrequire everything on TLS/443?}
-    D --> E
-    E -->|No| F[Use Direct]
-    E -->|Yes / TLS reset on non-standard ports| G[Consider Enterprise single-443]
-```
+## Server role
 
-<Note>
-  NAT is a network topology, not a third Data Relay Link mode. The two product modes are **Direct** and **Enterprise single-443**.
-</Note>
+The Server is Linux-based and owns enrollment, Managed Host inventory, Objects/Groups, Access Policies, AI Identity, audit, backup/restore, and Server ConfigurationBundle.
 
-## Direct mode defaults
+For v2.4 candidate testing, use the exact source/artifact identity provided by the qualification process rather than mutable main/latest.
 
-```mermaid
-flowchart LR
-    I[Internet]
-    S[Data Relay Link server]
-    I -->|TCP 443\nData Relay Link control| S
-    I -->|TCP 6099\nEnrollment / management HTTPS| S
-    I -->|TCP 6000-6098\nPublished services| S
-```
-
-TCP/22 is optional for your own administrative SSH access to the server; it is not part of the Data Relay Link tunnel path.
-
-## If the server is behind NAT
-
-Example:
-
-```mermaid
-flowchart LR
-    I[Internet\n203.0.113.10]
-    F[Firewall / NAT]
-    S[Data Relay Link server\n192.0.2.50]
-
-    I -->|8443| F -->|443| S
-    I -->|9443| F -->|6099| S
-    I -->|6000-6098| F -->|same ports| S
-```
-
-Clients must use the **public** control/enrollment endpoints, not the server's private address. See [Firewall & NAT](/deployment/firewall-nat).
-
-## Install the current stable release
-
-Current published stable: **v2.2.1** with bundled/tested relay engine **v0.71.0**.
+## Verify after installation
 
 ```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
+sudo drlink
 ```
 
-Use the immutable stable tag for field installs rather than mutable `main` unless you intentionally want development behavior.
-
-## What the installer asks for
-
-Expect questions about:
-
-1. public IP / public control endpoint
-2. optional public service hostname
-3. internal server IP
-4. Direct vs Enterprise single-443
-5. public and local control ports
-6. public and local enrollment/allocator ports
-7. published service range
-
-<Warning>
-  The installer does **not** create AWS Security Groups, OCI Security Lists, external firewall/NAT rules, UFW/firewalld/iptables policy, or DNS records.
-</Warning>
-
-## Verify immediately after installation
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-`doctor` is read-only and checks installation state, permissions, PKI, service state, registry consistency, topology, and common network problems.
-
-## Persistent state you should understand
+Then:
 
 ```text
-/etc/frp-auto-deploy/config.json
-/etc/frp-auto-deploy/pki/
-/etc/frp/server_token
-/var/lib/frp-auto-deploy/registry.json
+show version
+show status
+system diagnostics
 ```
 
-These files/state protect trust, identity, and public-port reservations. Do not manually edit them during normal operation.
+Confirm the role is **DRLink Server** and that product version, release channel, exact Source HEAD, and Relay Engine version are truthful.
 
-## Server readiness checklist
+## Public identity
 
-- required systemd services are active
-- `drlink doctor` has no blocking finding
-- public control/enrollment endpoints are reachable from the client network
-- published service range is allowed by the server-side firewall/NAT
-- if using DNS, the public hostname resolves to the correct public entry point
+The installer may use a public IP or configured public domain as the product-facing identity. The selected identity must be used consistently by generated enrollment/Zero-Touch links and other user-facing URLs.
 
-## Next
+Friendly Remote Service aliases and bootstrap hostnames are separate concerns and must not silently change management identity.
 
-- [Quick Start](/getting-started/quickstart)
-- [Deployment Modes](/deployment/modes)
-- [Firewall & NAT](/deployment/firewall-nat)
-- [Network Ports](/reference/network-ports)
+## External boundary
+
+DataRelay Link does not silently configure cloud security groups, external NAT/DNAT, customer DNS records, OS users, SSH configuration, or application TLS certificates.

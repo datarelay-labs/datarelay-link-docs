@@ -1,169 +1,51 @@
 ---
-title: "Publishing Services"
-description: "Publish SSH, HTTP, HTTPS, custom TCP, and LAN services through an enrolled client."
+title: "Remote Services"
+description: "Create Agent-owned TCP or Fixed TCP connectivity to local or reachable LAN targets."
+sidebarTitle: "Remote Services"
 ---
 
-# Publishing Services
+# Remote Services
 
-A **Service** is one TCP target that an enrolled client publishes through the Data Relay Link server. One client can publish one service or many.
-
-## The universal service path
-
-```mermaid
-flowchart LR
-    U[Internet user]
-    S[Data Relay Link server\npublic-port]
-    C[Data Relay Link client]
-    T[target-host:target-port]
-
-    U -->|public TCP port| S
-    S -->|Data Relay Link tunnel| C
-    C -->|normal TCP connection| T
-```
-
-The target can be on the client itself or on another LAN host the client can reach.
-
-## Common service types
-
-| Type | Typical target | Example public access | Important note |
-| --- | --- | --- | --- |
-| SSH | `127.0.0.1:22` | `ssh -p 6000 user@server` | user/sshd must already exist |
-| HTTP | `127.0.0.1:80` | `http://server:6001` | raw TCP forwarding |
-| HTTPS | `127.0.0.1:443` | `https://server:6002` | TLS stays end-to-end to target |
-| Custom TCP | `10.10.20.30:5432` | application-specific | keep target authentication enabled |
-
-## Pattern 1 — publish the client's own SSH
-
-```mermaid
-flowchart LR
-    U[Operator] -->|TCP 6000| S[Data Relay Link server]
-    S --> C[Client A]
-    C -->|127.0.0.1:22| SSH[sshd]
-```
-
-Typical target:
+A **Remote Service** is actual connectivity owned by an Agent Host.
 
 ```text
-127.0.0.1:22
+Agent Host
++ one destination
++ one Service Object
+→ Remote Service
+→ stable DataRelay Link endpoint
 ```
 
-## Pattern 2 — one client, multiple local services
+## Service Object vs Remote Service
 
-```mermaid
-flowchart LR
-    U[Internet user]
-    S[Data Relay Link server]
-    C[Client A]
-    A[SSH\n127.0.0.1:22]
-    B[HTTPS\n127.0.0.1:443]
-    D[API\n127.0.0.1:8080]
+A **Service Object** describes a service such as TCP/22. A **Remote Service** binds that definition to a real destination and receives an endpoint.
 
-    U -->|6000| S
-    U -->|6001| S
-    U -->|6002| S
-    S --> C
-    C --> A
-    C --> B
-    C --> D
+Create it on the Agent Host:
+
+```text
+set remote-service <NAME>
 ```
 
-Each service gets its own stable Service ID and persistent public-port reservation.
+or:
 
-## Pattern 3 — use the client as a small LAN gateway
-
-```mermaid
-flowchart LR
-    U[Internet user]
-    S[Data Relay Link server]
-    C[Data Relay Link client\ngateway host]
-    H1[10.10.20.30:22\nLAN SSH]
-    H2[10.10.20.40:80\nLAN HTTP]
-    H3[10.10.20.50:443\nLAN HTTPS]
-
-    U --> S --> C
-    C --> H1
-    C --> H2
-    C --> H3
+```text
+set remote-service ssh-access destination this-host service ssh enabled
 ```
 
-The Data Relay Link client only needs normal IP reachability to those target hosts.
+## Supported types
 
-## Practical examples from the field guide
+Remote Service supports **TCP** and **Fixed TCP** Service Objects. It rejects UDP and Service Groups.
 
-The same client can publish its own services and services on other LAN hosts at the same time. Typical examples:
+## Local and LAN targets
 
-| Use case | Target from the Data Relay Link client | Example |
-| --- | --- | --- |
-| Client SSH | `127.0.0.1:22` | administer the client itself |
-| Client HTTPS | `127.0.0.1:443` | local web UI |
-| Other LAN server SSH | `10.10.10.20:22` | administer a server behind the same firewall |
-| Other LAN server HTTP | `10.10.10.30:80` | internal web application |
-| Grafana | `10.10.10.40:3000` | monitoring UI |
-| Internal API | `10.10.10.50:8080` | application-specific TCP client |
-| PostgreSQL | `10.10.10.60:5432` | database client; keep DB authentication/ACLs enabled |
+destination this-host targets the Agent Host itself. A destination that resolves to another reachable host uses the current Agent Host as a **Relay Host**.
 
-Before adding a LAN target, prove that the **Data Relay Link client itself** can reach it:
+## Runtime state
 
-```bash
-nc -vz -w 3 10.10.10.20 22
-nc -vz -w 3 10.10.10.30 80
+```text
+HEALTHY
+DEGRADED
+DISABLED
 ```
 
-If this test fails, Data Relay Link cannot fix the client-to-LAN routing, target firewall, or target application. Resolve that path first, then publish the service.
-
-<Note>
-  You do not need a separate Data Relay Link client on every LAN host. A single enrolled client can act as a small gateway for hosts it can legitimately reach, which is useful for a few to a few dozen systems. Keep the scope deliberate rather than turning it into broad network exposure.
-</Note>
-
-## HTTPS is passthrough
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant S as Data Relay Link server
-    participant C as Data Relay Link client
-    participant W as HTTPS application
-
-    B->>S: TLS connection to public service port
-    S->>C: Forward encrypted TCP stream
-    C->>W: Forward encrypted TCP stream
-    W-->>B: Application certificate / TLS response
-```
-
-Data Relay Link does not terminate or replace the application's TLS certificate. If users connect with `fw.example.com`, the target application must present a certificate valid for that hostname where applicable.
-
-## Persistent public-port lifecycle
-
-```mermaid
-stateDiagram-v2
-    [*] --> Published
-    Published --> Disabled: disable service
-    Disabled --> Published: enable service
-    Published --> Published: edit target + apply
-    Disabled --> Released: release service
-    Published --> Released: release service
-    Released --> [*]
-```
-
-- **Disable** stops publication and keeps the port reserved.
-- **Enable** resumes on the same reserved port.
-- **Edit + apply** changes the target without intentionally changing the reservation.
-- **Release** returns the public port to the pool.
-
-## Security reminder
-
-Publishing a service makes that service reachable through the assigned public endpoint. Keep the target application's own authentication, authorization, host firewall, and access controls enabled.
-
-<CardGroup cols={3}>
-  <Card title="SSH" icon="terminal" href="/guides/ssh">
-    SSH-specific setup and checks.
-  </Card>
-
-  <Card title="HTTP & HTTPS" icon="globe" href="/guides/http-https">
-    Web publishing and TLS passthrough.
-  </Card>
-
-  <Card title="Custom TCP & LAN" icon="network-wired" href="/guides/custom-tcp-lan">
-    Databases, appliances, APIs, and LAN targets.
-  </Card>
-</CardGroup>
+Temporary reachability or synchronization failure does not automatically delete a valid Remote Service.

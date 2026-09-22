@@ -1,107 +1,20 @@
 ---
 title: "DNS & Public Hostname"
-description: "Use a friendly DNS name for published services without changing Data Relay Link identity or control-plane semantics."
+description: "Understand product public identity, optional Remote Service aliases, and bootstrap hostnames without changing management identity."
 ---
 
 # DNS & Public Hostname
 
-Data Relay Link separates the server's **Public IP** from an optional **Public Hostname**.
+DataRelay Link distinguishes several names that older documentation mixed together.
 
-```mermaid
-flowchart TD
-    S[Data Relay Link server]
-    IP[Public IP\nInfrastructure/control fallback]
-    DNS[Public Hostname\nHuman-friendly service alias]
-    S --> IP
-    S --> DNS
-```
+| Name | Purpose |
+| --- | --- |
+| Product public identity | Server control/management identity selected during installation |
+| Remote Service alias | Optional user-facing hostname for Remote Service endpoints |
+| Bootstrap hostname | Optional hostname used for Zero-Touch bootstrap entry |
 
-```text
-Public IP       = primary infrastructure/control reference
-Public Hostname = optional user-facing alias for published services
-```
+If installation selects a domain as the product public identity, generated Zero-Touch and other product-facing URLs must use that identity consistently.
 
-## Example
+Changing a friendly Remote Service alias must not silently change Agent identity, policy selectors, or the Server trust identity.
 
-```text
-Public IP       203.0.113.10
-Public Hostname fw.example.com
-SSH public port 6000
-HTTPS port      6005
-```
-
-Both SSH forms can reach the same published service:
-
-```bash
-ssh -p 6000 user@203.0.113.10
-ssh -p 6000 user@fw.example.com
-```
-
-Web examples:
-
-```text
-http://fw.example.com:6004
-https://fw.example.com:6005
-```
-
-## Configure the service hostname
-
-```bash
-sudo drlink set server hostname fw.example.com
-```
-
-Remove it with:
-
-```bash
-sudo drlink unset server hostname
-```
-
-This metadata change does **not** change CLIENT ID, Service ID, public-port reservations, project CA, or Data Relay Link control identity.
-
-## DNS remains external
-
-```mermaid
-flowchart LR
-    D[Your DNS provider] -->|A / AAAA record| P[Public Data Relay Link entry point]
-    U[User] -->|fw.example.com| D
-    P --> S[Data Relay Link server or firewall/NAT]
-```
-
-Data Relay Link does not call Route53, Cloudflare DNS, DNSZi, or another provider API. Create the DNS record yourself so the hostname resolves to the **public entry point**.
-
-## Server behind NAT
-
-If the Data Relay Link server is private, the hostname should normally resolve to the **firewall/public IP**, not the private server address.
-
-```mermaid
-flowchart LR
-    U[User] -->|fw.example.com| F[Public firewall / NAT]
-    F -->|DNAT| S[Private Data Relay Link server]
-```
-
-## HTTPS certificate behavior
-
-Published HTTPS is TCP passthrough:
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant S as Data Relay Link server
-    participant C as Data Relay Link client
-    participant W as Target HTTPS app
-
-    B->>S: TLS to fw.example.com:6005
-    S->>C: encrypted TCP stream
-    C->>W: encrypted TCP stream
-    W-->>B: target application's certificate
-```
-
-Data Relay Link does not issue or replace the published application's certificate. The **target application certificate** must be valid for the hostname users enter.
-
-## Hairpin NAT
-
-Internal clients may fail to reach the public hostname through the firewall's public IP if the firewall does not support hairpin NAT. Use hairpin NAT or split DNS when needed.
-
-<Tip>
-  When debugging a hostname problem, first prove the service works by public IP + public port. If IP works and hostname fails, debug DNS/certificate/hairpin behavior before changing Data Relay Link state.
-</Tip>
+DataRelay Link does not create DNS-provider records. Create and validate required DNS records outside the product.

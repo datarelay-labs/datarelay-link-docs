@@ -1,0 +1,59 @@
+---
+title: "ConfigurationBundle"
+description: "Validate, diff, and atomically apply dependent multi-resource configuration changes."
+---
+
+# ConfigurationBundle
+
+Use one-shot CLI for one independent resource. Use ConfigurationBundle when several dependent resources must succeed or fail together.
+
+## Canonical Server shape
+
+~~~yaml
+configurationBundle:
+  context: server
+
+  networkObjects:
+    - name: github
+      type: fqdn
+      value: github.com
+
+  serviceObjects:
+    - name: https
+      type: tcp
+      port: 443
+
+  internetAccess:
+    mode: whitelist
+    enforcement: enabled
+    rules:
+      - name: github-https
+        source: ubuntu-prod
+        destination: github
+        service: https
+        enabled: true
+~~~
+
+Agent bundles use context: agent and the remoteServices section.
+
+## Commands
+
+~~~text
+test configuration <FILE|->
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+system export configuration <FILE>
+~~~
+
+Interactive stdin paste ends with a line containing only :end.
+
+## Semantics
+
+~~~text
+resource omitted   → unchanged
+field omitted      → unchanged
+state: absent      → explicit deletion/reset
+same desired state → NO CHANGE
+~~~
+
+Server and Agent bundles are independently atomic. There is no single distributed Server+multi-Agent transaction. Export and AI copy/paste workflows must not contain enrollment tickets, OAuth/bearer secrets, private keys, or other protected values.

@@ -1,129 +1,36 @@
 ---
-title: "Client Enrollment"
-description: "Enroll remote clients with Zero-Touch or a manual Enrollment Code."
+title: "Managed Host Enrollment"
+description: "Enroll a host as a Managed Host and establish its DRLink Agent management identity."
+sidebarTitle: "Managed Host Enrollment"
 ---
 
-# Client Enrollment
+# Managed Host Enrollment
 
-Enrollment is the secure **first-time pairing** of a client with the Data Relay Link server. It establishes persistent management identity; it is not the same thing as the published SSH/web connection itself.
+Enrollment turns a real host into a **Managed Host** by installing and binding the DRLink Agent to the Server.
 
-![Data Relay Link client lifecycle from the original field guide](/images/guides/50.png)
-
-The lifecycle view helps separate first-time enrollment from normal service changes, updates, and final client/port retirement.
-
-## Choose the workflow
-
-| Workflow | Use it when | Typical operator experience |
-| --- | --- | --- |
-| **Zero-Touch** | the server admin should predefine the initial profile | remote user runs one generated command |
-| **Manual Enrollment Code** | the remote operator should choose services interactively | remote user runs installer and enters a short-lived code |
-
-```mermaid
-flowchart TD
-    A[New client] --> B{Who should choose\ninitial services?}
-    B -->|Server admin| Z[Zero-Touch]
-    B -->|Remote operator| M[Manual Enrollment Code]
-    Z --> E[Secure enrollment]
-    M --> E
-    E --> I[Persistent CLIENT ID + management identity]
-    I --> T[Outbound Data Relay Link tunnel]
-```
-
-## Zero-Touch
-
-The easiest interactive CLI path is:
-
-```bash
-sudo drlink
-```
-
-Then:
+## Server commands
 
 ```text
-create zero-touch
+set enrollment zero-touch
+set enrollment manual
+set enrollment bulk
+show enrollments
+show enrollment <ENROLLMENT>
 ```
 
-For an explicit SSH profile:
-
-```bash
-sudo drlink create enrollment \
-  --one-line \
-  --ssh \
-  --ssh-user <ssh-user> \
-  --label branch-a
-```
-
-The generated bootstrap command contains a short-lived credential. Send it only through an appropriate private channel.
-
-The SSH user must already exist. Data Relay Link does not create users, enable SSH, change passwords, or install SSH keys.
-
-## Manual Enrollment Code
-
-On the server:
-
-```bash
-sudo drlink create enrollment
-```
-
-The server produces enrollment information including a short-lived Enrollment Code, allocator URL, CA trust/fingerprint material, and a client bootstrap command.
-
-The remote user runs the generated command and enters the Enrollment Code when prompted.
-
-Typical service choices include:
+After enrollment:
 
 ```text
-SSH
-HTTP
-HTTPS
-Custom TCP
+show managed-hosts
+show managed-host <HOST>
 ```
 
-The server owns the public service-port assignment. The client chooses the target host and target port.
+## Identity boundary
 
-## Trust establishment
+Managed Host identity is tied to the enrolled Agent/machine identity, not merely to a display label, hostname, or observed NAT/public IP.
 
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant S as Server
+Enrollment credentials are bootstrap credentials. They are not the same as the persistent Agent management identity or Relay Engine transport credential.
 
-    C->>S: Enrollment Code / Bootstrap Ticket
-    S-->>C: CA bootstrap information
-    C->>C: Verify CA fingerprint / certificate
-    C->>S: Verified HTTPS enrollment
-    S-->>C: Persistent management identity + configuration
-```
+## Next step
 
-After that, normal supported operations use the persistent identity rather than repeatedly using the first-install secret.
-
-## Verify enrollment
-
-Server:
-
-```bash
-sudo drlink show enrollments
-sudo drlink show clients
-sudo drlink show client <CLIENT-ID>
-```
-
-Client:
-
-```bash
-sudo drlink show status
-sudo drlink show services
-sudo drlink doctor
-```
-
-## Stable v2.2.1 enrollment lifecycle
-
-Use the non-secret enrollment ID to revoke an active credential:
-
-```bash
-sudo drlink revoke enrollment <ID>
-```
-
-`show enrollments` never prints the secret itself. Enrollment retention/purge and lifecycle behavior documented by the v2.2.1 CLI are part of the stable release contract; mutable `main` may contain later changes.
-
-## Persistent identity
-
-A successful enrollment creates a persistent CLIENT ID and management identity. Normal service edits, reboots, and supported updates do not require re-enrollment.
+Create Remote Services on the enrolled **Agent Host**, not on the Server.

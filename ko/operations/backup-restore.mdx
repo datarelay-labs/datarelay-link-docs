@@ -1,75 +1,21 @@
 ---
 title: "백업 & 복구"
 sidebarTitle: "백업 & 복구"
-description: "CLIENT ID, private CA, registry와 persistent public-port reservation을 보존하기 위한 백업/복구 절차입니다."
+description: "v2.4 authoritative control-plane database와 trust/configuration state를 안전하게 보존하고 복구합니다."
 icon: "database"
 ---
 
 # 백업 & 복구
 
-Data Relay Link 서버는 단순 설정 파일만이 아니라 **신뢰와 식별 상태**를 보관합니다. 따라서 서버 장애 대비에서 백업은 매우 중요합니다.
-
-## 무엇을 보호하나요?
-
-```mermaid
-flowchart TB
-    B[Backup] --> C[config.json]
-    B --> P[Private CA / PKI]
-    B --> T[Data Relay Link server token]
-    B --> R[registry.json]
-    R --> I[CLIENT ID]
-    R --> S[Service records]
-    S --> PP[Persistent public-port reservations]
-```
-
-최소 핵심 상태는 다음과 같습니다.
+선택한 live 파일을 수동으로 복사하지 말고 제품의 backup/restore workflow를 사용합니다.
 
 ```text
-/etc/data-relay-link/config.json
-/etc/data-relay-link/pki/
-/etc/data-relay-link/server_token
-/var/lib/data-relay-link/registry.json
+system backup
+system restore <FILE>
 ```
 
-## 백업 생성
+v2.4 Server authoritative state에는 SQLite control-plane DB와 필요한 trust, secret, configuration material이 포함됩니다.
 
-```bash
-sudo drlink create backup
-```
+live WAL database는 일관된 SQLite backup/snapshot 방식으로 백업해야 합니다. 실행 중인 DB 파일 하나만 복사하는 방식은 canonical backup이 아닙니다.
 
-백업 파일은 private key와 token 같은 민감한 정보를 포함할 수 있으므로 안전한 위치에 저장하세요.
-
-## 복구
-
-```bash
-sudo drlink restore backup <path>
-```
-
-지원되는 restore는 단순 파일 복사가 아닙니다. Archive 검증, 현재 상태 snapshot, restore, 서비스 재시작, health check를 포함해 일관성이 깨지는 경우 보수적으로 실패하도록 설계되어 있습니다.
-
-## 왜 CA가 중요한가요?
-
-```mermaid
-sequenceDiagram
-    participant S as Server CA
-    participant C as Existing Client
-    participant M as Management HTTPS
-    C->>S: 최초 등록에서 CA trust 설정
-    C->>M: 이후 저장된 CA로 서버 검증
-```
-
-기존 Client는 Project private CA를 신뢰합니다. CA private key를 잃어버리면 기존 trust 관계를 그대로 재현하기 어려울 수 있습니다.
-
-## 복구 후 검증
-
-```bash
-sudo drlink show status
-sudo drlink show clients
-sudo drlink doctor
-```
-
-그 다음 대표 published service를 **실제 public host/public port**에서 테스트하세요.
-
-<Warning>
-  Disaster recovery를 준비하려면 backup 파일이 실제로 복구 가능한지도 별도 테스트 환경에서 주기적으로 검증하는 것이 좋습니다.
-</Warning>
+복구 후 Managed Host, Object/Group, Server에서 보이는 Remote Service 상태, Access Policy, AI Identity, revision, runtime health를 확인합니다.

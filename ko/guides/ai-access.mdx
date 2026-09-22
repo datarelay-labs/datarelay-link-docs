@@ -1,0 +1,32 @@
+---
+title: "AI Access & MCP"
+description: "AI Identity를 인증하고 명시적인 target Permission을 부여합니다."
+---
+
+# AI Access & MCP
+
+AI Access는 **인증**과 **권한 부여**를 분리합니다.
+
+~~~text
+지원 OAuth / credential
+→ 검증된 AI Identity
+→ AI Access policy
+→ Permission Object / Group
+→ 승인된 target
+~~~
+
+표시 이름만으로는 인증이 되지 않습니다.
+
+~~~text
+set ai-identity <NAME>
+show ai-identities
+show ai-identity <NAME>
+
+set permission-object read-only permissions host-info,process-read,file-read
+set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
+test ai-access source claude destination production-servers permission read-only
+~~~
+
+AI Access Rule에는 순서가 없고 Rule별 action도 없습니다. Policy enforcement를 disabled로 해도 AI 인증은 계속 필수입니다.
+
+v2.4 MCP Bridge는 Server의 인증된 HTTPS 경로입니다. MCP는 Agent identity, AI Access policy, target OS permission을 우회하지 않습니다. Remote Service나 SSH는 승인된 AI 작업의 전제조건이 아닙니다.

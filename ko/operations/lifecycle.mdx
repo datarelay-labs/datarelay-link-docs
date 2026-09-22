@@ -7,79 +7,35 @@ icon: "diagram-project"
 
 # Lifecycle 의미
 
-Data Relay Link는 **서비스 게시 상태**, **management identity**, **public-port reservation**을 서로 다른 상태로 관리합니다.
+## Access Policy
 
 ```text
-disable   != release
-revoke    != release
-uninstall != release
-update    != re-enrollment
+set <policy-family> disabled
 ```
 
-## Service lifecycle
+Mode와 Rule을 유지하면서 enforcement를 effective ALLOW ALL로 만듭니다.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Published
-    Published --> Disabled: disable service
-    Disabled --> Published: enable service
-    Published --> Published: edit + apply
-    Published --> Released: release service
-    Disabled --> Released: release service
-    Released --> [*]
+```text
+unset <policy-family> policy
 ```
 
-| 동작 | 의미 | Public port |
-| --- | --- | --- |
-| Disable | 게시 일시 중지 | **유지** |
-| Enable | 게시 재개 | **같은 port 재사용** |
-| Edit + apply | Target/config 변경 | **가능하면 유지** |
-| Release | Reservation 삭제 | **pool 반환** |
+Mode와 Rule을 제거하여 초기 No Policy / No Rules 상태로 돌아갑니다.
 
-## Client lifecycle
+## Remote Service
 
-```mermaid
-flowchart LR
-    E[Enrolled Client] -->|revoke client| R[Management identity 차단]
-    E -->|release client| X[Server record + service port reservation 반환]
-    E -->|local uninstall| L[Client local software/state 삭제]
-    L -. 자동으로 하지 않음 .-> X
+Disable은 Remote Service object를 유지하면서 connectivity를 중지합니다. 제거는 명시적인 configuration deletion입니다.
+
+## Agent Host
+
+```text
+system pause
+system resume
+system restart
+system update product
+system update engine
+system uninstall
 ```
 
-- `revoke client`: management identity 차단
-- `release client`: server record와 service reservation 반환
-- local uninstall: client local state 삭제, server reservation 자동 반환 아님
+Agent lifecycle 명령은 Agent Host에서 수행합니다.
 
-## 어떤 명령을 선택해야 하나요?
-
-```mermaid
-flowchart TD
-    A[목적은?] --> B{Service를 잠시만 멈춤?}
-    B -->|예| D[disable]
-    B -->|아니오| C{Public port도 영구 반환?}
-    C -->|예| R[release service]
-    C -->|아니오| M{Client management identity 차단?}
-    M -->|예| V[revoke client]
-    M -->|아니오| X{Client 완전 decommission + 예약 반환?}
-    X -->|예| RC[release client 후 필요 시 local uninstall]
-```
-
-## Stable v2.2.1 Enrollment credential
-
-Active enrollment credential은 다음처럼 revoke할 수 있습니다.
-
-```bash
-sudo drlink revoke enrollment <ID>
-```
-
-<Note>
-  Stable v2.2.1에는 qualified enrollment lifecycle/retention command가 포함됩니다. Mutable `main`에는 이후 변경이 있을 수 있으므로 field 운영은 immutable v2.2.1 contract를 기준으로 합니다.
-</Note>
-
-## Update
-
-정상적인 supported project update는 re-enrollment가 아닙니다. CLIENT ID, CA, token, registry, public-port reservation을 유지하도록 설계되어 있습니다.
-
-<Warning>
-  잠시 중지하려는 것뿐인데 `release`를 실행하면 public-port reservation을 반환하게 됩니다. Intent를 먼저 확인하세요.
-</Warning>
+일반 update/restart는 identity와 설정을 보존해야 하며 uninstall과 Server-side object/policy cleanup은 별도 작업입니다.

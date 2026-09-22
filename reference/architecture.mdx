@@ -7,139 +7,49 @@ icon: "sitemap"
 
 # Architecture
 
-This page is the deeper technical view. For the beginner model, start with [Concepts & Mental Model](/getting-started/concepts).
-
-## System architecture
+## Roles
 
 ```mermaid
 flowchart LR
-    U[Operator / Internet user]
-    F[Public firewall / NAT\noptional]
-    S[Data Relay Link server]
-    C1[Client A\nData Relay Link client runtime + management identity]
-    C2[Client B\nData Relay Link client runtime + management identity]
-    L1[Local services\n127.0.0.1:*]
-    L2[Reachable LAN services\n10.x / 172.16-31.x / 192.168.x]
+    S[DRLink Server]
+    A[Managed Host / Agent]
+    T[Local or LAN target]
+    I[Approved Internet destination]
+    AI[Authenticated AI Identity]
 
-    U -->|published TCP port| F
-    F --> S
-    C1 -->|outbound Data Relay Link control| S
-    C2 -->|outbound Data Relay Link control| S
-    C1 --> L1
-    C1 --> L2
-    C2 --> L1
+    A -->|management + relay control| S
+    S -->|Remote Service traffic| A
+    A --> T
+    A -->|Internet Access request path| S
+    S --> I
+    AI -->|MCP / AI Access| S
+    S --> A
 ```
 
-The product intentionally uses a **bundled relay engine behind the Data Relay Link product layer** rather than exposing low-level transport configuration as the operator experience.
+## Server control plane
 
-## Control plane vs data plane
+The Server owns enrollment, Managed Host inventory, Network/Service/Permission Objects and Groups, AI Identities, Access Policies, revisions, audit, backup/restore, and Server ConfigurationBundle.
 
-| Plane | Purpose | Typical transport |
-| --- | --- | --- |
-| Enrollment / management | bootstrap trust, identity, service metadata, management actions | verified HTTPS |
-| Relay control | register published services and maintain reverse-tunnel control | native relay TLS or WSS |
-| Published service data | carry SSH/HTTP/HTTPS/custom TCP | TCP through the relay proxy |
+## Agent plane
 
-These planes use different credentials and should not be treated as interchangeable.
+The Agent owns local lifecycle and Remote Services. A Remote Service binds one destination to one Service Object and receives a stable DataRelay Link endpoint.
 
-## Direct mode
+## Policy planes
 
-```mermaid
-flowchart TB
-    I[Internet]
-    S[Data Relay Link server]
-    A[Enrollment / management HTTPS\nTCP 6099]
-    C[Data Relay Link control\nTCP 443]
-    P[Published services\nTCP 6000-6098]
+Remote Access, Internet Access, and AI Access are separate policy families with the same BLACKLIST/WHITELIST plus Enforcement model. Rules are unordered and carry no per-rule ALLOW/DENY action.
 
-    I --> A
-    I --> C
-    I --> P
-    A --> S
-    C --> S
-    P --> S
-```
+## Authoritative state
 
-Direct is the default deployment mode.
-
-## Enterprise single-443
-
-```mermaid
-flowchart TB
-    I[Internet]
-    FE[Public frontend\nTCP 443]
-    A[Allocator backend\n127.0.0.1:6099]
-    F[Relay backend\n127.0.0.1:7000]
-    P[Published services\nTCP 6000-6098]
-
-    I --> FE
-    FE -->|HTTPS enrollment paths| A
-    FE -->|Data Relay Link control over WSS| F
-    I --> P
-```
-
-The backend ports `6099` and `7000` are loopback-only in this mode and should not be Internet-exposed.
-
-## Identity model
-
-```mermaid
-flowchart TD
-    M[Machine] --> CID[Immutable CLIENT ID]
-    CID --> MI[Persistent management identity]
-    CID --> SV[Services]
-    CID --> META[Mutable metadata]
-    META --> L[label]
-    META --> H[hostname]
-    META --> N[note]
-    META --> T[tags]
-    SV --> SID[Stable Service ID]
-    SID --> PP[Persistent public-port reservation]
-```
-
-The important design rule is that mutable display metadata never becomes canonical identity.
-
-## Trust establishment
-
-```mermaid
-sequenceDiagram
-    participant C as New client
-    participant S as Server
-    participant CA as Project private CA
-
-    C->>S: Bootstrap ticket / Enrollment Code
-    S-->>C: CA material + expected fingerprint path
-    C->>C: Verify CA fingerprint / X.509
-    C->>S: Verified HTTPS enrollment
-    S-->>C: Persistent management identity + config
-    C->>S: Signed management requests thereafter
-```
-
-The relay token authenticates the relay transport. It is **not** the same credential as the Enrollment Code, Bootstrap Ticket, or client management identity.
-
-## Persistent server state
-
-Important state includes:
+The v2.4 target uses SQLite as authoritative Server state:
 
 ```text
-/etc/data-relay-link/config.json
-/etc/data-relay-link/pki/
-/etc/data-relay-link/relay_token
-/var/lib/data-relay-link/registry.json
+/var/lib/drlink/drlink.db
 ```
 
-The design goal is to preserve identity, CA trust, token, registry, and public-port reservations across normal updates, reboots, and supported restore workflows.
+Runtime configuration is compiled from authoritative state. JSON compatibility files from older releases are not a second source of truth.
 
-## Fail-closed rules
+## Trust boundaries
 
-The management layer should fail rather than guess when it encounters conditions such as:
+Enrollment bootstrap credentials, persistent Agent management identity, Relay Engine transport credentials, and AI OAuth credentials are distinct. One credential must not be treated as another.
 
-- unknown or ambiguous client identity
-- invalid signatures
-- CA mismatch
-- inconsistent registry state
-- unknown release identity
-- unsafe restore/update conditions
-
-## Scale boundary
-
-Data Relay Link is optimized for a few systems to a few dozen clients. It does not aim to become a large-fleet orchestrator, CMDB, endpoint compliance platform, or high-availability management cluster.
+MCP is a server-side authenticated bridge. It does not bypass AI Access policy, Agent identity, or target OS permissions.

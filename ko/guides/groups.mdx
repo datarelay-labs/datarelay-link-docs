@@ -1,82 +1,33 @@
 ---
-title: "수동 그룹"
-sidebarTitle: "수동 그룹"
-description: "CLIENT ID나 서비스 포트를 바꾸지 않고 소규모 Client를 수동 그룹으로 정리합니다."
+title: "Object & Group"
+sidebarTitle: "Object & Group"
+description: "Network, Service, Permission Object와 Group을 재사용 가능한 정책 요소로 사용합니다."
 ---
 
-# 수동 그룹
+# Object & Group
 
-Data Relay Link v2.2.1에는 Client를 정리하기 위한 **Manual Group MVP**가 포함되어 있습니다. Group은 관리자용 metadata이며 CLIENT ID, 서비스 설정, public port, tunnel 동작을 변경하지 않습니다.
+## Network Object
 
-<Note>
-  v2.2.1은 **수동 그룹만 지원**합니다. Dynamic membership rule이나 대규모 fleet orchestration은 현재 stable 범위가 아닙니다.
-</Note>
+일반 사용자 정의 type은 IP, CIDR, FQDN입니다. 등록된 Managed Host도 type Managed Host의 Network Object로 필요한 context에서 사용됩니다.
 
-## 그룹 생성
-
-```bash
-sudo drlink create group branch-office --description "Branch office systems"
+```text
+set network-object github type fqdn value github.com
+set network-group approved-admins members office-admin,vpn-admin
 ```
 
-저장된 Group에는 `grp_1234abcd` 같은 immutable Group ID가 있습니다. 이름과 설명은 나중에 변경할 수 있습니다.
+## Service Object
 
-## Client 추가
+type은 TCP, UDP, Fixed TCP입니다. 일반 Wizard는 SSH, HTTP, HTTPS, RDP, Custom TCP, Fixed TCP를 제공합니다.
 
-가능하면 canonical CLIENT ID를 사용하세요.
+UDP는 명시적 설정으로 존재할 수 있지만 Remote Service와 Internet Access v2.4에서는 거부됩니다.
 
-```bash
-sudo drlink add client <CLIENT-ID> group branch-office
+## Permission Object
+
+AI 작업 권한을 재사용 가능한 Permission Object/Group으로 정의합니다.
+
+```text
+set permission-object read-only permissions host-info,process-read,file-read
+set permission-group operators members read-only,operator
 ```
 
-한 Client는 여러 Group에 속할 수 있습니다.
-
-## Group과 membership 확인
-
-```bash
-sudo drlink show groups
-sudo drlink show group branch-office
-sudo drlink show clients --group branch-office
-sudo drlink show client <CLIENT-ID> groups
-```
-
-`all`과 `ungrouped`는 virtual selector이며 실제 저장되는 Group object가 아닙니다.
-
-## Group 이름/설명 변경
-
-```bash
-sudo drlink rename group branch-office seoul-office
-sudo drlink set group seoul-office description "Seoul branch systems"
-```
-
-Group 이름을 바꿔도 immutable Group ID는 바뀌지 않습니다.
-
-## Membership 제거
-
-```bash
-sudo drlink remove client <CLIENT-ID> group seoul-office
-```
-
-Membership 관계만 제거됩니다. Client enrollment, 서비스, public-port reservation은 그대로 유지됩니다.
-
-## Group 삭제
-
-```bash
-sudo drlink delete group seoul-office
-```
-
-Group 삭제는 membership reference만 제거하며 Client 삭제, identity revoke, 서비스 disable, port release를 수행하지 않습니다.
-
-<Warning>
-  Group 삭제는 Client lifecycle 작업이 아닙니다. Revoke/Release 판단은 [Lifecycle](/ko/operations/lifecycle)을 확인하세요.
-</Warning>
-
-## 활용 예
-
-Manual Group은 소규모 운영에서 다음과 같은 분류에 유용합니다.
-
-- 고객 또는 파트너
-- 지사/사이트
-- Lab / production-support 장비
-- 임시 기술지원 대상
-
-현재 목표 규모인 약 1–50 Clients에서는 별도 fleet-management platform 없이도 Client 목록을 단순하게 정리하는 데 충분합니다.
+Group은 flat collection이며 선택한 context의 유효성 검사는 Group 전체 구성원에 적용됩니다.

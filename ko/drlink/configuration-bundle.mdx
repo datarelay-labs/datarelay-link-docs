@@ -1,0 +1,57 @@
+---
+title: "ConfigurationBundle"
+description: "의존성이 있는 여러 리소스를 validate, diff, atomic apply합니다."
+---
+
+# ConfigurationBundle
+
+독립적인 리소스 하나는 one-shot CLI를 사용하고, 여러 의존 리소스를 함께 성공 또는 실패시켜야 하면 ConfigurationBundle을 사용합니다.
+
+## Server 예
+
+~~~yaml
+configurationBundle:
+  context: server
+
+  networkObjects:
+    - name: github
+      type: fqdn
+      value: github.com
+
+  serviceObjects:
+    - name: https
+      type: tcp
+      port: 443
+
+  internetAccess:
+    mode: whitelist
+    enforcement: enabled
+    rules:
+      - name: github-https
+        source: ubuntu-prod
+        destination: github
+        service: https
+        enabled: true
+~~~
+
+Agent bundle은 context: agent와 remoteServices section을 사용합니다.
+
+~~~text
+test configuration <FILE|->
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+system export configuration <FILE>
+~~~
+
+stdin interactive paste 종료 표시는 한 줄의 :end 입니다.
+
+## 의미
+
+~~~text
+resource 생략    → unchanged
+field 생략       → unchanged
+state: absent    → 명시적 삭제/reset
+동일한 desired   → NO CHANGE
+~~~
+
+Server와 Agent bundle은 각각 atomic합니다. Server와 여러 Agent를 하나의 distributed transaction으로 묶지는 않습니다. export와 AI copy/paste에는 enrollment ticket, OAuth/bearer secret, private key 등 보호값이 포함되면 안 됩니다.

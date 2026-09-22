@@ -1,0 +1,29 @@
+---
+title: "Internet Access"
+description: "Control outbound destinations without turning DataRelay Link into an open proxy."
+---
+
+# Internet Access
+
+Internet Access authorizes outbound connectivity from managed/protected sources to approved external destinations.
+
+The v2.4 datapath is TCP / HTTP / HTTPS CONNECT oriented. UDP Service Objects are not valid Internet Access selections.
+
+## Selector rules
+
+A Managed Host may be used as a **source**.
+
+A Managed Host must not be used as a **destination**, directly or through a Network Group containing one.
+
+## Policy example
+
+~~~text
+set network-object github type fqdn value github.com
+set service-object https type tcp port 443
+set internet-access github-https mode whitelist source ubuntu-prod destination github service https enabled
+test internet-access source ubuntu-prod destination github service https
+~~~
+
+Internet Access uses the same BLACKLIST / WHITELIST and Enforcement model as Remote Access.
+
+DataRelay Link must not become an open proxy. The implementation validates destinations and protocol/port use, performs safe DNS handling where applicable, resists DNS rebinding and SSRF/private/local/metadata destinations, and fails closed on ambiguous unsafe state.

@@ -5,94 +5,37 @@ description: "Understand disable, revoke, release, uninstall, purge, and update 
 
 # Lifecycle Semantics
 
-Data Relay Link deliberately separates **temporary publication**, **management identity**, and **public-port reservation**. These are different state machines.
+DataRelay Link uses explicit lifecycle operations; do not treat unrelated actions as synonyms.
+
+## Access Policy
 
 ```text
-disable   != release
-revoke    != release
-uninstall != release
-update    != re-enrollment
+set <policy-family> disabled
 ```
 
-## Service lifecycle
+preserves Mode and Rules but makes policy enforcement effectively ALLOW ALL.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Published
-    Published --> Disabled: disable service
-    Disabled --> Published: enable service
-    Published --> Published: edit + apply
-    Published --> Released: release service
-    Disabled --> Released: release service
-    Released --> [*]
+```text
+unset <policy-family> policy
 ```
 
-| Action | Effect | Public port |
-| --- | --- | --- |
-| Disable service | stop publication temporarily | **kept** |
-| Enable service | resume publication | **same port reused** |
-| Edit + apply | change target/name/config | **kept when possible** |
-| Release service | remove reservation | **returned to pool** |
+removes Mode and Rules and returns to the initial No Policy / No Rules state.
 
-## Client management lifecycle
+## Remote Service
 
-```mermaid
-flowchart LR
-    E[Enrolled client] -->|revoke client| R[Management identity blocked]
-    E -->|release client| X[Server record + service reservations released]
-    E -->|local uninstall| L[Client software/state removed locally]
-    L -. does not automatically .-> X
+Disabling a Remote Service stops that connectivity while retaining the object for later re-enable. Removing a Remote Service is an explicit configuration deletion.
+
+## Agent Host
+
+```text
+system pause
+system resume
+system restart
+system update product
+system update engine
+system uninstall
 ```
 
-- `revoke client` blocks the client's management identity but does not mean "free all public ports".
-- `release client` is the server-side operation that removes the client record and returns its service reservations.
-- client uninstall is local-only and does not automatically contact the server to release reservations.
+Agent lifecycle commands belong on the Agent Host.
 
-There is intentionally no ambiguous `delete client` command.
-
-## Enrollment credential lifecycle — stable v2.2.1
-
-```mermaid
-stateDiagram-v2
-    [*] --> Pending
-    Pending --> Bound
-    Pending --> Revoked: revoke enrollment
-    Bound --> Completed
-    Bound --> Revoked: revoke enrollment
-    Pending --> Expired
-    Completed --> [*]
-    Revoked --> [*]
-    Expired --> [*]
-```
-
-`show enrollments` does not expose the secret itself. Stable v2.2.1 supports revoking active enrollment credentials with:
-
-```bash
-sudo drlink revoke enrollment <ID>
-```
-
-<Note>
-  The stable v2.2.1 CLI includes the qualified enrollment lifecycle/retention controls. Mutable `main` may contain later changes, so field procedures should follow the immutable v2.2.1 contract.
-</Note>
-
-## Which command do I actually want?
-
-```mermaid
-flowchart TD
-    A[What is your goal?] --> B{Stop one service temporarily?}
-    B -->|Yes| D[disable service]
-    B -->|No| C{Permanently return its public port?}
-    C -->|Yes| R[release service]
-    C -->|No| M{Block a client's management identity?}
-    M -->|Yes| V[revoke client]
-    M -->|No| X{Decommission client and free all reservations?}
-    X -->|Yes| RC[release client\nthen uninstall local client as needed]
-```
-
-## Update
-
-A supported normal project update is not a re-enrollment operation. Identity, CA, token, registry, and persistent public ports are designed to remain intact.
-
-<Warning>
-  Do not use `release` as a generic cleanup command unless you actually intend to return the public-port reservation to the pool.
-</Warning>
+Normal update or restart must preserve identity and configured state; uninstall behavior is separate from Server-side object and policy cleanup.

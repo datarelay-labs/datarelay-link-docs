@@ -1,0 +1,27 @@
+---
+title: "Internet Access"
+description: "DataRelay Link를 open proxy로 만들지 않으면서 승인된 외부 목적지만 허용합니다."
+---
+
+# Internet Access
+
+Internet Access는 Managed Host 또는 보호된 source가 승인된 외부 destination으로 나가는 연결을 제어합니다.
+
+v2.4 datapath는 TCP / HTTP / HTTPS CONNECT 중심이며 UDP Service Object는 Internet Access에서 사용할 수 없습니다.
+
+## selector 규칙
+
+Managed Host는 **source**로 사용할 수 있습니다.
+
+Managed Host는 **destination**으로 사용할 수 없으며 Managed Host를 포함한 Network Group도 destination에서 거부됩니다.
+
+~~~text
+set network-object github type fqdn value github.com
+set service-object https type tcp port 443
+set internet-access github-https mode whitelist source ubuntu-prod destination github service https enabled
+test internet-access source ubuntu-prod destination github service https
+~~~
+
+Internet Access는 Remote Access와 동일한 BLACKLIST / WHITELIST + Enforcement 모델을 사용합니다.
+
+목적지와 protocol/port를 검증하고 안전한 DNS 처리, DNS rebinding 저항, SSRF/private/local/metadata destination 차단을 통해 open proxy가 되지 않도록 fail closed 해야 합니다.

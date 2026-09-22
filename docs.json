@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Data Relay Link",
+  "name": "DataRelay Link",
   "description": "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and agentless outbound egress.",
   "colors": {
     "primary": "#16A34A"
@@ -20,7 +20,7 @@
     }
   },
   "search": {
-    "prompt": "Search Data Relay Link docs..."
+    "prompt": "Search DataRelay Link docs..."
   },
   "seo": {
     "indexing": "navigable",
@@ -52,23 +52,45 @@
             "icon": "rocket"
           },
           {
-            "group": "Client & Services",
+            "group": "Managed Hosts & Objects",
             "pages": [
               "guides/enrollment",
               "guides/zero-touch",
-              "guides/services",
-              "guides/ssh",
-              "guides/http-https",
-              "guides/custom-tcp-lan",
               "guides/groups"
             ],
             "icon": "network-wired"
           },
           {
-            "group": "drlink",
+            "group": "Remote Services & Access",
+            "icon": "arrow-right-to-bracket",
+            "pages": [
+              "guides/ssh",
+              "guides/services",
+              "guides/http-https",
+              "guides/custom-tcp-lan",
+              "guides/remote-access"
+            ]
+          },
+          {
+            "group": "Internet Access",
+            "icon": "globe",
+            "pages": [
+              "guides/internet-access"
+            ]
+          },
+          {
+            "group": "AI Access",
+            "icon": "robot",
+            "pages": [
+              "guides/ai-access"
+            ]
+          },
+          {
+            "group": "CLI & Configuration",
             "pages": [
               "drlink/overview",
-              "drlink/cli-reference"
+              "drlink/cli-reference",
+              "drlink/configuration-bundle"
             ],
             "icon": "terminal"
           },
@@ -129,23 +151,45 @@
             "icon": "rocket"
           },
           {
-            "group": "클라이언트 & 서비스",
+            "group": "Managed Host & Object",
             "pages": [
               "ko/guides/enrollment",
               "ko/guides/zero-touch",
-              "ko/guides/services",
-              "ko/guides/ssh",
-              "ko/guides/http-https",
-              "ko/guides/custom-tcp-lan",
               "ko/guides/groups"
             ],
             "icon": "network-wired"
           },
           {
-            "group": "drlink",
+            "group": "Remote Service & Access",
+            "icon": "arrow-right-to-bracket",
+            "pages": [
+              "ko/guides/ssh",
+              "ko/guides/http-https",
+              "ko/guides/remote-access",
+              "ko/guides/services",
+              "ko/guides/custom-tcp-lan"
+            ]
+          },
+          {
+            "group": "Internet Access",
+            "icon": "globe",
+            "pages": [
+              "ko/guides/internet-access"
+            ]
+          },
+          {
+            "group": "AI Access",
+            "icon": "robot",
+            "pages": [
+              "ko/guides/ai-access"
+            ]
+          },
+          {
+            "group": "CLI & Configuration",
             "pages": [
               "ko/drlink/overview",
-              "ko/drlink/cli-reference"
+              "ko/drlink/cli-reference",
+              "ko/drlink/configuration-bundle"
             ],
             "icon": "terminal"
           },

@@ -1,199 +1,148 @@
 ---
 title: "CLI Reference"
-description: "Canonical drlink command grammar and everyday operator commands."
+description: "Canonical v2.4 DataRelay Link direct command reference."
 ---
 
 # CLI Reference
 
-This page documents the **stable v2.2.1** CLI baseline. Mutable `main` may contain later development or docs-only changes, so field procedures should continue to use the immutable v2.2.1 release contract.
+<Note>
+  This page describes the **v2.4 development target**. The CLI/AI Master in the product repository is authoritative when an abbreviated example here is unclear.
+</Note>
 
-## Grammar
-
-```text
-<verb> <resource> [target] [property] [value]
-```
-
-Host role decides which commands appear in Tab/help. There is no separate `server ...` / `client ...` top-level namespace.
-
-## Interactive keys
+## Common discovery
 
 ```text
-Tab   show/complete valid next tokens
-?     detailed contextual explanation
-Enter execute
-↑/↓   session-only history
+?
+help
+help commands
+<verb> ?
+Tab
 ```
 
-Tab does not execute commands. `drlink` history is not written to disk.
-
-## Client selector
-
-The canonical selector is **CLIENT ID**: immutable short machine identity. Changing label, note, tags, or hostname never changes CLIENT ID.
-
-- `show clients` prints CLIENT ID first.
-- Tab completes CLIENT ID.
-- A unique label/hostname can be typed manually.
-- Ambiguous selectors fail closed.
-- `user@host:port` is not a client selector.
-
-## Show
+## Server — read
 
 ```text
 show status
-show version
-show clients
-show client <ID>
-show client <ID> services
-show client <ID> tags
+show managed-hosts
+show managed-host <HOST>
+show managed-host <HOST> remote-services
 show enrollments
-show audit
-show upstream
-show services
-show info
+show network-objects
+show network-groups
+show service-objects
+show service-groups
+show remote-access
+show internet-access
+show ai-identities
+show permission-objects
+show permission-groups
+show ai-access
+show ai-access-log
 ```
 
-`status` and `version` remain compatibility shortcuts for the `show` form.
-
-## Set
-
-Server:
+## Server — create/edit
 
 ```text
-set client <ID> label <value>
-set client <ID> note <value>
-set client <ID> tag <key> <value>
-set installer-url <url>
-set server hostname <fqdn>
+set enrollment zero-touch
+set enrollment manual
+set enrollment bulk
+
+set network-object <NAME>
+set network-group <NAME>
+set service-object <NAME>
+set service-group <NAME>
+set ai-identity <NAME>
+set permission-object <NAME>
+set permission-group <NAME>
+
+set remote-access <RULE>
+set internet-access <RULE>
+set ai-access <RULE>
 ```
 
-Client:
+Bare named set enters Guided Create/Edit. A complete one-shot form skips the Wizard.
 
 ```text
-set service <service-id> target-host <host>
-set service <service-id> target-port <port>
-set service <service-id> ssh-user <user>
-set service <service-id> name <value>
+set network-object github type fqdn value github.com
+set service-object ssh type tcp port 22
+set permission-object read-only permissions host-info,process-read,file-read
+set remote-access block-partner mode blacklist source partner destination prod service ssh enabled
 ```
 
-Service IDs are immutable. Client-side pending changes become live after `apply`.
-
-## Unset
+## Policy lifecycle
 
 ```text
-unset client <ID> label
-unset client <ID> note
-unset client <ID> tag <key>
-unset server hostname
+set remote-access enabled
+set remote-access disabled
+unset remote-access <RULE>
+unset remote-access policy
+
+set internet-access enabled
+set internet-access disabled
+unset internet-access <RULE>
+unset internet-access policy
+
+set ai-access enabled
+set ai-access disabled
+unset ai-access <RULE>
+unset ai-access policy
 ```
 
-`unset` removes metadata; it does not release public ports or change identity.
+Rules are not ordered and have no per-rule ALLOW/DENY action.
 
-## Create / add
+## Policy test
 
 ```text
-create zero-touch
-create enrollment [--one-line] [--ssh --ssh-user USER --label NAME]
-create enrollments --count N
-create enrollments --csv clients.csv
-create backup [path]
-add service [--preset ssh|http|https|custom] ...
+test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
+test internet-access source <SOURCE> destination <DESTINATION> service <SERVICE>
+test ai-access source <AI_IDENTITY> destination <DESTINATION> permission <PERMISSION>
 ```
 
-`create zero-touch` is the recommended everyday onboarding path.
-
-## Enable / disable / apply / discard
+## Server — system/configuration
 
 ```text
-enable service <service-id>
-disable service <service-id>
-apply
-discard
+system status
+system version
+system diagnostics
+system audit
+system revisions
+system backup
+system restore <FILE>
+
+test configuration <FILE|->
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+system export configuration <FILE>
+
+system update
+system support-bundle
+system uninstall
 ```
 
-Disabling a service keeps the public-port reservation. `apply` does not release server ports.
-
-## Revoke / release / restore
+## Agent Host
 
 ```text
-revoke client <ID>
-revoke enrollment <ID>
-release service <ID> <service-id>
-release client <ID>
-restore backup <path>
+show status
+show agent
+show remote-services
+show remote-service <NAME>
+
+set remote-service <NAME>
+unset remote-service <NAME>
+
+system info
+system pause
+system resume
+system restart
+system update product
+system update engine
+system diagnostics
+system support-bundle
+
+test configuration <FILE|->
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+system export configuration <FILE>
 ```
 
-```mermaid
-flowchart LR
-    U[unset] -->|metadata only| M[label / note / tag]
-    V[revoke] -->|block identity / credential| I[management access]
-    R[release] -->|return reservation| P[public port pool]
-```
-
-These are never aliases. There is intentionally no ambiguous `delete client` command.
-
-## Update
-
-```text
-update project [--check]
-update relay-engine [--check]
-```
-
-The bundled relay engine remains pinned to the tested project version. `show upstream` is informational.
-
-## Other
-
-```text
-doctor
-help
-help show
-help set client
-help legacy
-?
-show ?
-set client <ID> ?
-menu
-history
-clear
-exit
-```
-
-## Stable enrollment states
-
-`show enrollments` can represent enrollment records in normalized lifecycle states such as:
-
-```text
-pending
-bound
-completed
-expired
-revoked
-```
-
-Secrets are never printed by `show`, Tab, or help output.
-
-<Note>
-  Stable v2.2.1 includes the qualified enrollment lifecycle controls and bootstrap-hostname / Short URL support documented here. Mutable `main` may contain later changes; use the immutable v2.2.1 contract for field procedures.
-</Note>
-
-## Compatibility aliases
-
-| Alias | Canonical |
-| --- | --- |
-| `clients` | `show clients` |
-| `client` / `client-info` | `show client` |
-| `client-set` / `edit-client` | `set client` / `unset client` |
-| `enroll` / `create-client` | `create enrollment` |
-| `enroll-bulk` | `create enrollments` |
-| `enrollments` | `show enrollments` |
-| `enrollment-revoke` | `revoke enrollment` |
-| `revoke` / `revoke-client` | `revoke client` |
-| `release-service` | `release service` |
-| `release-client` | `release client` |
-| `project-update` / `client-update` | `update project` |
-| `relay-engine-update` / `server-update` | `update relay-engine` |
-| `backup` | `create backup` |
-| `restore PATH` | `restore backup PATH` |
-| `upstream` | `show upstream` |
-| `audit` | `show audit` |
-| `services` / `manage` / `info` | `show services` / `add`\+`set service` / `show info` |
-| `status` / `version` | `show status` / `show version` |
+Remote Service supports TCP and Fixed TCP Service Objects. UDP and Service Groups are rejected for Remote Service use.

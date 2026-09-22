@@ -1,63 +1,26 @@
 ---
 title: "릴리스 상태"
 sidebarTitle: "릴리스 상태"
-description: "현재 stable v2.2.1, bundled relay engine v0.71.0, immutable stable tag와 development main의 차이를 설명합니다."
+description: "공개 stable v2.3.0과 현재 v2.4.0 development target을 구분합니다."
 icon: "tag"
 ---
 
 # 릴리스 상태
 
-Data Relay Link는 **published stable release**와 변경 가능한 development `main` branch를 구분합니다.
+## 현재 공개 stable
 
-## 현재 Stable
+GitHub의 최신 공개 stable release는 **v2.3.0**입니다.
 
-| 항목 | 현재 |
-| --- | --- |
-| Published stable release | **v2.2.1** |
-| Project version | **2.2.1** |
-| Bundled relay engine | **v0.71.0** |
-| Field install 기준 | immutable `v2.2.1` tag |
-| Release commit | `19d4b6fb8a9bee2d477ace6f5c3ed70310e7ea8f` |
-| Release qualification | **동일한 qualified candidate에서 전체 Real E2E 두 번 완료** |
+Stable 운영 설치는 immutable release/tag와 해당 qualified artifact를 사용해야 합니다.
 
-Qualified v2.2.1 candidate와 published release tree는 동일했습니다. 이미 공개된 v2.2.0은 immutable historical release로 그대로 유지됩니다.
+## 현재 개발 대상
 
-## Stable과 development `main`의 차이
+이 문서는 **v2.4.0 development target** 기준으로 업데이트되고 있습니다.
+
+v2.4의 Managed Host / Object / Remote Service / Remote Access / Internet Access / AI Access / ConfigurationBundle 모델을 설명합니다.
 
 <Warning>
-  `main`에는 아직 공개되지 않은 기능, 수정 또는 다음 릴리스 준비 내용이 포함될 수 있습니다. `main`에 version이나 기능이 존재하더라도 해당 tag와 GitHub Release가 실제로 publish되기 전에는 stable 기능으로 보지 않습니다.
+  v2.4 source tree, VERSION 값, branch 이름, 문서가 존재한다는 사실만으로 v2.4가 stable이 되는 것은 아닙니다. exact-HEAD qualification과 immutable release/tag가 필요합니다.
 </Warning>
 
-Field 설치와 public 문서의 stable claim은 항상 최신 **published release/tag**를 기준으로 합니다. Development channel을 의도적으로 사용하는 경우가 아니라면 immutable stable tag를 mutable `main`으로 바꾸지 마세요.
-
-특히 기능이 이미 `main`에 merge됐지만 아직 release되지 않은 시점에는 이 구분이 중요합니다.
-
-## 현재 Stable 설치
-
-```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
-```
-
-Stable server에서 생성하는 client enrollment 명령도 같은 stable release 경로를 유지하는 것이 원칙입니다.
-
-## Data Relay Link 버전 정책
-
-Data Relay Link는 upstream 최신 Data Relay Link를 자동으로 따라가지 않습니다. Project에서 특정 upstream 버전을 pin하고 검증한 뒤 qualified project release에 포함합니다.
-
-현재 pinned relay engine:
-
-```text
-0.71.0
-```
-
-`show upstream`은 정보용이며 더 새로운 upstream binary가 자동으로 지원된다는 의미가 아닙니다.
-
-## Stable 플랫폼 요약
-
-v2.2.1은 **Ubuntu 24 physical, Rocky Linux 8.10, Rocky Linux 9.4, Amazon Linux 2023, macOS Apple Silicon, Windows 10 / PowerShell 5.1**에서 Real E2E 검증됐습니다.
-
-Amazon Linux 2는 **Container/CI portability만**, PowerShell 7은 실제 test host에 `pwsh`가 있는 경우를 제외하면 **CI 검증**으로 구분합니다.
-
-정확한 validation matrix는 [지원 플랫폼 & 제한](/ko/reference/platforms)을 확인하세요.
+DataRelay Link product version과 Relay Engine version은 별도입니다. 현재 v2.4 development target의 pinned Relay Engine은 release metadata가 바뀌지 않는 한 FRP 0.71.0입니다.

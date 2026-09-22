@@ -1,10 +1,10 @@
 ---
-title: "Data Relay Link and Managed Alternatives"
+title: "DataRelay Link and Managed Alternatives"
 sidebarTitle: "Compare Alternatives"
-description: "Compare Data Relay Link with managed tunnels, private overlay networks, and manual self-hosted reverse proxies by operating model and use case."
+description: "Compare DataRelay Link with managed tunnels, private overlay networks, and manual self-hosted reverse proxies by operating model and use case."
 ---
 
-# Data Relay Link and Managed Alternatives
+# DataRelay Link and Managed Alternatives
 
 There is no single best connectivity tool. The right choice depends on whether you want a **self-hosted public relay**, a **managed Internet ingress**, a **private overlay network**, or a **controlled outbound gateway**.
 
@@ -14,40 +14,40 @@ This page compares operating models rather than benchmark performance or vendor 
 
 | Option | Primary model | Who operates the public edge/control plane? | Remote site needs inbound firewall opening? | Typical fit |
 | --- | --- | --- | --- | --- |
-| **Data Relay Link** | Self-hosted secure relay + enrollment/lifecycle + controlled egress | You | No, for remote clients | A few to a few dozen systems where you want your own public server, predictable service ports, and explicit outbound policy |
-| **Manual self-hosted reverse proxy** | Self-managed tunnel/reverse proxy configuration | You | Usually no for remote clients | Engineers who want maximum low-level flexibility and are comfortable maintaining configuration directly |
+| **DataRelay Link** | Self-hosted secure relay + enrollment/lifecycle + Internet Access | You | No, for Managed Hosts | A few to a few dozen systems where you want your own public server, predictable service ports, and explicit outbound policy |
+| **Manual self-hosted reverse proxy** | Self-managed tunnel/reverse proxy configuration | You | Usually no for Managed Hosts | Engineers who want maximum low-level flexibility and are comfortable maintaining configuration directly |
 | **ngrok** | Managed Internet ingress / agent endpoints | ngrok | Normally no | Development, webhooks, demos, temporary or managed public endpoints, including TCP/SSH use cases |
 | **Cloudflare Tunnel** | Outbound connector to Cloudflare Zero Trust/global edge | Cloudflare | No | Public web applications and organization-managed private application access |
 | **Tailscale** | WireGuard-based private mesh network; optional Serve/Funnel | Tailscale coordination service | No | Private device-to-device or user-to-service connectivity across a team/tailnet |
 
 ## Feature-oriented comparison
 
-| Capability | Data Relay Link | Manual self-hosted reverse proxy | ngrok | Cloudflare Tunnel | Tailscale |
+| Capability | DataRelay Link | Manual self-hosted reverse proxy | ngrok | Cloudflare Tunnel | Tailscale |
 | --- | --- | --- | --- | --- | --- |
 | Self-host the traffic entry server | **Yes** | **Yes** | No | No | Primarily managed coordination |
 | Raw public TCP service such as SSH | **Yes** — assigned public TCP port | Usually configurable | **Yes** — TCP endpoints | Public non-HTTP access typically uses Cloudflare client-side tooling | Private access is primary; public exposure uses Funnel |
 | Public web application ingress | TCP passthrough / public service port | Depends on implementation | Strong managed ingress focus | **Strong managed ingress focus** | Serve is private; Funnel can publish selected services |
 | Private overlay network between users/devices | No | Usually no | Not the primary model | Available through Zero Trust private networking | **Core model** |
-| Zero-Touch client enrollment | **Built in** | Usually manual/custom | Managed agent/account onboarding | Managed connector/Zero Trust onboarding | Managed device/tailnet enrollment |
-| Persistent service-port reservation | **Built in** | Operator-managed | Provider-managed endpoint addressing | Hostname/route oriented | Tailnet IP/DNS oriented |
-| Small-fleet identity and service lifecycle | **Built in** | Operator-managed | Managed SaaS model | Managed Zero Trust model | Managed tailnet/device model |
-| Agentless HTTP/HTTPS controlled egress | **Product direction; release qualification in progress** | Requires separate proxy/policy design | Not the primary product model | Gateway/Zero Trust options available | Not the primary product model |
+| Zero-Touch Managed Host enrollment | **Built in** | Usually manual/custom | Managed agent/account onboarding | Managed connector/Zero Trust onboarding | Managed device/tailnet enrollment |
+| Persistent Remote Service endpoint reservation | **Built in** | Operator-managed | Provider-managed endpoint addressing | Hostname/route oriented | Tailnet IP/DNS oriented |
+| Small-fleet Managed Host and Remote Service lifecycle | **Built in** | Operator-managed | Managed SaaS model | Managed Zero Trust model | Managed tailnet/device model |
+| Internet Access (controlled HTTP/HTTPS egress) | **Product direction; release qualification in progress** | Requires separate proxy/policy design | Not the primary product model | Gateway/Zero Trust options available | Not the primary product model |
 | SaaS account required for normal operation | **No** | **No** | **Yes** | **Yes** | **Yes** |
-| Intended scale of this project | **About 1–50 clients** | Depends on your operations | Vendor-managed | Vendor-managed | Vendor-managed |
+| Intended scale of this project | **A few to a few dozen Managed Hosts** | Depends on your operations | Vendor-managed | Vendor-managed | Vendor-managed |
 
 <Note>
-  Data Relay Link should not be presented as a replacement for enterprise ZTNA, SASE, endpoint compliance, DLP, or a full VPN/mesh platform. Controlled Egress v1 is deliberately narrower than a Secure Web Gateway.
+  DataRelay Link should not be presented as a replacement for enterprise ZTNA, SASE, endpoint compliance, DLP, or a full VPN/mesh platform. Internet Access v2.4 is deliberately narrower than a Secure Web Gateway.
 </Note>
 
-## When Data Relay Link is a good fit
+## When DataRelay Link is a good fit
 
-Choose Data Relay Link when several of these priorities matter together:
+Choose DataRelay Link when several of these priorities matter together:
 
 - you want to own the public relay server and IP address
 - remote systems sit behind NAT/firewalls and should connect outbound
 - support staff need direct SSH/HTTP/HTTPS/custom-TCP access without first joining a VPN
-- a remote client may publish multiple local or reachable LAN services
-- you want Zero-Touch enrollment, persistent CLIENT IDs, persistent service ports, lifecycle controls, diagnostics, and backup/restore
+- an Agent Host may expose multiple local or reachable LAN targets through Remote Services
+- you want Zero-Touch enrollment, Managed Host identity, persistent Remote Service endpoints, lifecycle controls, diagnostics, and backup/restore
 - restricted systems need only approved outbound HTTP/HTTPS destinations rather than unrestricted Internet access
 - the environment is a **small fleet**, typically a few systems to a few dozen
 
@@ -55,7 +55,7 @@ Choose Data Relay Link when several of these priorities matter together:
 
 A low-level self-hosted reverse proxy/tunnel may be preferable when you want maximum protocol/configuration flexibility and are comfortable building your own enrollment, identity, policy, lifecycle, diagnostics, backup, and upgrade procedures.
 
-Data Relay Link deliberately exposes a narrower operational model in exchange for simpler and more consistent small-environment operations.
+DataRelay Link deliberately exposes a narrower operational model in exchange for simpler and more consistent small-environment operations.
 
 ## When ngrok may be better
 
@@ -73,7 +73,7 @@ Tailscale is usually the better choice when the main goal is **private network m
 
 | Requirement | Start with |
 | --- | --- |
-| Self-hosted public relay, small fleet, direct SSH/TCP, controlled egress | **Data Relay Link** |
+| Self-hosted public relay, small fleet, direct SSH/TCP, Internet Access | **DataRelay Link** |
 | Maximum low-level flexibility and manual configuration is acceptable | **Manual self-hosted reverse proxy** |
 | Fast managed public endpoint for development/webhooks/demos | **ngrok** |
 | Cloudflare-centric public apps or Zero Trust private application access | **Cloudflare Tunnel** |

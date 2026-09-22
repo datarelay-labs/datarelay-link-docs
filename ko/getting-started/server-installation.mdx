@@ -1,130 +1,36 @@
 ---
 title: "서버 설치"
-description: "Data Relay Link 서버를 설치하기 전에 필요한 네트워크와 설치 절차"
+description: "DataRelay Link 서버를 설치하기 전에 필요한 네트워크와 설치 절차"
 ---
 
 # 서버 설치
 
-Data Relay Link 서버는 인터넷의 공인 진입점입니다. bundled relay runtime와 enrollment/registry/lifecycle/`drlink` 관리 계층이 함께 동작합니다.
-
-## 처음이라면 권장 환경
-
-가장 이해하기 쉬운 첫 구성은 **Ubuntu 24.04 x86_64 + 직접 공인 IP**입니다. Ubuntu 24.04는 stable release에서 가장 명확한 Real E2E 검증 서버 baseline이며, Ubuntu 22.04는 automated portability coverage가 있지만 동일한 real-host 검증 claim으로 표현하지 않습니다.
-
-<Tip>
-  고정 공인 IP나 별도 Linux 서버가 없다면 실제 Console 화면을 포함한 [OCI 무료티어 서버 준비](/ko/getting-started/oci-free-tier-server)에서 Always Free 대상 Ubuntu VM과 Reserved Public IPv4를 먼저 준비할 수 있습니다.
-</Tip>
-
-다른 Linux 계열은 validation level이 다르므로 [지원 플랫폼 & 제한](/ko/reference/platforms)을 확인하세요.
-
-## 먼저 토폴로지를 고르세요
-
-기존 실사용 가이드의 구성도를 먼저 보면 Direct, NAT 뒤 Direct, Enterprise single-443의 차이를 훨씬 쉽게 이해할 수 있습니다.
-
-![Data Relay Link 배포 방식: Direct, NAT, Enterprise single-443](/images/guides/deployment-modes.webp)
-
 <Note>
-  그림은 **Direct**, **NAT 뒤 Direct**, **Enterprise single-443**의 네트워크 배치를 비교합니다. NAT 자체가 세 번째 제품 모드는 아니며 실제 제품 모드는 Direct와 Enterprise single-443 두 가지입니다.
+  현재 공개 stable release는 **v2.3.0**이고, 이 사이트는 **v2.4.0 development target**을 설명합니다. stable 설치는 immutable release/tag를 사용하고 v2.4 검증은 exact qualified SHA 또는 artifact를 사용합니다.
 </Note>
 
-```mermaid
-flowchart TD
-    A[시작] --> B{서버가 인터넷 트래픽을\n직접 받을 수 있나요?}
-    B -->|직접 공인 IP| C[Direct 기본 구성]
-    B -->|외부 Firewall/NAT 뒤| D[DNAT 규칙 준비]
-    C --> E{클라이언트 네트워크가\nTLS를 사실상 443만 허용하나요?}
-    D --> E
-    E -->|아니오| F[Direct]
-    E -->|예 / non-443 TLS reset| G[Enterprise single-443 고려]
-```
+## Server 역할
 
-<Note>
-  NAT는 세 번째 배포 모드가 아닙니다. 제품 배포 모드는 **Direct**와 **Enterprise single-443** 두 가지입니다.
-</Note>
+Server는 Enrollment, Managed Host inventory, Object/Group, Access Policy, AI Identity, Audit, Backup/Restore, Server ConfigurationBundle을 관리합니다.
 
-## Direct 기본 포트
-
-```mermaid
-flowchart LR
-    I[Internet]
-    S[Data Relay Link Server]
-    I -->|TCP 443\nData Relay Link control| S
-    I -->|TCP 6099\nEnrollment / management HTTPS| S
-    I -->|TCP 6000-6098\nPublished services| S
-```
-
-TCP/22는 서버 자체 관리 SSH용 선택 포트이며 Data Relay Link의 tunnel 경로는 아닙니다.
-
-## 서버가 NAT 뒤인 경우
-
-```mermaid
-flowchart LR
-    I[Internet\n203.0.113.10]
-    F[Firewall / NAT]
-    S[Data Relay Link Server\n192.0.2.50]
-
-    I -->|8443| F -->|443| S
-    I -->|9443| F -->|6099| S
-    I -->|6000-6098| F -->|same ports| S
-```
-
-클라이언트에는 내부 `192.0.2.50`가 아니라 외부에서 보이는 public endpoint를 사용해야 합니다.
-
-## Stable 버전 설치
+설치 후:
 
 ```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
+sudo drlink
 ```
-
-운영 설치에서는 mutable `main`보다 immutable stable tag를 사용하세요.
-
-## 설치기가 묻는 항목
-
-대략 다음 순서의 정보가 필요합니다.
-
-1. Public IP / control endpoint
-2. 선택적 public service hostname
-3. 내부 서버 IP
-4. Direct vs single-443
-5. Public/local control port
-6. Public/local enrollment/allocator port
-7. Published service port range
-
-<Warning>
-  AWS Security Group, OCI Security List/NSG, 외부 방화벽/NAT, UFW/firewalld/iptables, DNS record는 자동 생성되지 않습니다.
-</Warning>
-
-## 설치 직후 검증
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-`doctor`는 읽기 전용이며 설치 파일, 권한, PKI, 서비스 상태, registry, topology와 흔한 네트워크 문제를 확인합니다.
-
-## 보존해야 할 상태
 
 ```text
-/etc/frp-auto-deploy/config.json
-/etc/frp-auto-deploy/pki/
-/etc/frp/server_token
-/var/lib/frp-auto-deploy/registry.json
+show version
+show status
+system diagnostics
 ```
 
-일반 운영 중 이 상태를 직접 편집하지 마세요.
+Role이 DRLink Server인지 확인하고 product version, release channel, exact Source HEAD, Relay Engine version이 실제 상태와 일치하는지 확인합니다.
 
-## 서버 준비 완료 체크
+## Public identity
 
-- 필요한 systemd 서비스가 active
-- `doctor`에 blocking 오류 없음
-- 클라이언트 네트워크에서 public control/enrollment endpoint 도달 가능
-- Published service range가 서버 측 firewall/NAT에서 허용
-- DNS 사용 시 hostname이 올바른 public entry point를 가리킴
+설치 시 public IP 또는 public domain을 product-facing identity로 선택할 수 있습니다. domain을 선택했다면 생성되는 Zero-Touch 및 사용자-facing URL에 일관되게 사용되어야 합니다.
 
-## 다음
+Remote Service용 friendly alias와 bootstrap hostname은 별도 개념입니다.
 
-[빠른 시작](/ko/getting-started/quickstart)에서 첫 클라이언트를 등록하세요.
+DataRelay Link는 cloud security group, 외부 NAT/DNAT, DNS provider record, OS 사용자, SSH 설정, application TLS certificate를 자동 변경하지 않습니다.
