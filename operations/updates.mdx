@@ -5,92 +5,23 @@ description: "Update DataRelay Link safely while preserving identity, trust, and
 
 # Updates
 
-DataRelay Link separates **project updates** from **upstream DataRelay Link binary updates**.
+The DataRelay Link product version and bundled Relay Engine version are separate.
 
-## Update decision flow
+## Server
 
-```mermaid
-flowchart TD
-    A[Need to update?] --> B[Run update project --check]
-    B --> C{Project update available?}
-    C -->|Yes| D[Create backup when change risk warrants it]
-    D --> E[update project]
-    E --> F[show status + doctor + test service]
-    C -->|No| G{Checking upstream DataRelay Link?}
-    G -->|Yes| H[show upstream / update relay-engine --check]
-    H --> I[Only pinned/tested DataRelay Link is accepted]
+```text
+system update
 ```
 
-## Project update
+## Agent Host
 
-Check first:
-
-```bash
-sudo drlink update project --check
+```text
+system update product
+system update engine
 ```
 
-Then update:
+Stable updates use immutable qualified releases. Development or pre-release testing uses an exact immutable SHA or qualified artifact. Never silently fall back from a missing immutable ref to mutable main/latest.
 
-```bash
-sudo drlink update project
-```
+Normal upgrade must preserve Managed Host/Agent identity, enrollment trust, Remote Service identity, endpoint reservations, authoritative control-plane state, policy state, and release provenance.
 
-A normal supported project update is designed to preserve:
-
-- CLIENT ID and client management identity
-- project private CA
-- DataRelay Link token
-- registry state
-- enrollment state where applicable
-- service definitions
-- persistent public service-port reservations
-
-```mermaid
-flowchart LR
-    OLD[Installed project] -->|verified update| NEW[Updated project]
-    STATE[Identity / CA / token / registry / ports] -->|preserved| NEW
-```
-
-A normal update is **not** a re-enrollment operation.
-
-## Stable release vs development `main`
-
-| Channel | Meaning | Recommended use |
-| --- | --- | --- |
-| **v2.2.1 immutable tag** | current published stable | field/normal installation |
-| **main** | mutable development/docs channel | intentional development/testing only |
-
-Do not copy a development-only command into stable field documentation unless the operator explicitly opted into development behavior.
-
-## DataRelay Link binary update
-
-```bash
-sudo drlink show upstream
-sudo drlink update relay-engine --check
-```
-
-`show upstream` is informational. DataRelay Link does **not** automatically install the newest upstream DataRelay Link release. The current stable release remains pinned to the qualified version, **v0.71.0**.
-
-```mermaid
-flowchart LR
-    U[Newest upstream DataRelay Link] -. informational .-> C[show upstream]
-    P[Pinned/tested DataRelay Link 0.71.0] --> A[Allowed normal update path]
-```
-
-## Same-version refreshes
-
-Update decisions are not based only on the visible project version string. Verified release metadata and bundle SHA256 can distinguish changed builds even when the project version text is unchanged.
-
-## After any update
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-Then test at least one representative published service through its public endpoint.
-
-<Warning>
-  Do not manually replace the bundled relay-server/client runtimes with arbitrary newer upstream binaries just because `show upstream` reports one. The tested/pinned relay-engine policy is part of release safety.
-</Warning>
+The v2.4 authoritative Server state is SQLite at /var/lib/drlink/drlink.db; migration uses ordered schema migrations and integrity validation.

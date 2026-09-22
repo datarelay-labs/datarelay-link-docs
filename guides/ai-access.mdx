@@ -1,0 +1,46 @@
+---
+title: "AI Access & MCP"
+description: "Authenticate AI Identities and authorize explicit target permissions through the MCP Bridge."
+---
+
+# AI Access & MCP
+
+AI Access separates **authentication** from **authorization**.
+
+~~~text
+supported OAuth / credential
+→ verified AI Identity
+→ AI Access policy
+→ Permission Object / Group
+→ approved target
+~~~
+
+A display name alone is never authentication.
+
+## AI Identity
+
+~~~text
+set ai-identity <NAME>
+show ai-identities
+show ai-identity <NAME>
+~~~
+
+Interactive AI uses OAuth Authorization Code verification where supported. Automation/custom AI can use OAuth Client Credentials where supported.
+
+## Permission Objects
+
+Examples include host-info, process-read, file-read, command-exec, file-write, file-upload, and file-download.
+
+A true read-only permission set does not include command execution.
+
+## AI Access Rule
+
+~~~text
+set permission-object read-only permissions host-info,process-read,file-read
+set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
+test ai-access source claude destination production-servers permission read-only
+~~~
+
+AI Access Rules are not ordered and have no per-rule action. AI authentication remains mandatory even when policy enforcement is disabled.
+
+The v2.4 target uses a server-side MCP Bridge over authenticated HTTPS. MCP does not bypass Agent identity, AI Access policy, or target OS permissions. Remote Services and SSH are not prerequisites for approved AI operations.

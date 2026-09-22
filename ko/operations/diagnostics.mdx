@@ -5,54 +5,29 @@ sidebarTitle: "진단 & Doctor"
 icon: "stethoscope"
 ---
 
-# 진단 & Doctor
-
-문제가 생기면 **상태 확인 → doctor → network/target 확인 → 필요한 변경** 순서가 안전합니다.
-
-```mermaid
-flowchart LR
-    O[Observe] --> S[show status / info]
-    S --> D[doctor]
-    D --> N[Network + target 확인]
-    N --> C{State change 필요?}
-    C -->|아니오| E[Evidence 정리]
-    C -->|예| A[Documented operation 수행]
-    A --> V[다시 status + doctor + E2E 확인]
-```
+# 진단
 
 ## Server
 
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show clients
-sudo drlink show enrollments
-sudo drlink doctor
+```text
+show status
+show version
+system diagnostics
+system audit
+system revisions
+show managed-hosts
 ```
 
-## Client
+## Agent Host
 
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink show info
-sudo drlink doctor
+```text
+show status
+show agent
+show remote-services
+system info
+system diagnostics
 ```
 
-## Doctor가 확인하는 범주
+Policy의 ALLOW 결과와 Remote Service runtime 상태는 서로 다른 문제를 설명합니다. authorization은 test 명령으로, connectivity는 Agent/Remote Service 상태로 확인합니다.
 
-- 설치 상태와 expected files
-- secret file permission
-- PKI / CA trust
-- systemd service state
-- DataRelay Link config / transport
-- allocator/enrollment reachability
-- registry / client-state consistency
-- topology와 common network failure
-
-<Warning>
-  server/client runtime config, registry, client identity, PKI 파일을 troubleshooting 첫 단계에서 직접 수정하지 마세요.
-</Warning>
-
-더 자세한 증상별 흐름은 [문제 해결](/ko/operations/troubleshooting)을 사용하세요.
+지원 요청 시 ticket, bearer/OAuth secret, private key, secret-bearing database를 그대로 붙여 넣지 말고 sanitized support bundle을 사용합니다.

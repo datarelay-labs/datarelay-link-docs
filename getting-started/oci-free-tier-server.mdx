@@ -16,7 +16,7 @@ keywords:
 
 # OCI Free Tier DataRelay Link Server
 
-This guide takes you from an empty OCI tenancy to a working **DataRelay Link v2.2.1** server and the first SSH client. It reuses the actual OCI Console screenshots from the original deployment guide while updating all commands and product behavior to the current DataRelay Link stable release.
+This guide prepares an OCI Ubuntu 24.04 host with a persistent Reserved Public IPv4 address for DataRelay Link. It preserves the original OCI Console screenshots, while current product installation and Managed Host onboarding continue through the v2.4 documentation below.
 
 <Note>
   OCI Console labels, Free Tier eligibility, capacity, and pricing can change. Treat the current Console's **Always Free Eligible** indicator and cost estimate as the final source before creating resources. Oracle also documents that idle Always Free compute instances may be reclaimed after a sustained low-usage period, so do not treat a Free Tier VM as an SLA-backed production host without reviewing the current OCI policy.
@@ -32,7 +32,7 @@ flowchart TD
     VM -->|public 443| FE[single-443 frontend]
     FE -->|loopback 7000| RS[relay backend]
     FE -->|loopback 6099| ENR[Enrollment / management]
-    VM --> PORTS[Published service ports\n6000-6098]
+    VM --> PORTS[Remote Service endpoint pool\n6000-6098]
 ```
 
 The high-resolution architecture diagram below shows the same deployment from the operator's point of view: one OCI Reserved Public IP fronts the DataRelay Link server, while each remote client publishes one or more local or reachable LAN services through its assigned persistent public ports.
@@ -45,7 +45,7 @@ For this OCI walkthrough we use **Enterprise single-443** because it gives a sim
 | --- | --- |
 | TCP 22 | OCI server administration; restrict to your admin IP `/32` |
 | TCP 443 | DataRelay Link control over WSS + enrollment/management HTTPS |
-| TCP 6000-6098 | Published client services; restrict further when practical |
+| TCP 6000-6098 | Remote Service endpoints; restrict further when practical |
 | TCP 6099 | **Do not expose** in single-443 |
 | TCP 7000 | **Do not expose** in single-443 |
 
@@ -62,9 +62,9 @@ Direct mode is also fully supported. In Direct mode, TCP 6099 is a separate publ
 | 5 | Create VM | Ubuntu 24.04 x86_64 / `VM.Standard.E2.1.Micro` when eligible |
 | 6 | Public address | attach a **Reserved Public IPv4** |
 | 7 | SSH | `ubuntu@<RESERVED-IP>` |
-| 8 | Install DataRelay Link | immutable `v2.2.1` |
-| 9 | Verify | `drlink doctor` + listener checks |
-| 10 | Add first client | current one-line Zero-Touch enrollment |
+| 8 | Install DataRelay Link | follow current Server Installation / exact qualified source |
+| 9 | Verify | show version, show status, system diagnostics |
+| 10 | Add first Managed Host | set enrollment zero-touch |
 
 # Part I — Build the OCI network and VM
 
@@ -162,7 +162,7 @@ Review the ingress rules on the **Default Security List**.
 
 ![Picture 13. Review the Default Security List ingress rules](/images/oci/13.png)
 
-For DataRelay Link in single-443 mode, add TCP 443 and the published-service range TCP 6000-6098. Keep SSH 22 for administration, preferably restricted to your administrator public IP `/32`.
+For DataRelay Link in single-443 mode, add TCP 443 and the Remote Service endpoint pool TCP 6000-6098. Keep SSH 22 for administration, preferably restricted to your administrator public IP `/32`.
 
 ![Picture 14. Add ingress rules for TCP 443 and TCP 6000-6098](/images/oci/14.png)
 
@@ -176,7 +176,7 @@ Confirm that the ingress rules were applied.
 | --- | --: | --- | --- |
 | TCP | 22 | **your admin public IP/32** | SSH administration |
 | TCP | 443 | client networks or `0.0.0.0/0` if required | WSS control + enrollment/management |
-| TCP | 6000-6098 | only networks/users that need the services | published services |
+| TCP | 6000-6098 | only networks/users that need the services | Remote Services |
 
 <Warning>
   In **single-443** mode, do not create public OCI ingress or DNAT for **6099** or **7000**. They are internal loopback backends. Also do not blindly copy a broad `All Protocols` rule from a generic OCI tutorial.
@@ -328,188 +328,108 @@ OS             Ubuntu 24.04 LTS
 PID 1          systemd
 ```
 
-# Part II — Install DataRelay Link v2.2.1
+# Part II — Install and operate DataRelay Link
 
-## 6. Prepare only the packages you need
+<Note>
+  The latest published stable release is **v2.3.0**. This site documents the **v2.4.0 development target**. For stable deployment use the immutable stable release. For v2.4 testing use an exact qualified SHA or candidate artifact.
+</Note>
+
+## 6. Prepare the Ubuntu host
 
 ```bash
 sudo apt update
 sudo apt -y install curl ca-certificates
 ```
 
-Check time and the host firewall before installation:
+Review OCI Security Lists/NSGs and the Ubuntu host firewall deliberately. Do not flush firewall chains merely to make DataRelay Link work.
 
-```bash
-timedatectl status
-sudo ufw status
-sudo iptables -S INPUT
-```
+## 7. Install the Server
 
-<Warning>
-  The older field notes contained an environment-specific procedure that flushed the Ubuntu `INPUT` chain. **Do not blindly run `iptables -F` or change the default INPUT policy just for DataRelay Link.** OCI Security Lists/NSGs and the Ubuntu host firewall are separate security boundaries; configure each deliberately for your environment.
-</Warning>
+Continue with [Server Installation](/getting-started/server-installation). For a v2.4 candidate, use the exact source or artifact identity provided by qualification.
 
-## 7. Install the immutable stable release
-
-```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
-```
-
-For this OCI walkthrough, choose **Enterprise single-443** when the installer asks for topology. Conceptually the result is:
+For this OCI topology, Enterprise single-443 is usually the simplest public exposure model:
 
 ```text
-Public host                  <RESERVED-PUBLIC-IP or DNS>
-Deployment mode              Enterprise single-443
-Public control               TCP 443
-DataRelay Link backend                  127.0.0.1:7000
-Public enrollment/management HTTPS 443
-Allocator backend            127.0.0.1:6099
-Published service range      TCP 6000-6098
-Bundled/tested relay engine             0.71.0
-Project                       2.2.1
+TCP/22          optional OCI administration; restrict to admin source
+TCP/443         public management/enrollment + Relay control
+TCP/6000-6098   default Remote Service endpoint pool
+TCP/6099        loopback/internal in single-443
+TCP/7000        loopback/internal in single-443
 ```
 
-Do not copy the v2.1.0 environment-variable installation command from the old guide. The current field path is the immutable **v2.2.1** installer above and its current interactive questions.
+If Fixed TCP is enabled, expose only the separately configured Fixed TCP endpoint pool actually required.
 
-## 8. Verify the server
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-For single-443, also inspect the listeners:
-
-```bash
-sudo ss -lntp | grep -E ':(443|6099|7000)\b'
-```
-
-The important exposure model is:
+## 8. Verify the Server
 
 ```text
-0.0.0.0:443       public frontend
-127.0.0.1:7000    frps backend
-127.0.0.1:6099    allocator backend
+show version
+show status
+system diagnostics
 ```
 
-From another machine on the Internet:
-
-```bash
-nc -vz -w 3 <RESERVED-PUBLIC-IP> 443
-```
-
-`drlink doctor` should have no blocking failure before onboarding clients.
+Confirm the role is DRLink Server and product version, release channel, exact Source HEAD, and Relay Engine version are truthful.
 
 ## 9. Verify reboot persistence
 
-```bash
-sudo reboot
+Reboot the OCI VM and verify the same Server identity, control-plane state, listener topology, and diagnostics return without rebuilding configuration.
+
+## 10. Enroll the first Managed Host
+
+On the Server:
+
+```text
+set enrollment zero-touch
 ```
 
-After reconnecting:
+Run the generated one-time command on the target host. Then verify on that Agent Host:
 
-```bash
-sudo drlink show status
-sudo drlink doctor
-sudo ss -lntp | grep -E ':(443|6099|7000)\b'
+```text
+show status
+show agent
+system info
+system diagnostics
 ```
 
-The services and listener topology should return without re-enrollment or manual reconstruction.
+Create the first Remote Service on the Agent Host:
 
-# Part III — Connect the first client
-
-## 10. Generate a Zero-Touch SSH enrollment
-
-On the DataRelay Link server:
-
-```bash
-sudo drlink create enrollment \
-  --one-line \
-  --ssh \
-  --ssh-user <EXISTING-CLIENT-USER> \
-  --label <CLIENT-LABEL>
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
 ```
 
-The command printed by the server contains a short-lived, one-time bootstrap credential. **Copy the exact generated command** to the remote client instead of reconstructing it manually.
+Remote Access policy is configured separately on the Server if the endpoint should be restricted.
 
-<Warning>
-  Treat a generated Zero-Touch command as sensitive until it expires or is used. Do not paste a live ticket into public chat, documentation, or issue trackers.
-</Warning>
+## Final checklist
 
-On the client, run the generated line. DataRelay Link does not create the SSH user or `sshd`; they must already exist.
-
-## 11. Verify the client and connect
-
-On the client:
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink doctor
-```
-
-On the server:
-
-```bash
-sudo drlink show clients
-sudo drlink show client <CLIENT-ID>
-sudo drlink show client <CLIENT-ID> services
-```
-
-Then use the assigned persistent public service port:
-
-```bash
-ssh -p <PUBLIC-SERVICE-PORT> <CLIENT-USER>@<RESERVED-PUBLIC-IP>
-```
-
-The **client does not manually choose the public port**. The DataRelay Link server allocates and persists the service reservation.
-
-# Final checklist
-
-- [ ] VCN `10.0.0.0/16` exists
-- [ ] Internet Gateway exists
-- [ ] default route has `0.0.0.0/0 → Internet Gateway`
-- [ ] public subnet `10.0.0.0/24` exists
-- [ ] admin SSH is restricted appropriately
-- [ ] public TCP 443 is reachable
-- [ ] service ports are allowed only as broadly as required
-- [ ] 6099/7000 are not publicly exposed in single-443
-- [ ] Ubuntu 24.04 x86_64 VM is running
+- [ ] OCI VCN, Internet Gateway, route, and public subnet are ready
 - [ ] Reserved Public IPv4 is attached
-- [ ] SSH to the VM succeeds
-- [ ] DataRelay Link reports project 2.2.1 / bundled relay engine 0.71.0
-- [ ] `drlink doctor` has no blocking finding
-- [ ] listener exposure matches the selected topology
+- [ ] SSH administration is restricted appropriately
+- [ ] only listeners required by the selected deployment mode are public
+- [ ] internal single-443 backends are not publicly exposed
+- [ ] Server reports the correct role/version/source identity
+- [ ] system diagnostics has no blocking finding
 - [ ] state survives reboot
-- [ ] first Zero-Touch client enrolls and the assigned SSH public port works
-
-## Troubleshooting split
-
-When a published service cannot be reached, test both halves independently:
-
-```bash
-# From an external workstation: Internet -> DataRelay Link server
-nc -vz -w 3 <RESERVED-PUBLIC-IP> <PUBLIC-SERVICE-PORT>
-
-# From the DataRelay Link client: client -> local/LAN target
-nc -vz -w 3 <TARGET-IP> <TARGET-PORT>
-```
-
-This quickly separates an OCI/public-ingress problem from a client-to-target problem.
+- [ ] first Managed Host enrolls with Zero-Touch
+- [ ] Agent-owned Remote Service receives an endpoint and works
+- [ ] optional Remote Access policy is tested separately from runtime health
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Publish Services" icon="network-wired" href="/guides/services">
-    Add SSH, HTTP, HTTPS, custom TCP, or services on other LAN hosts.
+  <Card title="Remote Services" icon="network-wired" href="/guides/services">
+    Create local or LAN TCP/Fixed TCP connectivity on an Agent Host.
+  </Card>
+
+  <Card title="Remote Access" icon="arrow-right-to-bracket" href="/guides/remote-access">
+    Authorize use of existing Remote Services.
   </Card>
 
   <Card title="Firewall & NAT" icon="shield-halved" href="/deployment/firewall-nat">
-    Compare Direct, public/listen NAT separation, and single-443.
+    Review Direct and single-443 exposure.
+  </Card>
+
+  <Card title="Quick Start" icon="rocket" href="/getting-started/quickstart">
+    Follow the current v2.4 Managed Host workflow.
   </Card>
 </CardGroup>
 
@@ -518,5 +438,3 @@ This quickly separates an OCI/public-ingress problem from a client-to-target pro
 - [Oracle Cloud Always Free Resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
 - [Launching Your First Linux Instance](https://docs.oracle.com/en-us/iaas/Content/Compute/tutorials/first-linux-instance/overview.htm)
 - [Public IP Addresses](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm)
-- [Creating a Reserved Public IP](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/reserved-public-ip-create.htm)
-- [Assigning a Reserved Public IP](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/reserved-public-ip-assign.htm)

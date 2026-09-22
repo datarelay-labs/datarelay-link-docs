@@ -7,70 +7,24 @@ icon: "route"
 
 # 배포 모드
 
-DataRelay Link의 server deployment mode는 **Direct**와 **Enterprise single-443** 두 가지입니다.
-
-NAT는 별도 모드가 아니라 외부 network topology입니다.
-
-![기존 실사용 가이드의 DataRelay Link 배포 방식 비교](/images/guides/deployment-modes.webp)
-
-이 그림은 공인 IP 직접 구성, 방화벽/NAT 뒤 private server, Enterprise single-443 구성을 한눈에 비교합니다. 아래 표와 포트 설명은 현재 stable v2.2.1 기준입니다.
-
-## 어떤 모드를 선택하나요?
-
-```mermaid
-flowchart TD
-    A[시작] --> B{Client network가\n일반 endpoint의 verified TLS를\n정상 허용하나요?}
-    B -->|예| D[Direct 사용\n기본 권장]
-    B -->|아니오 / non-443 TLS reset| C{Public TCP 443에서\nEnrollment와 DataRelay Link control을\n함께 처리 가능?}
-    C -->|예| S[Enterprise single-443]
-    C -->|아니오| N[Upstream network policy 수정\nInsecure fallback은 지원하지 않음]
-```
+DataRelay Link Server는 Direct와 Enterprise single-443 두 배포 모드를 지원합니다.
 
 ## Direct
 
-```mermaid
-flowchart LR
-    C[Remote Client] -->|DataRelay Link control TCP 443| S[DataRelay Link Server]
-    C -->|Enrollment HTTPS TCP 6099| S
-    U[Internet user] -->|Published TCP 6000-6098| S
-```
+일반적인 public listener:
 
-| 용도 | Public TCP | 기본 listen |
-| --- | ---: | ---: |
-| DataRelay Link control | 443 | 443 |
-| Enrollment / management HTTPS | 6099 | 6099 |
-| Published services | 6000-6098 | 6000-6098 |
+```text
+TCP/443        Relay control
+TCP/6099       management/enrollment HTTPS
+TCP/6000-6098 Remote Service endpoint pool
+```
 
 ## Enterprise single-443
 
-```mermaid
-flowchart LR
-    C[Remote Client] -->|HTTPS + DataRelay Link WSS TCP 443| FE[Public Frontend]
-    FE -->|Enrollment| A[127.0.0.1:6099]
-    FE -->|DataRelay Link control| F[127.0.0.1:7000]
-    U[Internet user] -->|6000-6098| P[Published services]
-```
+Management/Enrollment HTTPS와 Relay control이 public TCP/443을 공유하고 내부 backend listener는 loopback-only로 유지됩니다.
 
-<Warning>
-  single-443에서 backend `6099`, `7000`은 Internet에 직접 노출하면 안 됩니다.
-</Warning>
+Remote Service endpoint는 설정된 endpoint pool에서 별도로 할당됩니다.
 
-## 요약 비교
+배포 모드 변경은 v2.4 authoritative control-plane DB, Managed Host/Agent identity, Remote Service, endpoint reservation, policy, trust material을 보존해야 합니다.
 
-| 항목 | Direct | single-443 |
-| --- | --- | --- |
-| 기본 권장 | **예** | Enterprise 제약 환경에서만 |
-| Public DataRelay Link control | 443 | 443 via WSS |
-| Public Enrollment HTTPS | 6099 | 443 |
-| Published services | 6000-6098 | 6000-6098 |
-| Internal 6099 | normal listen | loopback backend |
-| Internal 7000 | normal path 아님 | loopback DataRelay Link backend |
-
-## 모드 변경
-
-Direct ↔ single-443 변경은 maintenance-window cutover입니다. Identity/CA/token/registry/public-port reservation을 유지하도록 설계되지만 client transport가 새 topology와 맞아야 합니다.
-
-```bash
-sudo drlink show status
-sudo drlink doctor
-```
+설치 프로그램은 cloud security group, 외부 firewall/NAT, DNS provider record를 자동 변경하지 않습니다.

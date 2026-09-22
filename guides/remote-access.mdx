@@ -1,0 +1,47 @@
+---
+title: "Remote Access"
+description: "Authorize use of Remote Services with BLACKLIST or WHITELIST policy."
+---
+
+# Remote Access
+
+Remote Access authorizes inbound use of existing Remote Services. It does **not** create connectivity.
+
+## Policy semantics
+
+~~~text
+No Policy / No Rules → ALLOW
+
+BLACKLIST:
+  matching enabled Rule → DENY
+  no match              → ALLOW
+
+WHITELIST:
+  matching enabled Rule → ALLOW
+  no match              → DENY
+~~~
+
+Rules are not ordered and do not have a per-rule ALLOW/DENY action.
+
+## Commands
+
+~~~text
+show remote-access
+show remote-access <RULE>
+set remote-access <RULE>
+set remote-access enabled
+set remote-access disabled
+unset remote-access <RULE>
+unset remote-access policy
+test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
+~~~
+
+Example:
+
+~~~text
+set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+~~~
+
+Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL. Policy Reset removes Mode and Rules and returns to the initial no-policy ALLOW state.
+
+An ALLOW result still requires an enabled Remote Service, a working Agent/runtime path, and a reachable target.

@@ -5,103 +5,27 @@ description: "Use drlink status and doctor to diagnose server, client, PKI, regi
 
 # Diagnostics
 
-The safest diagnostic pattern is **observe first, change later**.
-
-```mermaid
-flowchart LR
-    O[Observe symptoms] --> S[show status / info]
-    S --> D[doctor]
-    D --> N[Verify public network path]
-    N --> T[Verify target locally from client]
-    T --> C{State change needed?}
-    C -->|No| E[Collect evidence]
-    C -->|Yes| A[Use documented lifecycle/config command]
-    A --> V[Verify again]
-```
-
-## Server baseline
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show clients
-sudo drlink show enrollments
-sudo drlink doctor
-```
-
-## Client baseline
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink show info
-sudo drlink doctor
-```
-
-## What `doctor` can surface
-
-| Area | Examples |
-| --- | --- |
-| Installation | expected files/components, version state |
-| Permissions | secret-file modes and ownership |
-| PKI / trust | CA material and consistency |
-| Runtime | systemd service state |
-| DataRelay Link | generated config, transport, local consistency |
-| Enrollment | allocator/HTTPS reachability and trust path |
-| State | registry/client-state consistency |
-| Topology | Direct/single-443 and common network mismatch |
-
-`doctor` is read-only.
-
-## Separate product state from network state
-
-```mermaid
-flowchart TD
-    A[Service unreachable] --> B{Client/service state healthy?}
-    B -->|No| C[Product state / DataRelay Link config / identity]
-    B -->|Yes| D{Public service port reachable?}
-    D -->|No| E[Cloud firewall / NAT / external firewall]
-    D -->|Yes| F{Client can reach target?}
-    F -->|No| G[Target app / LAN routing / ACL]
-    F -->|Yes| H[Protocol-specific investigation]
-```
-
-DataRelay Link does not automatically control external security groups, NAT, DNS, or the target application's own listener/authentication.
-
-## Useful target checks
-
-For a local SSH target:
-
-```bash
-ss -lntp | grep ':22'
-```
-
-For a LAN target, prove the client itself can reach `target-host:target-port` before debugging the DataRelay Link public path.
-
-## Avoid destructive diagnosis
-
-Do not start by editing or replacing:
+## Server
 
 ```text
-/etc/data-relay-link/relay-server.toml
-/etc/data-relay-link/relay-client.toml
-/var/lib/data-relay-link/registry.json
-/etc/data-relay-link/client-state.json
-client management identity files
-project PKI
+show status
+show version
+system diagnostics
+system audit
+system revisions
+show managed-hosts
 ```
 
-Manual edits can erase the evidence that explains the original problem or create a second consistency problem.
+## Agent Host
 
-## When the symptom is already known
+```text
+show status
+show agent
+show remote-services
+system info
+system diagnostics
+```
 
-Use the symptom-driven [Troubleshooting](/troubleshooting/overview) page for:
+A policy ALLOW result and a Remote Service runtime state answer different questions. Use policy test commands for authorization and Agent or Remote Service state for connectivity.
 
-- client missing after enrollment
-- published SSH/web port unreachable
-- LAN target unreachable
-- TCP handshake works but TLS resets
-- IP works but hostname fails
-- HTTPS certificate warning
-- server behind NAT
+When escalation is needed, create a sanitized support bundle rather than pasting raw secrets, enrollment tickets, OAuth credentials, private keys, or full configuration databases into chat or tickets.

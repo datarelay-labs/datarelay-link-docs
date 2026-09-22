@@ -5,83 +5,26 @@ description: "Publish arbitrary TCP services and services hosted on other LAN sy
 
 # Custom TCP & LAN Targets
 
-DataRelay Link is not limited to SSH/web. The stable core can publish arbitrary **TCP** targets reachable from an enrolled client.
+A Remote Service can target the Agent Host itself or another host the Agent can reach.
 
-## Local custom TCP examples
+## Create a Service Object
 
-```text
-Grafana       127.0.0.1:3000
-API           127.0.0.1:8080
-Custom agent  127.0.0.1:9000
-```
-
-```mermaid
-flowchart LR
-    U[Internet client] -->|assigned public port| S[DataRelay Link Server]
-    S --> C[DataRelay Link Client]
-    C -->|127.0.0.1:3000| G[Grafana]
-```
-
-## LAN gateway pattern
-
-The target does not have to run on the DataRelay Link client itself.
-
-```mermaid
-flowchart LR
-    U[Internet users]
-    S[DataRelay Link Server]
-    C[DataRelay Link Client\ngateway host]
-    DB[10.10.30.30:5432\nPostgreSQL]
-    UI[10.10.40.50:8443\nAppliance UI]
-    API[10.10.30.20:8080\nAPI]
-
-    U --> S --> C
-    C --> DB
-    C --> UI
-    C --> API
-```
-
-The only DataRelay Link-specific requirement for the target path is that the DataRelay Link client can make a normal TCP connection to the configured `target-host:target-port`.
-
-## Before publishing a LAN target
-
-```mermaid
-flowchart TD
-    A[Want to publish LAN target] --> B{Can the DataRelay Link client reach\ntarget-host:target-port directly?}
-    B -->|No| C[Fix routing / ACL / target firewall / listener]
-    B -->|Yes| D[Add DataRelay Link service]
-    D --> E[Verify assigned public port]
-    E --> F[Test from external network]
-```
-
-## Stable Service ID
-
-Use a descriptive stable Service ID, for example:
+On the Server:
 
 ```text
-postgres-reporting
-appliance-ui
-branch-api
+set service-object postgres type tcp port 5432
 ```
 
-Changing the display name or target later should not require changing the Service ID.
+## Create the Remote Service
 
-## Security responsibility
+On the Agent Host:
 
-Publishing a database, appliance, or API makes that TCP endpoint reachable through the public DataRelay Link entry point. DataRelay Link does not automatically configure:
+```text
+set remote-service db-support destination 10.10.20.30 service postgres enabled
+```
 
-- database users or ACLs
-- application authentication
-- target host firewalls
-- network segmentation
-- source-IP allow lists
+The Agent Host becomes the **Relay Host** for that destination.
 
-Keep the target application's own authentication and authorization enabled.
+## Boundary
 
-<Warning>
-  Be especially cautious when publishing databases or administrative appliance ports. A reachable port is not the same thing as an appropriately secured service.
-</Warning>
-
-## Port lifecycle
-
-Normal target edits and disable/enable operations are designed to preserve the public-port reservation. Use `release service` only when you intend to return the port to the pool.
+DataRelay Link does not add routes, open the destination firewall, create application users, or disable target authentication. The Agent Host must already have normal network reachability to the selected target.

@@ -5,66 +5,53 @@ description: "DataRelay Link 버그 리포트와 기능 개선 요청"
 
 # 피드백
 
-재현 가능한 문제를 알려주거나 실제 운영에서 필요한 개선점을 제안해 DataRelay Link 개선에 참여해 주세요.
+재현 가능한 문제나 실제 운영에서 필요한 개선점을 알려주세요.
 
 <CardGroup cols={2}>
-  <Card title="버그 리포트" icon="bug" href="https://github.com/datarelay-labs/datarelay-link/issues/new?title=%5BBug%5D%20&body=%23%23%20Data%20Relay%20Link%20version%0A%0A%23%23%20Environment%0A%0A%23%23%20Steps%20to%20reproduce%0A%0A%23%23%20Expected%20behavior%0A%0A%23%23%20Actual%20behavior%0A%0A%23%23%20Diagnostics%20or%20logs%0A%0A%3C!--%20Remove%20passwords%2C%20private%20keys%2C%20tokens%2C%20API%20keys%2C%20customer%20data%2C%20and%20other%20secrets%20before%20submitting.%20--%3E">
-    버전, 환경, 재현 절차, 기대 동작, 실제 동작 및 필요한 범위의 진단 정보를 함께 제출합니다.
+  <Card title="버그 리포트" icon="bug" href="https://github.com/datarelay-labs/datarelay-link/issues/new?title=%5BBug%5D%20">
+    버전, 환경, 재현 절차, 기대 동작, 실제 동작, redacted diagnostics를 제출합니다.
   </Card>
 
-  <Card title="기능 개선 요청" icon="lightbulb" href="https://github.com/datarelay-labs/datarelay-link/issues/new?title=%5BFeature%5D%20&body=%23%23%20Problem%20or%20workflow%0A%0A%23%23%20Requested%20behavior%0A%0A%23%23%20Current%20workaround%0A%0A%23%23%20Affected%20platforms%20or%20components%0A%0A%23%23%20Why%20this%20matters%0A">
-    먼저 해결하려는 실제 문제나 운영 흐름을 설명하고, 원하는 동작을 제안합니다.
+  <Card title="기능 개선 요청" icon="lightbulb" href="https://github.com/datarelay-labs/datarelay-link/issues/new?title=%5BFeature%5D%20">
+    먼저 해결하려는 실제 문제와 workflow를 설명합니다.
   </Card>
 </CardGroup>
 
-## 제출하기 전에
+## 제출 전에
 
-1. 같은 문제나 요청이 있는지 [기존 GitHub Issues](https://github.com/datarelay-labs/datarelay-link/issues)를 먼저 검색하세요.
-2. 추정한 최신 버전이 아니라 실제 설치되어 있는 DataRelay Link 버전을 적어 주세요.
-3. 버그는 가능한 한 가장 짧고 안정적으로 재현되는 절차를 작성해 주세요.
-4. 문제 파악에 필요한 범위의 로그와 진단 정보만 첨부하세요.
-5. 공개 제출 전에 비밀정보와 고객 데이터를 반드시 제거하세요.
+1. 기존 GitHub Issue를 검색합니다.
+2. 실제 설치된 DataRelay Link version과 가능한 경우 Source HEAD를 적습니다.
+3. Server 또는 Agent Host 역할과 영향받은 기능을 적습니다.
+4. 가장 짧고 안정적인 재현 절차를 제공합니다.
+5. 비밀정보와 고객 데이터를 제거합니다.
 
 <Warning>
-  **비밀번호, 개인키, enrollment token, API key, 고객 데이터 및 기타 비밀정보를 공개 Issue에 올리지 마세요.** 보안 취약점일 가능성이 있다면 공개 버그 양식을 사용하지 말고 먼저 유지관리자에게 비공개로 연락하세요.
+  비밀번호, 개인키, enrollment ticket, OAuth/bearer token, API key, 고객 데이터를 공개 Issue에 올리지 마십시오.
 </Warning>
 
-## 좋은 버그 리포트에 포함할 내용
+## 유용한 버그 정보
 
-일반적으로 다음 정보가 있으면 문제를 훨씬 빠르게 확인할 수 있습니다.
-
-- DataRelay Link 버전
-- 문제가 발생한 기능 또는 구성요소
-- 필요한 경우 Server OS와 Client OS
-- 필요한 경우 배포 모드와 NAT/방화벽 환경
-- 관련 CLIENT ID 또는 서비스 정보 — **비밀정보는 제외**
-- 기대한 동작
-- 실제 발생한 동작
+- DataRelay Link version / release channel / Source HEAD
+- Server 또는 Agent Host platform/role
+- 관련 Managed Host public name
+- 관련 Remote Service, Object/Group, Access Policy 이름
+- 필요한 경우 deployment mode / NAT / firewall context
+- 기대 동작과 실제 동작
 - 정확한 재현 절차
-- 필요한 범위로 정리한 `drlink` 진단 결과, 서비스 상태 또는 로그
+- 필요한 범위의 redacted show/status/test/system diagnostics 출력
+- reconnect, reboot, update, restore 등 lifecycle 이벤트 연관 여부
 
-간헐적인 문제라면 발생 빈도와 함께 reconnect, reboot, upgrade, restore 등 어떤 lifecycle 이벤트와 관련되어 있는지도 알려주세요.
+## 기능 개선 영역
 
-## 좋은 기능 개선 요청 작성 방법
-
-구현 방법만 적기보다 먼저 **해결하려는 문제**를 설명해 주세요.
-
-예를 들어 단순히 "프로토콜 X를 추가해 주세요"라고 하기보다, 현재 어떤 작업을 수행할 수 없는지, 지금은 어떻게 우회하고 있는지, 어떤 플랫폼에 필요한지, 보안상 제약은 무엇인지, 실제 배포에 얼마나 중요한지 함께 설명하는 것이 좋습니다.
-
-DataRelay Link는 의도적으로 **몇 대에서 몇십 대 규모의 소규모 환경**을 목표로 합니다. 따라서 대규모 fleet orchestration이나 전체 SASE/SWG 제품으로 범위를 확장하는 요청보다, 현재의 가볍고 이해하기 쉬운 운영 모델을 유지하는 개선 요청을 우선 평가하기 쉽습니다.
-
-## 요청 가능한 영역 예시
-
-- Secure Remote Access
-- Controlled Egress
-- enrollment 및 bootstrap UX
-- 서비스 게시와 공개 포트 관리
-- `drlink` CLI 및 운영자 UX
-- lifecycle, upgrade, backup, restore, diagnostics
-- Linux, macOS, Windows 호환성
-- AI / MCP 통합
+- Managed Host enrollment/lifecycle
+- Network / Service / Permission Object와 Group
+- Remote Service / Remote Access
+- Internet Access
+- AI Identity / AI Access / MCP
+- ConfigurationBundle / AI-assisted configuration
+- CLI / operator UX
+- update / backup / restore / diagnostics / support bundle
+- Linux / macOS / Windows Agent Host
 - 문서
 
-<Tip>
-  버그인지 기능 요청인지 애매하다면, 현재 동작과 기대한 동작을 설명한 뒤 주된 문제에 더 가까운 양식을 선택하세요.
-</Tip>
+DataRelay Link의 목표 규모는 몇 대에서 몇십 대의 Managed Host이며 대규모 fleet orchestration이나 전체 SASE/SWG 제품이 아닙니다.

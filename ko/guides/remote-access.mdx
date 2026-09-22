@@ -1,0 +1,38 @@
+---
+title: "Remote Access"
+description: "BLACKLIST 또는 WHITELIST 정책으로 Remote Service 사용을 제어합니다."
+---
+
+# Remote Access
+
+Remote Access는 이미 존재하는 Remote Service의 **사용 권한**을 제어합니다. 연결 자체를 생성하지는 않습니다.
+
+## 정책 의미
+
+~~~text
+No Policy / No Rules → ALLOW
+
+BLACKLIST:
+  enabled Rule 일치 → DENY
+  미일치            → ALLOW
+
+WHITELIST:
+  enabled Rule 일치 → ALLOW
+  미일치            → DENY
+~~~
+
+Rule에는 순서가 없고 Rule별 ALLOW/DENY action도 없습니다.
+
+~~~text
+show remote-access
+set remote-access <RULE>
+set remote-access enabled
+set remote-access disabled
+unset remote-access <RULE>
+unset remote-access policy
+test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
+~~~
+
+Policy enforcement를 disabled로 바꾸면 Mode/Rule은 유지되고 effective ALLOW ALL이 됩니다. Policy Reset은 Mode와 Rule을 제거합니다.
+
+Policy가 ALLOW여도 실제 연결에는 enabled Remote Service, 정상 Agent/runtime path, reachable target이 필요합니다.

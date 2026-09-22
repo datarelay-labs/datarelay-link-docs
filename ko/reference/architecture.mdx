@@ -7,117 +7,37 @@ icon: "sitemap"
 
 # 아키텍처
 
-이 페이지는 전문가/운영자를 위한 구조 설명입니다. 처음 보는 사용자라면 [개념과 동작 원리](/ko/getting-started/concepts)부터 읽는 것이 빠릅니다.
-
-## 전체 구조
+## 역할
 
 ```mermaid
 flowchart LR
-    U[관리자 / 인터넷 사용자]
-    F[외부 Firewall / NAT\n선택]
-    S[DataRelay Link 서버]
-    C1[Client A\nDataRelay Link Client runtime + management identity]
-    C2[Client B\nDataRelay Link Client runtime + management identity]
-    L1[로컬 서비스\n127.0.0.1:*]
-    L2[접근 가능한 LAN 서비스\n10.x / 172.16-31.x / 192.168.x]
+    S[DRLink Server]
+    A[Managed Host / Agent]
+    T[Local or LAN target]
+    I[승인된 Internet destination]
+    AI[인증된 AI Identity]
 
-    U -->|published TCP port| F
-    F --> S
-    C1 -->|outbound DataRelay Link control| S
-    C2 -->|outbound DataRelay Link control| S
-    C1 --> L1
-    C1 --> L2
+    A -->|management + relay control| S
+    S -->|Remote Service traffic| A
+    A --> T
+    A -->|Internet Access request| S
+    S --> I
+    AI -->|MCP / AI Access| S
+    S --> A
 ```
 
-DataRelay Link는 Secure Remote Access용 **bundled relay engine**과 enrollment, identity, service lifecycle, policy, audit를 하나의 제품으로 관리합니다. 내부 transport runtime은 사용자-facing 제품 identity와 분리합니다.
+Server는 Enrollment, Managed Host inventory, Network/Service/Permission Object와 Group, AI Identity, Access Policy, Revision, Audit, Backup/Restore, Server ConfigurationBundle을 관리합니다.
 
-## Control plane과 data plane
+Agent는 로컬 lifecycle과 Remote Service를 관리합니다. Remote Service는 destination 하나와 Service Object 하나를 연결하고 안정적인 DataRelay Link endpoint를 가집니다.
 
-| 영역 | 역할 | 일반 전송 방식 |
-| --- | --- | --- |
-| Enrollment / management | 최초 신뢰, identity, 서비스 metadata, 관리 작업 | 검증된 HTTPS |
-| Relay control | proxy 등록과 reverse tunnel 유지 | bundled relay transport의 TLS 또는 WSS |
-| Published service data | SSH/HTTP/HTTPS/Custom TCP 실제 트래픽 | relay tunnel을 통한 TCP |
+Remote Access, Internet Access, AI Access는 독립 policy family이며 BLACKLIST/WHITELIST + Enforcement 모델을 사용합니다. Rule은 unordered이며 Rule별 action이 없습니다.
 
-각 영역은 서로 다른 자격 증명과 역할을 가집니다.
-
-## Direct 모드
-
-```mermaid
-flowchart TB
-    I[Internet]
-    A[Enrollment / management HTTPS\nTCP 6099]
-    C[DataRelay Link control\nTCP 443]
-    P[Published services\nTCP 6000-6098]
-    S[DataRelay Link 서버]
-
-    I --> A --> S
-    I --> C --> S
-    I --> P --> S
-```
-
-## Enterprise single-443
-
-```mermaid
-flowchart TB
-    I[Internet]
-    FE[Public frontend\nTCP 443]
-    A[Allocator backend\n127.0.0.1:6099]
-    F[DataRelay Link backend\n127.0.0.1:7000]
-    P[Published services\nTCP 6000-6098]
-
-    I --> FE
-    FE -->|HTTPS enrollment| A
-    FE -->|DataRelay Link control over WSS| F
-    I --> P
-```
-
-single-443에서는 backend `6099`, `7000`을 인터넷에 직접 노출하면 안 됩니다.
-
-## Identity 모델
-
-```mermaid
-flowchart TD
-    M[Machine] --> CID[Immutable CLIENT ID]
-    CID --> MI[Persistent management identity]
-    CID --> SV[Services]
-    CID --> META[Mutable metadata]
-    META --> L[label]
-    META --> H[hostname]
-    META --> N[note]
-    META --> T[tags]
-    SV --> SID[Stable Service ID]
-    SID --> PP[Persistent public-port reservation]
-```
-
-## 신뢰 수립
-
-```mermaid
-sequenceDiagram
-    participant C as 새 Client
-    participant S as Server
-
-    C->>S: Bootstrap Ticket / Enrollment Code
-    S-->>C: CA trust bootstrap 정보
-    C->>C: CA fingerprint / X.509 검증
-    C->>S: 검증된 HTTPS enrollment
-    S-->>C: Persistent management identity + config
-    C->>S: 이후 signed management request
-```
-
-Relay transport token은 Secure Remote Access tunnel 인증용이며 Enrollment Code, Bootstrap Ticket, management identity와 같은 자격 증명이 아닙니다.
-
-## 보존되는 서버 상태
+v2.4 authoritative Server state는 다음 SQLite DB입니다.
 
 ```text
-/etc/data-relay-link/config.json
-/etc/data-relay-link/pki/
-/etc/data-relay-link/server_token
-/var/lib/data-relay-link/registry.json
+/var/lib/drlink/drlink.db
 ```
 
-정상적인 업데이트, 재부팅, 지원되는 restore에서는 identity, CA trust, token, registry, public-port reservation을 보존하는 것이 설계 목표입니다.
+Enrollment bootstrap credential, persistent Agent management identity, Relay Engine credential, AI OAuth credential은 서로 다른 trust boundary입니다.
 
-## 설계 규모
-
-주 대상은 몇 대에서 몇십 대입니다. 수백/수천 endpoint orchestration, CMDB, endpoint compliance, HA management cluster는 현재 제품 목표가 아닙니다.
+MCP는 Server-side authenticated bridge이며 AI Access policy, Agent identity, target OS permission을 우회하지 않습니다.

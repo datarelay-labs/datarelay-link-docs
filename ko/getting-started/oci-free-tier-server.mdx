@@ -16,7 +16,7 @@ keywords:
 
 # OCI 무료티어 DataRelay Link 서버 구축
 
-이 가이드는 빈 OCI 환경에서 시작해 **DataRelay Link v2.2.1 서버를 만들고 첫 번째 SSH Client를 연결하는 단계까지** 한 번에 설명합니다. 화면은 기존 OCI 구축 문서에서 실제로 사용했던 OCI Console 스크린샷을 재사용하고, DataRelay Link 명령과 동작 설명만 현재 stable 기준으로 업데이트했습니다.
+이 가이드는 OCI Ubuntu 24.04 Host와 지속적인 Reserved Public IPv4를 준비하는 절차입니다. 기존 OCI Console 실제 스크린샷은 유지하고, 제품 설치와 Managed Host 등록은 아래의 현재 v2.4 문서 흐름으로 이어집니다.
 
 <Note>
   OCI Console 메뉴명, Free Tier 정책, 리전별 capacity와 가격은 바뀔 수 있습니다. 실제 생성 직전 Console의 **Always Free Eligible** 표시와 예상 비용을 최종 기준으로 확인하세요. Oracle은 장기간 사용량이 낮은 Always Free Compute Instance를 회수할 수 있다고 명시하므로, 현재 OCI 정책을 확인하지 않은 채 Free Tier VM을 SLA가 보장되는 운영 서버로 가정하지 마세요.
@@ -32,7 +32,7 @@ flowchart TD
     VM -->|Public 443| FE[single-443 frontend]
     FE -->|loopback 7000| S[relay backend]
     FE -->|loopback 6099| ENR[Enrollment / Management]
-    VM --> PORTS[Published service ports\n6000-6098]
+    VM --> PORTS[Remote Service ports\n6000-6098]
 ```
 
 이 OCI 예제는 외부 정책을 단순하게 만들기 위해 **Enterprise single-443**를 사용합니다.
@@ -58,7 +58,7 @@ Direct 모드도 stable 지원입니다. Direct를 선택하면 TCP 6099가 별�
 | 5 | Compute Instance | Ubuntu 24.04 x86_64 / eligible일 때 `VM.Standard.E2.1.Micro` |
 | 6 | Public 주소 | **Reserved Public IPv4** 연결 |
 | 7 | SSH 접속 | `ubuntu@<RESERVED-IP>` |
-| 8 | DataRelay Link 설치 | immutable `v2.2.1` |
+| 8 | DataRelay Link 설치 | 현재 Server Installation / exact qualified source 사용 |
 | 9 | 검증 | `drlink doctor` + listener 확인 |
 | 10 | 첫 Client | 현재 Zero-Touch one-line Enrollment |
 
@@ -158,7 +158,7 @@ Subnet Access  Public Subnet
 
 ![그림 13. Default Security List의 Ingress Rules](/images/oci/13.png)
 
-DataRelay Link single-443 기준으로 TCP 443과 Published Service 범위인 TCP 6000-6098을 추가합니다. SSH 22는 기존 관리용 규칙을 유지하되 가능하면 관리자 공인 IP `/32`로 제한합니다.
+DataRelay Link single-443 기준으로 TCP 443과 Remote Service 범위인 TCP 6000-6098을 추가합니다. SSH 22는 기존 관리용 규칙을 유지하되 가능하면 관리자 공인 IP `/32`로 제한합니다.
 
 ![그림 14. Ingress Rule 추가 - TCP 443 및 TCP 6000-6098](/images/oci/14.png)
 
@@ -172,7 +172,7 @@ DataRelay Link single-443 기준으로 TCP 443과 Published Service 범위인 TC
 | --- | --: | --- | --- |
 | TCP | 22 | **관리자 공인 IP/32** | SSH 관리 |
 | TCP | 443 | 필요한 Client network 또는 필요 시 `0.0.0.0/0` | WSS control + Enrollment/Management |
-| TCP | 6000-6098 | 실제 서비스가 필요한 source | Published services |
+| TCP | 6000-6098 | 실제 서비스가 필요한 source | Remote Services |
 
 <Warning>
   **single-443에서는 6099와 7000을 OCI Public Ingress에 열지 않습니다.** 두 포트는 서버 내부 loopback backend입니다. 또한 다른 OCI 예제 화면의 `All Protocols` 규칙을 그대로 복사하지 말고 위 DataRelay Link용 최소 규칙을 사용하세요.
@@ -324,185 +324,108 @@ OS             Ubuntu 24.04 LTS
 PID 1          systemd
 ```
 
-# Part II — DataRelay Link v2.2.1 설치
+# Part II — DataRelay Link 설치와 운영
 
-## 6. 최소 패키지와 Host Firewall 확인
+<Note>
+  현재 공개 stable release는 **v2.3.0**이며 이 사이트는 **v2.4.0 development target**을 설명합니다. Stable 운영 설치는 immutable stable release를 사용하고, v2.4 검증은 exact qualified SHA 또는 candidate artifact를 사용합니다.
+</Note>
+
+## 6. Ubuntu Host 준비
 
 ```bash
 sudo apt update
 sudo apt -y install curl ca-certificates
-
-timedatectl status
-sudo ufw status
-sudo iptables -S INPUT
 ```
 
-<Warning>
-  예전 실환경 메모에는 해당 장비에 맞춰 `iptables INPUT`을 비우는 절차가 있었습니다. **현재 가이드에서는 `iptables -F` 또는 INPUT 기본정책 변경을 일반 설치 절차로 권장하지 않습니다.** OCI Security List/NSG와 Ubuntu Host Firewall은 서로 별도의 보안 경계이므로 필요한 포트만 환경에 맞게 명시적으로 허용하세요.
-</Warning>
+OCI Security List/NSG와 Ubuntu host firewall은 각각 의도적으로 설정합니다. DataRelay Link 동작을 위해 firewall chain을 무작정 flush하지 마십시오.
 
-## 7. immutable stable v2.2.1 설치
+## 7. Server 설치
 
-```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
-```
-
-설치 질문에서 이 OCI 예제는 **Enterprise single-443**를 선택합니다. 결과 구조는 다음과 같습니다.
+[서버 설치](/ko/getting-started/server-installation)의 현재 절차를 따릅니다. v2.4 candidate는 qualification workflow가 지정한 exact source 또는 artifact identity를 사용합니다.
 
 ```text
-Public host                  <RESERVED-PUBLIC-IP 또는 DNS>
-Deployment mode              Enterprise single-443
-Public control               TCP 443
-DataRelay Link backend                  127.0.0.1:7000
-Public Enrollment/Management HTTPS 443
-Allocator backend            127.0.0.1:6099
-Published service range      TCP 6000-6098
-Bundled relay engine                    0.71.0
-Project                       2.2.1
+TCP/22          선택적 OCI 관리용; 관리자 source로 제한
+TCP/443         public management/enrollment + Relay control
+TCP/6000-6098   기본 Remote Service endpoint pool
+TCP/6099        single-443에서 internal/loopback
+TCP/7000        single-443에서 internal/loopback
 ```
 
-예전 사이트의 `v2.1.0` 환경변수 설치 명령을 그대로 사용하지 마세요. 현재 field 설치 기준은 위의 immutable **v2.2.1** bootstrap과 현재 installer 질문입니다.
+Fixed TCP를 사용하면 실제로 설정된 전용 Fixed TCP endpoint pool만 추가로 노출합니다.
 
-## 8. Server 상태 확인
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-single-443 listener도 확인합니다.
-
-```bash
-sudo ss -lntp | grep -E ':(443|6099|7000)\b'
-```
-
-의도된 노출 구조:
+## 8. Server 확인
 
 ```text
-0.0.0.0:443       public frontend
-127.0.0.1:7000    frps backend
-127.0.0.1:6099    allocator backend
+show version
+show status
+system diagnostics
 ```
 
-외부 Mac/Linux 등에서:
+Role이 DRLink Server인지, product version/release channel/exact Source HEAD/Relay Engine version이 실제 상태와 일치하는지 확인합니다.
 
-```bash
-nc -vz -w 3 <RESERVED-PUBLIC-IP> 443
+## 9. Reboot persistence 확인
+
+OCI VM을 reboot한 뒤 동일한 Server identity, control-plane state, listener topology와 diagnostics가 자동 복구되는지 확인합니다.
+
+## 10. 첫 Managed Host 등록
+
+Server에서:
+
+```text
+set enrollment zero-touch
 ```
 
-를 실행해 Public 443도 확인합니다. Client를 붙이기 전 `drlink doctor`에 blocking failure가 없어야 합니다.
+생성된 1회용 명령을 대상 Host에서 실행합니다.
 
-## 9. 재부팅 후 영속성 확인
+Agent Host에서:
 
-```bash
-sudo reboot
+```text
+show status
+show agent
+system info
+system diagnostics
 ```
 
-다시 접속 후:
+첫 Remote Service를 Agent Host에서 생성합니다.
 
-```bash
-sudo drlink show status
-sudo drlink doctor
-sudo ss -lntp | grep -E ':(443|6099|7000)\b'
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
 ```
 
-를 확인합니다. 정상 update/reboot는 identity나 service reservation을 새로 만들게 해서는 안 됩니다.
+endpoint 사용을 제한해야 하면 Server에서 Remote Access policy를 별도로 구성하고 test합니다.
 
-# Part III — 첫 번째 Client 연결
+## 최종 체크리스트
 
-## 10. Zero-Touch SSH Enrollment 생성
-
-DataRelay Link Server에서:
-
-```bash
-sudo drlink create enrollment \
-  --one-line \
-  --ssh \
-  --ssh-user <CLIENT에 실제 존재하는 계정> \
-  --label <CLIENT-LABEL>
-```
-
-서버가 출력한 **one-line 명령 전체를 그대로** Client에서 실행합니다. 직접 bootstrap payload를 다시 조립하지 마세요.
-
-<Warning>
-  생성된 Zero-Touch 명령에는 만료시간이 있는 one-time bootstrap credential이 들어 있으므로 사용/만료 전까지 secret처럼 취급합니다. 공개 채팅, 문서, 티켓에 실제 살아 있는 명령을 남기지 마세요.
-</Warning>
-
-DataRelay Link는 Client의 SSH 계정, password, SSH key, `sshd`를 생성하지 않습니다. `--ssh-user`의 계정과 SSH 서비스는 Client에 이미 존재해야 합니다.
-
-## 11. Client 상태와 실제 SSH 확인
-
-Client:
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink doctor
-```
-
-Server:
-
-```bash
-sudo drlink show clients
-sudo drlink show client <CLIENT-ID>
-sudo drlink show client <CLIENT-ID> services
-```
-
-실제 연결:
-
-```bash
-ssh -p <할당된-PUBLIC-SERVICE-PORT> <CLIENT-USER>@<RESERVED-PUBLIC-IP>
-```
-
-**Public Service Port는 Client가 직접 고르는 값이 아닙니다.** Server가 service에 대해 할당하고 persistent reservation으로 유지합니다.
-
-# 최종 체크리스트
-
-- [ ] `data-relay-vcn` / `10.0.0.0/16`
-- [ ] Internet Gateway 생성
-- [ ] `0.0.0.0/0 → Internet Gateway` Route
-- [ ] `data-relay-public-subnet` / `10.0.0.0/24`
-- [ ] SSH 22는 관리자 source에 맞게 제한
-- [ ] TCP 443 Public reachability 확인
-- [ ] Published service port는 필요한 범위/source만 허용
-- [ ] single-443에서 6099/7000 Public 비노출
-- [ ] Ubuntu 24.04 x86_64 VM Running
+- [ ] OCI VCN / Internet Gateway / route / public subnet 준비
 - [ ] Reserved Public IPv4 연결
-- [ ] 외부 SSH 성공
-- [ ] DataRelay Link 2.2.1 / DataRelay Link 0.71.0 확인
-- [ ] `drlink doctor` blocking failure 없음
-- [ ] 443/6099/7000 listener 노출 구조 정상
-- [ ] reboot 후 상태 유지
-- [ ] 첫 Zero-Touch Client Enrollment 성공
-- [ ] 할당된 Public SSH Port로 실제 접속 성공
-
-## 장애를 두 구간으로 나누기
-
-서비스 연결 실패 시 다음 두 테스트를 분리하면 원인을 빠르게 찾을 수 있습니다.
-
-```bash
-# 외부 workstation: Internet -> DataRelay Link Server
-nc -vz -w 3 <RESERVED-PUBLIC-IP> <PUBLIC-SERVICE-PORT>
-
-# DataRelay Link Client: Client -> Local/LAN Target
-nc -vz -w 3 <TARGET-IP> <TARGET-PORT>
-```
-
-첫 번째가 실패하면 OCI/Security List/Public endpoint를, 두 번째가 실패하면 Client와 내부 Target 사이의 routing/firewall/service를 봅니다.
+- [ ] SSH 관리 source 제한
+- [ ] 선택한 deployment mode에 필요한 listener만 public 노출
+- [ ] single-443 internal backend 비노출
+- [ ] Server role/version/source identity 정상
+- [ ] system diagnostics blocking finding 없음
+- [ ] reboot 후 state 유지
+- [ ] 첫 Managed Host Zero-Touch 등록 성공
+- [ ] Agent-owned Remote Service endpoint 정상
+- [ ] 필요 시 Remote Access policy를 runtime health와 별도로 test
 
 ## 다음 단계
 
 <CardGroup cols={2}>
-  <Card title="서비스 게시" icon="network-wired" href="/ko/guides/services">
-    SSH, HTTP, HTTPS, Custom TCP 또는 내부 LAN의 다른 서버를 공개합니다.
+  <Card title="Remote Service" icon="network-wired" href="/ko/guides/services">
+    Agent Host에서 local/LAN TCP/Fixed TCP 연결을 생성합니다.
+  </Card>
+
+  <Card title="Remote Access" icon="arrow-right-to-bracket" href="/ko/guides/remote-access">
+    기존 Remote Service의 사용 권한을 제어합니다.
   </Card>
 
   <Card title="방화벽 & NAT" icon="shield-halved" href="/ko/deployment/firewall-nat">
-    Direct, Public/Listen 분리 NAT, single-443 차이를 비교합니다.
+    Direct와 single-443 노출 범위를 확인합니다.
+  </Card>
+
+  <Card title="빠른 시작" icon="rocket" href="/ko/getting-started/quickstart">
+    현재 v2.4 Managed Host workflow를 따라갑니다.
   </Card>
 </CardGroup>
 
@@ -511,5 +434,3 @@ nc -vz -w 3 <TARGET-IP> <TARGET-PORT>
 - [Oracle Cloud Always Free Resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
 - [Launching Your First Linux Instance](https://docs.oracle.com/en-us/iaas/Content/Compute/tutorials/first-linux-instance/overview.htm)
 - [Public IP Addresses](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm)
-- [Creating a Reserved Public IP](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/reserved-public-ip-create.htm)
-- [Assigning a Reserved Public IP](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/reserved-public-ip-assign.htm)

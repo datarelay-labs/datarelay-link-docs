@@ -4,91 +4,39 @@ description: "웹 서비스를 TCP로 게시하고 HTTPS passthrough, DNS, certi
 icon: "globe"
 ---
 
-# HTTP & HTTPS
+# HTTP & HTTPS Remote Service
 
-DataRelay Link는 HTTP/HTTPS를 **TCP service**로 게시합니다. Published service용 application reverse proxy가 아닙니다.
+HTTP/HTTPS는 일반 TCP Service Object로 정의합니다.
 
-## HTTP
-
-```mermaid
-flowchart LR
-    B[Browser] -->|http://server:6001| S[DataRelay Link Server]
-    S --> C[DataRelay Link Client]
-    C -->|127.0.0.1:80| W[HTTP App]
-```
-
-Target은 Client local 또는 LAN host일 수 있습니다.
+Server:
 
 ```text
-127.0.0.1:80
-10.10.20.40:80
+set service-object http type tcp port 80
+set service-object https type tcp port 443
 ```
 
-## HTTPS: TLS는 target까지 그대로 전달
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant S as DataRelay Link Server
-    participant C as DataRelay Link Client
-    participant W as HTTPS App
-
-    B->>S: TLS to public service port
-    S->>C: encrypted TCP
-    C->>W: encrypted TCP
-    W-->>B: target app certificate + TLS response
-```
-
-DataRelay Link가 TLS를 종료하거나 certificate를 발급/교체하지 않습니다.
-
-## Hostname과 certificate
-
-예:
+Agent Host:
 
 ```text
-Public hostname : fw.example.com
-Public port     : 6005
-Target          : 127.0.0.1:443
+set remote-service web-http destination this-host service http enabled
+set remote-service web-https destination this-host service https enabled
 ```
 
-사용자 접속:
+다른 LAN Host를 destination으로 지정하면 현재 Agent Host가 Relay Host가 됩니다.
 
-```text
-https://fw.example.com:6005
-```
+## HTTPS
 
-실제 target application certificate가 `fw.example.com`에 유효해야 합니다.
+Remote Service는 TCP를 전달합니다. DataRelay Link가 target application의 HTTPS TLS를 종료하거나 certificate를 교체하지 않습니다.
 
-## 한 Client에서 여러 Web Service
+브라우저가 Remote Service endpoint를 통해 HTTPS target에 접속할 경우 certificate name/SAN 검증은 실제 application TLS endpoint 설계와 일치해야 합니다.
 
-```mermaid
-flowchart LR
-    U[Users]
-    S[DataRelay Link Server]
-    C[Client A]
-    A[web-admin\n127.0.0.1:443]
-    B[api\n127.0.0.1:8080]
-    D[lan-ui\n10.10.20.50:8443]
+Remote Service 사용자를 제한하려면 Server의 Remote Access Policy를 별도로 설정합니다.
 
-    U -->|6001| S
-    U -->|6002| S
-    U -->|6003| S
-    S --> C
-    C --> A
-    C --> B
-    C --> D
-```
+## 장애 확인
 
-## 증상별 확인
+- policy authorization: test remote-access 결과
+- Agent/runtime 상태: show remote-service
+- target 연결성: Agent Host에서 실제 target TCP reachability
+- HTTPS warning: target certificate/SAN
 
-| 증상 | 우선 확인 |
-| --- | --- |
-| Timeout | public firewall/NAT/service port |
-| Connection refused | target listener/bind |
-| IP는 되고 hostname 실패 | DNS/hairpin NAT |
-| HTTPS certificate warning | target certificate SAN |
-| LAN Web만 실패 | Client→LAN routing/ACL |
-
-<Tip>
-  먼저 Client에서 target에 직접 연결 가능한지 확인하고, 그 다음 public service port, 마지막으로 DNS/TLS hostname을 확인하세요.
-</Tip>
+Authorization ALLOW와 runtime HEALTHY는 서로 다른 판단입니다.

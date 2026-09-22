@@ -5,105 +5,28 @@ description: "Choose between Direct and Enterprise single-443 deployments."
 
 # Deployment Modes
 
-DataRelay Link has **two** server deployment modes: **Direct** and **Enterprise single-443**.
+DataRelay Link supports two Server deployment modes.
 
-NAT is not a third mode; it is a network topology around either deployment.
+## Direct
 
-![DataRelay Link deployment layouts from the original field guide](/images/guides/51.png)
+Typical public listeners include:
 
-The image is the original field-guide overview: a direct public server, a private server behind DNAT, and the Enterprise single-443 layout. The tables below use the current v2.2.1 terminology and port rules.
-
-## Which mode should I choose?
-
-```mermaid
-flowchart TD
-    A[Start] --> B{Does the client network allow\nverified HTTPS / DataRelay Link traffic\non the normal public endpoints?}
-    B -->|Yes| D[Use Direct\nrecommended default]
-    B -->|No / TLS on non-443 is reset| C{Can public TCP 443\nbe used for both enrollment\nand DataRelay Link control?}
-    C -->|Yes| S[Use Enterprise single-443]
-    C -->|No| N[Fix upstream network policy\nDataRelay Link does not support insecure fallback]
+```text
+TCP/443        Relay control
+TCP/6099       management/enrollment HTTPS
+TCP/6000-6098 Remote Service endpoint pool
 ```
-
-## Direct mode
-
-```mermaid
-flowchart LR
-    C[Remote client]
-    I[Internet]
-    S[DataRelay Link server]
-    U[Internet user]
-
-    C -->|DataRelay Link control TCP 443| S
-    C -->|Enrollment/management HTTPS TCP 6099| S
-    U -->|Published service TCP 6000-6098| S
-```
-
-Direct is the default and easiest mode to reason about.
-
-| Purpose | Public TCP | Typical local listen |
-| --- | --: | --: |
-| DataRelay Link control | 443 | 443 |
-| Enrollment / management HTTPS | 6099 | 6099 |
-| Published services | 6000-6098 | 6000-6098 |
 
 ## Enterprise single-443
 
-Use this when an enterprise client network strongly prefers TLS on TCP/443 or allows the TCP connection to a non-standard port but resets TLS there.
+Management/enrollment HTTPS and Relay control share public TCP/443 through the DataRelay Link frontend, while internal backend listeners remain loopback-only.
 
-```mermaid
-flowchart LR
-    C[Remote client]
-    U[Internet user]
-    FE[Public frontend\nTCP 443]
-    A[Allocator backend\n127.0.0.1:6099]
-    F[DataRelay Link backend\n127.0.0.1:7000]
-    P[Published ports\n6000-6098]
+Remote Service endpoints remain separately allocated from their configured endpoint pools.
 
-    C -->|HTTPS enrollment| FE
-    C -->|DataRelay Link control over WSS| FE
-    FE --> A
-    FE --> F
-    U --> P
-```
+## Important boundaries
 
-<Warning>
-  In single-443 mode, backend ports `6099` and `7000` are not intended to be Internet-exposed.
-</Warning>
+Changing deployment mode is a controlled lifecycle operation. It must preserve the v2.4 authoritative control-plane database, Managed Host/Agent identities, Remote Services, endpoint reservations, policy state, and trust material.
 
-## Side-by-side summary
+The installer does not change cloud security groups, customer firewall/NAT rules, or DNS-provider records.
 
-| Question | Direct | single-443 |
-| --- | --- | --- |
-| Normal default? | **Yes** | No, use for constrained enterprise networks |
-| Public DataRelay Link control | TCP 443 | TCP 443 via WSS frontend |
-| Public enrollment HTTPS | TCP 6099 | TCP 443 |
-| Published services | 6000-6098 | 6000-6098 |
-| Backend 6099 | public/listen by default | loopback backend |
-| Backend 7000 | not normal Direct path | loopback DataRelay Link backend |
-
-## Server behind firewall/NAT
-
-Either mode can be placed behind a firewall/NAT device if the public endpoints are forwarded correctly.
-
-```mermaid
-flowchart LR
-    C[Remote client] -->|public endpoint| F[Firewall / NAT]
-    F -->|DNAT| S[Private DataRelay Link server]
-```
-
-For a Direct example with public-to-private port translation, see [Firewall & NAT](/deployment/firewall-nat).
-
-## Switching modes
-
-Direct ↔ single-443 is a maintenance-window cutover, not a zero-downtime change. Persistent identity, CA, token, registry, and port reservations are designed to remain, but the client transport must match the new topology.
-
-After any mode change:
-
-```bash
-sudo drlink show status
-sudo drlink doctor
-```
-
-<Note>
-  Do not solve TLS interception/reset by disabling certificate verification or by switching enrollment to plain HTTP. The supported management plane remains verified HTTPS.
-</Note>
+Use single-443 when restrictive enterprise networks permit standard HTTPS/WSS on 443 but interfere with TLS on non-standard ports.
