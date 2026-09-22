@@ -1,0 +1,30 @@
+engineering_system:
+  version: "1.6.1"
+  mode: adopted
+  baseline: "fe0c05d0508564512b3eaae96e35a84699d4c728"
+  ci_mode: "shared"
+  native_ci_workflows: []
+  merge_gate_status: "advisory"
+
+project:
+  name: "datarelay-link-docs"
+  type: "generic"
+  maturity: "development"
+
+domains:
+  - "core"
+
+platforms:
+  - "linux"
+
+operations:
+  production_oriented: false
+  runbook_required: false
+  incident_response_required: false
+  persistent_state: false
+  runbook_paths: []
+  health_command: ""
+  backup_command: ""
+  restore_test_command: ""
+  upgrade_command: ""
+  rollback_command: ""
