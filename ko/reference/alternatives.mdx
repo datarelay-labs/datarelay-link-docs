@@ -14,7 +14,7 @@ description: "DataRelay Link를 주요 터널링·원격접속 대안과 운영 
 
 | 선택지 | 기본 모델 | 공개 Edge / Control Plane 운영 주체 | 원격 사이트에서 inbound 방화벽 오픈 필요? | 적합한 환경 |
 | --- | --- | --- | --- | --- |
-| **DataRelay Link** | Self-hosted secure relay + enrollment/lifecycle + controlled egress | 사용자 | Managed Host에는 불필요 | 직접 공개 서버를 운영하고, 예측 가능한 서비스 포트와 명시적인 outbound 정책을 원하는 수 대~수십 대 환경 |
+| **DataRelay Link** | Self-hosted secure relay + enrollment/lifecycle + Internet Access | 사용자 | Managed Host에는 불필요 | 직접 공개 서버를 운영하고, 예측 가능한 Remote Service endpoint와 명시적인 outbound 정책을 원하는 수 대~수십 대 환경 |
 | **수동 Self-hosted reverse proxy** | 직접 관리하는 tunnel/reverse proxy 구성 | 사용자 | 일반적으로 Managed Host에는 불필요 | 저수준 설정의 최대 유연성이 필요하고 설정을 직접 유지할 수 있는 엔지니어 |
 | **ngrok** | 관리형 Internet ingress / agent endpoint | ngrok | 일반적으로 불필요 | 개발, webhook, demo, 임시 또는 관리형 공개 endpoint, TCP/SSH 활용 |
 | **Cloudflare Tunnel** | Cloudflare Zero Trust/global edge로 outbound connector 연결 | Cloudflare | 불필요 | 공개 Web application 및 조직 관리형 private application access |
