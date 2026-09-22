@@ -4,79 +4,39 @@ sidebarTitle: "Manual Groups"
 description: "Organize a small DataRelay Link fleet into manual groups without changing client identity or service ports."
 ---
 
-# Manual Groups
+# Objects & Groups
 
-DataRelay Link v2.2.1 includes a **Manual Group MVP** for organizing clients. Groups are administrator metadata: they do not change CLIENT ID, service configuration, public ports, or tunnel behavior.
+DataRelay Link v2.4 uses explicit Object families.
 
-<Note>
-  v2.2.1 supports **manual groups only**. Dynamic membership rules and large-scale fleet orchestration are outside this stable scope.
-</Note>
+## Network Objects
 
-## Create a group
+Normal user-created types are IP, CIDR, and FQDN. Registered Managed Hosts also appear as Network Objects of type Managed Host.
 
-```bash
-sudo drlink create group branch-office --description "Branch office systems"
+```text
+set network-object github type fqdn value github.com
+set network-group approved-admins members office-admin,vpn-admin
 ```
 
-Each stored group has an immutable group ID such as `grp_1234abcd`. The name and description can be changed later.
+## Service Objects
 
-## Add a client
+Schema types are TCP, UDP, and Fixed TCP. The normal Wizard offers SSH, HTTP, HTTPS, RDP, Custom TCP, and Fixed TCP.
 
-Use the client's canonical CLIENT ID when possible:
+UDP can exist through explicit configuration, but Remote Service and Internet Access v2.4 reject UDP use.
 
-```bash
-sudo drlink add client <CLIENT-ID> group branch-office
+```text
+set service-object ssh type tcp port 22
+set service-group web-services members http,https
 ```
 
-A client can belong to more than one group.
+## Permission Objects
 
-## View groups and membership
+Permission Objects contain reusable AI-operation permissions.
 
-```bash
-sudo drlink show groups
-sudo drlink show group branch-office
-sudo drlink show clients --group branch-office
-sudo drlink show client <CLIENT-ID> groups
+```text
+set permission-object read-only permissions host-info,process-read,file-read
+set permission-group operators members read-only,operator
 ```
 
-`all` and `ungrouped` are virtual selectors; they are not stored group objects.
+## Group rules
 
-## Rename or describe a group
-
-```bash
-sudo drlink rename group branch-office seoul-office
-sudo drlink set group seoul-office description "Seoul branch systems"
-```
-
-Changing the group name does not change its immutable group ID.
-
-## Remove membership
-
-```bash
-sudo drlink remove client <CLIENT-ID> group seoul-office
-```
-
-This only removes the membership relationship. The client remains enrolled and its services and public-port reservations are unchanged.
-
-## Delete a group
-
-```bash
-sudo drlink delete group seoul-office
-```
-
-Deleting a group removes its membership references but does **not** delete clients, revoke identities, disable services, or release ports.
-
-<Warning>
-  Group deletion is not a client lifecycle action. Use [Lifecycle Semantics](/operations/lifecycle) for revoke/release decisions.
-</Warning>
-
-## Typical uses
-
-Manual groups are useful for a small fleet when you want simple operator categories such as:
-
-- customer or partner
-- branch/site
-- lab vs production-support systems
-- temporary support campaign
-
-For the current project target of roughly 1–50 clients, this keeps client lists easier to navigate without introducing a separate fleet-management platform.
+Groups are flat reusable collections. Context validation applies to the whole selected Group. Internet Access destination, for example, rejects a Network Group if any member is a Managed Host.

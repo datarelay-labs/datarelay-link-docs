@@ -5,165 +5,129 @@ description: "Lightweight secure connectivity for isolated and restricted networ
 
 # DataRelay Link
 
-**Relay only the connections you actually need — into private systems for remote access, or out from restricted networks to approved Internet destinations.**
+**Relay only the connections that are actually needed. Do not join entire networks.**
 
-DataRelay Link is a lightweight secure-connectivity gateway for small environments. It combines two complementary connection models:
+DataRelay Link is a lightweight, CLI-first secure-connectivity gateway for isolated and restricted networks.
 
-- **Secure Remote Access** — publish selected SSH, HTTP, HTTPS, or custom TCP services from systems behind NAT/firewalls without requiring inbound access on every remote client.
-- **Controlled Egress** — allow systems in isolated or restricted networks to reach only approved external destinations through an agentless HTTP/HTTPS proxy policy.
+```text
+Remote Access     outside → approved internal Remote Service
+Internet Access   managed/protected source → approved outside destination
+AI Access         authenticated AI Identity → approved target permissions
+```
 
 <Note>
-  **Free Early Access:** DataRelay Link is currently available free of charge under the **DataRelay Link Early Access License 1.0**. It is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed. Early Access has no SLA and support is best effort. Commercial General Availability is planned with a **perpetual-license** model. See [License](/reference/license).
+  **v2.4 documentation:** This site describes the current **v2.4.0 development target**. A stable v2.4.0 tag does not exist until exact-HEAD qualification and immutable release publication complete. See [Release Status](/reference/release-status).
 </Note>
 
 <Note>
-  The target scale is **a few systems to a few dozen clients**. DataRelay Link is intentionally not a large-fleet orchestration, VPN mesh, SWG, or SASE platform.
+  **Free Early Access:** DataRelay Link is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed under the current license. See [License](/reference/license).
 </Note>
 
 ## Understand it in 30 seconds
 
 ```mermaid
 flowchart LR
-    U[Operator / Internet user]
-    S[DataRelay Link Server\npublic entry point]
-    C[Remote Client\nbehind NAT/firewall]
-    L[Private services\nSSH / HTTPS / TCP]
-    R[Restricted host]
-    I[Approved Internet destinations]
+    O[Operator / approved source]
+    S[DataRelay Link Server]
+    A[Managed Host<br/>DRLink Agent]
+    T[Local or LAN target]
+    I[Approved Internet destination]
+    AI[Authenticated AI Identity]
 
-    C -->|outbound relay control| S
-    U -->|published service port| S
-    S --> C --> L
-
-    R -->|HTTP / HTTPS proxy| S
-    S -->|policy-approved egress| I
+    A -->|outbound relay / management| S
+    O -->|Remote Access| S
+    S -->|Remote Service| A
+    A --> T
+    A -->|Internet Access| S
+    S --> I
+    AI -->|MCP / AI Access| S
+    S --> A
 ```
 
-The core principle is simple:
+## Current public model
 
-> **Do not connect entire networks. Relay only the connections that are actually needed.**
+```text
+Managed Host / DRLink Agent
+
+Network Object / Network Group
+Service Object / Service Group
+Permission Object / Permission Group
+
+AI Identity
+Remote Service
+
+Remote Access
+Internet Access
+AI Access
+
+BLACKLIST / WHITELIST
+
+ConfigurationBundle
+```
+
+A **Remote Service creates connectivity**. An **Access Policy authorizes or denies use of that connectivity**. A Rule never creates a Remote Service.
 
 ## Choose your path
 
 <CardGroup cols={2}>
-  <Card title="I want remote access" icon="arrow-right-to-bracket" href="/getting-started/quickstart">
-    Install a server, enroll a client, and publish your first SSH service.
+  <Card title="Get started" icon="rocket" href="/getting-started/quickstart">
+    Install a Server, enroll a Managed Host, and create a Remote Service.
   </Card>
 
-  <Card title="I need controlled outbound access" icon="arrow-up-right-from-square" href="/reference/architecture">
-    Understand the Controlled Egress model, policy boundaries, and current qualification status.
+  <Card title="Remote Access" icon="arrow-right-to-bracket" href="/guides/remote-access">
+    Control who can use approved internal Remote Services.
   </Card>
 
-  <Card title="I am completely new" icon="circle-question" href="/getting-started/concepts">
-    Learn Server, Client, CLIENT ID, Service, public ports, and relay traffic flow visually.
+  <Card title="Internet Access" icon="arrow-up-right-from-square" href="/guides/internet-access">
+    Allow only approved outbound destinations.
   </Card>
 
-  <Card title="I need a public server" icon="cloud" href="/getting-started/oci-free-tier-server">
-    Prepare an OCI Always Free-eligible Ubuntu VM with a persistent Reserved Public IPv4 address.
+  <Card title="AI Access / MCP" icon="robot" href="/guides/ai-access">
+    Bind verified AI Identities to explicit target permissions.
   </Card>
 
-  <Card title="I need to publish applications" icon="network-wired" href="/guides/services">
-    Publish SSH, HTTP, HTTPS passthrough, custom TCP, or another reachable LAN target.
+  <Card title="CLI reference" icon="terminal" href="/drlink/cli-reference">
+    Use the role-aware Server and Agent Host command grammar.
   </Card>
 
-  <Card title="I want operator commands" icon="terminal" href="/drlink/overview">
-    Use the `drlink` CLI for enrollment, services, lifecycle, diagnostics, backup, and updates.
+  <Card title="ConfigurationBundle" icon="file-code" href="/drlink/configuration-bundle">
+    Validate, diff, and atomically apply dependent multi-resource changes.
   </Card>
 </CardGroup>
 
-## Secure Remote Access
+## Policy model
 
-```mermaid
-sequenceDiagram
-    participant A as Server admin
-    participant S as DataRelay Link Server
-    participant C as Remote Client
-    participant U as Remote user
-    participant T as Target service
+Each Access Policy family uses BLACKLIST or WHITELIST Mode plus ENABLED or DISABLED enforcement.
 
-    A->>S: Create Zero-Touch enrollment
-    S-->>A: One-time bootstrap command
-    A-->>C: Send command privately
-    C->>S: HTTPS enrollment / trust establishment
-    S-->>C: Persistent identity + service config
-    C->>S: Outbound relay-control session
-    U->>S: Connect to assigned public service port
-    S->>C: Relay service traffic
-    C->>T: Connect to target host:port
-```
+- No Policy / No Rules → effective ALLOW.
+- BLACKLIST: matching enabled Rule → DENY; otherwise ALLOW.
+- WHITELIST: matching enabled Rule → ALLOW; otherwise DENY.
+- Rules are **not ordered** and do **not** carry a per-rule ALLOW/DENY action.
+- Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL.
+- Policy Reset removes Mode and Rules.
 
-A remote client normally needs **outbound** connectivity to the DataRelay Link Server, not a public IP or inbound NAT rule of its own.
-
-## Controlled Egress
-
-Controlled Egress is designed for hosts that cannot access the Internet directly but need tightly limited outbound connectivity.
-
-```text
-HTTP_PROXY=http://data-relay-link.example:6080
-HTTPS_PROXY=http://data-relay-link.example:6080
-```
-
-The server-side policy can restrict:
-
-- source CIDR/network
-- destination FQDN
-- destination port
-- controlled wildcard subdomains
-- IP-literal use
-
-The design is **default deny / fail closed**, with server-side DNS resolution, SSRF protection, DNS-rebinding resistance, audit logging, diagnostics, and backup/restore integration.
-
-<Warning>
-  Controlled Egress is currently under release qualification. Secure Remote Access v2.2.1 is the published stable baseline; do not assume Controlled Egress is part of the immutable v2.2.1 release until its Real E2E qualification is complete.
-</Warning>
-
-## Current stable baseline
-
-| Item | Current |
-| --- | --- |
-| Stable product release | **v2.2.1** |
-| Bundled / tested relay engine | **v0.71.0** |
-| Server | **Linux-based** |
-| Default remote-access deployment | **Direct** |
-| Operator CLI | **`drlink`** |
-
-Real E2E client coverage for v2.2.1 includes **Ubuntu 24, Rocky Linux 8.10/9.4, Amazon Linux 2023, macOS Apple Silicon, and Windows 10 / PowerShell 5.1**. Amazon Linux 2 and PowerShell 7 have narrower validation levels.
-
-See [Supported Platforms](/reference/platforms) for the validation matrix and [Release Status](/reference/release-status) for release details.
+AI authentication remains mandatory even when AI Access enforcement is disabled.
 
 ## Boundaries that matter
 
 <AccordionGroup>
-  <Accordion title="DataRelay Link does not configure your cloud firewall, NAT, or DNS provider">
-    AWS Security Groups, OCI Security Lists, external NAT/DNAT, host firewall policy, and DNS records remain infrastructure responsibilities.
+  <Accordion title="DataRelay Link is not a VPN or full-network overlay">
+    It relays explicitly configured services and approved destinations rather than joining entire networks.
   </Accordion>
 
-  <Accordion title="Published HTTPS is TCP passthrough">
-    The target application, not DataRelay Link, presents the application TLS certificate.
+  <Accordion title="External infrastructure stays outside the product boundary">
+    Cloud security groups, firewalls, NAT/DNAT, DNS-provider records, OS accounts, and application certificates remain operator responsibilities unless a separately approved feature says otherwise.
   </Accordion>
 
-  <Accordion title="Controlled Egress is not TLS inspection">
-    The v1 egress design allows HTTP forwarding and HTTPS CONNECT. It does not decrypt TLS, perform DLP, malware inspection, CASB, browser isolation, or full SWG/SASE functions.
+  <Accordion title="Remote Service health and policy result are separate">
+    Policy can evaluate ALLOW while a target is temporarily unreachable. The Remote Service can remain configured as DEGRADED.
   </Accordion>
 
-  <Accordion title="Disable, revoke, and release are different lifecycle actions">
-    Disable stops publication but keeps the port. Revoke blocks management identity. Release returns a public-port reservation.
+  <Accordion title="Target scale is intentionally small">
+    The current target is roughly a few hosts to a few dozen Managed Hosts, not hundreds or thousands of endpoints.
   </Accordion>
 </AccordionGroup>
 
-## Help improve DataRelay Link
-
-Found a problem or have an idea that would make DataRelay Link easier or safer to operate?
-
-<CardGroup cols={2}>
-  <Card title="Report a Bug" icon="bug" href="/feedback">
-    Report a reproducible problem with version, environment, reproduction steps, and redacted diagnostics.
-  </Card>
-  <Card title="Request a Feature" icon="lightbulb" href="/feedback">
-    Describe the workflow or problem you want to improve and the behavior you would like to see.
-  </Card>
-</CardGroup>
-
 <Tip>
-  New user: start with [Concepts & Mental Model](/getting-started/concepts) and [Quick Start](/getting-started/quickstart). Operators can jump to the [drlink Guide](/drlink/overview), [Architecture](/reference/architecture), [Troubleshooting](/troubleshooting/overview), or [Feedback](/feedback).
+  New users should read [Concepts & Mental Model](/getting-started/concepts) and then [Quick Start](/getting-started/quickstart).
 </Tip>

@@ -5,185 +5,88 @@ description: "Install the server, enroll a client, and publish your first SSH se
 
 # Quick Start
 
-This is the shortest stable **v2.2.1** path from an empty server to a working remote SSH connection.
-
-## What you are building
-
-```mermaid
-flowchart LR
-    U[Your laptop]
-    S[DataRelay Link server]
-    C[Remote Linux client\nbehind NAT/firewall]
-    SSH[sshd\n127.0.0.1:22]
-
-    C -->|outbound tunnel| S
-    U -->|ssh -p assigned-port| S
-    S --> C
-    C --> SSH
-```
-
-## Before you start
-
-You need:
-
-- a Linux/systemd server that remote clients can reach through a public entry point
-- a Linux/systemd client
-- an SSH account that already exists on that client
-- server firewall/NAT rules for the chosen deployment
-- `sudo`/root privileges for installation
-
-For a first deployment, **Ubuntu 24.04 x86_64** is the clearest real-validated baseline.
-
-<Tip>
-  If you do not already have a static public IP or spare Linux server, start with the screenshot-based [OCI Free Tier Server Preparation](/getting-started/oci-free-tier-server) guide to prepare an Always Free-eligible VM with a Reserved Public IPv4 address.
-</Tip>
-
-### Direct mode network requirements
-
-| Direction | Purpose | Default TCP |
-| --- | --- | --: |
-| Client → Server | DataRelay Link control | 443 |
-| Client → Server | Enrollment / management HTTPS | 6099 |
-| User → Server | Published services | 6000-6098 as assigned |
-
 <Warning>
-  DataRelay Link does not automatically change cloud security groups, external firewalls, NAT rules, UFW, firewalld, or iptables.
+  These instructions describe the **v2.4.0 development target**. Before a stable v2.4.0 release exists, use an exact immutable SHA or an explicitly qualified candidate artifact supplied for testing.
 </Warning>
 
-## 1. Install the server
-
-```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/xdr-labs/frp-auto-deploy/v2.2.1/dist/bootstrap-server.sh \
-  | sudo bash
-```
-
-The interactive installer asks for the public endpoint, optional published-service hostname, internal IP, deployment mode, and port settings.
-
-If the server is behind a firewall/NAT device, read [Firewall & NAT](/deployment/firewall-nat) before accepting the defaults.
-
-## 2. Verify the server
-
-```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink doctor
-```
-
-<Check>
-  Continue only after the expected services are active and `doctor` does not report a blocking configuration/trust problem.
-</Check>
-
-## 3. Create the client enrollment
-
-### Easiest interactive path
-
-Start the CLI:
+## 1. Verify the Server
 
 ```bash
 sudo drlink
 ```
 
-Then use:
+Then run:
 
 ```text
-create zero-touch
+show version
+show status
+system diagnostics
 ```
 
-This is the recommended everyday onboarding path.
+The role must be **DRLink Server**.
 
-### Explicit SSH one-liner profile
+## 2. Ensure the Service Object exists
 
-For a predictable SSH profile from the shell:
+For SSH:
+
+```text
+set service-object ssh type tcp port 22
+```
+
+## 3. Issue a Zero-Touch enrollment
+
+On the Server:
+
+```text
+set enrollment zero-touch
+```
+
+Run the generated one-time installation command on the target host.
+
+## 4. Verify the Agent Host
+
+On the newly enrolled host:
 
 ```bash
-sudo drlink create enrollment \
-  --one-line \
-  --ssh \
-  --ssh-user <ssh-user> \
-  --label branch-a
+sudo drlink
 ```
 
-Replace `<ssh-user>` with an SSH user that **already exists on the remote client**.
+Then:
 
-DataRelay Link does not create OS users, install/configure `sshd`, change passwords, or manage SSH keys.
-
-## 4. Run the generated command on the client
-
-Send the **exact generated command** to the remote operator through an appropriate private channel and run it once on the Linux client.
-
-```mermaid
-sequenceDiagram
-    participant A as Server admin
-    participant S as DataRelay Link server
-    participant C as Remote client
-
-    A->>S: create zero-touch / enrollment
-    S-->>A: one-time bootstrap command
-    A-->>C: send privately
-    C->>S: HTTPS bootstrap + enrollment
-    S-->>C: persistent identity + service config
-    C->>S: outbound DataRelay Link control tunnel
+```text
+show status
+show agent
 ```
 
-Treat the generated bootstrap command as sensitive until it is used, expires, or is revoked.
+The role must be **Agent Host**.
 
-## 5. Verify on the client
+## 5. Create the Remote Service on the Agent Host
+
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
+```
+
+The endpoint is allocated and managed by DataRelay Link. Temporary Server or target failure can leave a valid Remote Service in DEGRADED state.
+
+## 6. Optional: restrict Remote Access
+
+With no policy configured, effective access is ALLOW.
+
+On the Server:
+
+```text
+set network-object office-admin type ip value 203.0.113.10
+set remote-access office-ssh mode whitelist source office-admin destination <managed-host> service ssh enabled
+test remote-access source office-admin destination <managed-host> service ssh
+```
+
+## 7. Connect
+
+Use the endpoint shown by the Agent:
 
 ```bash
-sudo drlink show version
-sudo drlink show status
-sudo drlink show services
-sudo drlink show info
-sudo drlink doctor
+ssh -p <public-port> <username>@<public-hostname>
 ```
 
-## 6. Verify on the server
-
-```bash
-sudo drlink show clients
-sudo drlink show enrollments
-```
-
-Then inspect the assigned service port:
-
-```bash
-sudo drlink show client <CLIENT-ID> services
-```
-
-The client receives a persistent CLIENT ID and the SSH service receives a persistent public-port reservation.
-
-## 7. Connect over SSH
-
-```bash
-ssh -p <public-port> <ssh-user>@<DataRelay Link-server-public-IP>
-```
-
-With an optional public service hostname:
-
-```bash
-ssh -p <public-port> <ssh-user>@fw.example.com
-```
-
-## Success checklist
-
-You are finished when all of these are true:
-
-- the client appears in `show clients`
-- the client has a CLIENT ID
-- the SSH service has an assigned public port
-- the client reports healthy DataRelay Link state
-- the public service port is allowed through the server-side firewall/NAT
-- SSH reaches the intended target
-
-## If it does not work
-
-Use [Troubleshooting](/troubleshooting/overview) and run `drlink doctor` on both sides **before** editing generated config, registry, identity, or PKI files.
-
-## Next steps
-
-- [Concepts & Mental Model](/getting-started/concepts)
-- [Linux Client](/getting-started/linux-client)
-- [Publishing Services](/guides/services)
-- [Deployment Modes](/deployment/modes)
-- [drlink Guide](/drlink/overview)
+DataRelay Link does not create OS users or configure sshd; the target account/service must already exist.

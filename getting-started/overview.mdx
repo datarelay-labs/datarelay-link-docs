@@ -1,135 +1,44 @@
 ---
 title: "What is DataRelay Link?"
 description: "Understand the problem DataRelay Link solves and its operating model."
+sidebarTitle: "What is DataRelay Link?"
 ---
 
 # What is DataRelay Link?
 
-DataRelay Link is a **lightweight secure-connectivity gateway for small isolated, restricted, and NAT/firewall-protected environments**. It is designed around a simple rule:
+DataRelay Link is a lightweight secure-connectivity gateway for environments where you need selected connectivity without opening or joining an entire network.
 
-> **Do not connect entire networks. Relay only the connections that are actually needed.**
+## Three access planes
 
-It has two product pillars:
+| Plane | Direction | Purpose |
+| --- | --- | --- |
+| Remote Access | outside → inside | Authorize use of Agent-owned Remote Services |
+| Internet Access | inside → outside | Permit approved outbound destinations |
+| AI Access | AI → managed target | Authorize verified AI Identities to explicit permissions |
 
-1. **Secure Remote Access** — outside → inside. Publish only selected services from systems behind NAT/firewalls.
-2. **Controlled Egress** — inside → Internet. Allow restricted hosts to reach only policy-approved external destinations.
+## Connectivity and authorization are separate
 
-<Note>
-  The intended scale is a few systems to a few dozen clients. The product is intentionally not a large-fleet orchestration platform, full VPN mesh, SWG, or SASE stack.
-</Note>
+```text
+Remote Service
+→ actual connectivity and stable endpoint
 
-## The problems it solves
-
-Remote support often becomes a chain of infrastructure requests:
-
-```mermaid
-flowchart LR
-    E[Support engineer] --> V[Request VPN access]
-    V --> F[Request firewall/NAT change]
-    F --> B[Find bastion / internal path]
-    B --> H[Reach private server]
+Access Policy
+→ authorization only
 ```
 
-Restricted networks have the opposite problem: an internal server may need package updates, source repositories, APIs, or vendor services, but administrators do not want to grant broad Internet access.
+Creating a Rule does not create a tunnel or endpoint.
 
-```mermaid
-flowchart LR
-    R[Restricted host] --> X[No direct Internet]
-    X --> P[Need only approved destinations]
-```
+## Two CLI contexts
 
-DataRelay Link addresses both cases without turning the environment into one flat connected network.
+**DRLink Server** owns Managed Hosts, enrollment, Network/Service/Permission Objects and Groups, AI Identities, Access Policies, audit, backup/restore, and Server ConfigurationBundle.
 
-## Secure Remote Access model
+**Agent Host** owns local Agent lifecycle, Remote Services, local diagnostics, and Agent ConfigurationBundle.
 
-Install a public DataRelay Link Server once. Remote clients enroll and initiate outbound relay-control sessions toward it.
+Remote Service mutation belongs on the Agent Host that owns it.
 
-```mermaid
-flowchart LR
-    O[Operator]
-    S[DataRelay Link Server\npublic entry point]
-    C[Remote Client\nbehind NAT/firewall]
-    LOCAL[Local services\n127.0.0.1:*]
-    LAN[Other LAN hosts\n10.x / 172.16-31.x / 192.168.x]
+## Start here
 
-    C -->|outbound relay control| S
-    O -->|published service port| S
-    S -->|service traffic| C
-    C --> LOCAL
-    C --> LAN
-```
-
-A client can publish its own services or selected services on other LAN hosts that it can reach.
-
-## Controlled Egress model
-
-A restricted host uses the DataRelay Link Server as an HTTP/HTTPS forward proxy. The host itself does not require a DataRelay Link agent for this v1 model.
-
-```mermaid
-flowchart LR
-    R[Restricted host] -->|HTTP_PROXY / HTTPS_PROXY| S[DataRelay Link Server]
-    S --> P{Policy}
-    P -->|allow| A[Approved FQDN:port]
-    P -->|deny| D[Everything else]
-```
-
-The policy model includes source CIDR, FQDN, destination port, controlled wildcard rules, default deny, fail-closed behavior, and protections against unsafe destinations.
-
-<Warning>
-  Controlled Egress is currently under release qualification. The published stable v2.2.1 baseline is Secure Remote Access; do not treat Controlled Egress as part of immutable v2.2.1 until its Real E2E qualification is complete.
-</Warning>
-
-## Who is it for?
-
-<CardGroup cols={2}>
-  <Card title="System administrators" icon="server">
-    Reach remote Linux, Windows, or macOS systems without building a full VPN/RMM stack.
-  </Card>
-
-  <Card title="Technical support engineers" icon="headset">
-    Give customers or partners a controlled one-command onboarding path for remote support.
-  </Card>
-
-  <Card title="Restricted-network operators" icon="shield-halved">
-    Permit only approved outbound HTTP/HTTPS destinations instead of granting broad Internet access.
-  </Card>
-
-  <Card title="Small infrastructure teams" icon="network-wired">
-    Operate a few to a few dozen systems with persistent identity, service ports, policy, diagnostics, and a CLI.
-  </Card>
-</CardGroup>
-
-## What DataRelay Link manages
-
-```mermaid
-flowchart TB
-    D[DataRelay Link]
-    D --> I[Install / update]
-    D --> E[Enrollment / trust]
-    D --> ID[CLIENT ID / metadata]
-    D --> SV[Service definitions]
-    D --> PP[Persistent public ports]
-    D --> EG[Controlled Egress policy]
-    D --> CLI[drlink operations]
-    D --> DR[Audit / backup / restore / doctor]
-    D --> RE[Bundled relay engine]
-```
-
-## What it intentionally does not manage
-
-- cloud security groups
-- external firewall or NAT/DNAT rules
-- host firewall policy
-- DNS provider records
-- operating-system accounts, passwords, or SSH keys
-- application authentication
-- application TLS certificates
-- TLS inspection, DLP, malware inspection, CASB, browser isolation, or full SWG/SASE functions
-
-## Recommended reading order
-
-1. [Concepts & Mental Model](/getting-started/concepts)
-2. [Quick Start](/getting-started/quickstart)
-3. [Publishing Services](/guides/services)
-4. [drlink Guide](/drlink/overview)
-5. [Architecture](/reference/architecture)
+- [Concepts & Mental Model](/getting-started/concepts)
+- [Quick Start](/getting-started/quickstart)
+- [CLI Guide](/drlink/overview)
+- [Architecture](/reference/architecture)
