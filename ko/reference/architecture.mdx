@@ -15,21 +15,21 @@ icon: "sitemap"
 flowchart LR
     U[관리자 / 인터넷 사용자]
     F[외부 Firewall / NAT\n선택]
-    S[Data Relay Link 서버]
-    C1[Client A\nData Relay Link Client runtime + management identity]
-    C2[Client B\nData Relay Link Client runtime + management identity]
+    S[DataRelay Link 서버]
+    C1[Client A\nDataRelay Link Client runtime + management identity]
+    C2[Client B\nDataRelay Link Client runtime + management identity]
     L1[로컬 서비스\n127.0.0.1:*]
     L2[접근 가능한 LAN 서비스\n10.x / 172.16-31.x / 192.168.x]
 
     U -->|published TCP port| F
     F --> S
-    C1 -->|outbound Data Relay Link control| S
-    C2 -->|outbound Data Relay Link control| S
+    C1 -->|outbound DataRelay Link control| S
+    C2 -->|outbound DataRelay Link control| S
     C1 --> L1
     C1 --> L2
 ```
 
-Data Relay Link는 Secure Remote Access용 **bundled relay engine**과 enrollment, identity, service lifecycle, policy, audit를 하나의 제품으로 관리합니다. 내부 transport runtime은 사용자-facing 제품 identity와 분리합니다.
+DataRelay Link는 Secure Remote Access용 **bundled relay engine**과 enrollment, identity, service lifecycle, policy, audit를 하나의 제품으로 관리합니다. 내부 transport runtime은 사용자-facing 제품 identity와 분리합니다.
 
 ## Control plane과 data plane
 
@@ -47,9 +47,9 @@ Data Relay Link는 Secure Remote Access용 **bundled relay engine**과 enrollmen
 flowchart TB
     I[Internet]
     A[Enrollment / management HTTPS\nTCP 6099]
-    C[Data Relay Link control\nTCP 443]
+    C[DataRelay Link control\nTCP 443]
     P[Published services\nTCP 6000-6098]
-    S[Data Relay Link 서버]
+    S[DataRelay Link 서버]
 
     I --> A --> S
     I --> C --> S
@@ -63,12 +63,12 @@ flowchart TB
     I[Internet]
     FE[Public frontend\nTCP 443]
     A[Allocator backend\n127.0.0.1:6099]
-    F[Data Relay Link backend\n127.0.0.1:7000]
+    F[DataRelay Link backend\n127.0.0.1:7000]
     P[Published services\nTCP 6000-6098]
 
     I --> FE
     FE -->|HTTPS enrollment| A
-    FE -->|Data Relay Link control over WSS| F
+    FE -->|DataRelay Link control over WSS| F
     I --> P
 ```
 

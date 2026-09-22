@@ -1,19 +1,19 @@
 ---
 title: "Known Limits"
-description: "Current product boundaries and unsupported assumptions for Data Relay Link."
+description: "Current product boundaries and unsupported assumptions for DataRelay Link."
 ---
 
 # Known Limits
 
-Data Relay Link is intentionally focused on lightweight remote-access management for a small number to a few dozen systems.
+DataRelay Link is intentionally focused on lightweight remote-access management for a small number to a few dozen systems.
 
 ## Current boundaries
 
 - TCP services only
-- The Data Relay Link server remains Linux-based
+- The DataRelay Link server remains Linux-based
 - v2.2.1 stable client validation includes Linux real hosts, macOS Apple Silicon, and Windows 10 / PowerShell 5.1
 - Amazon Linux 2 is portability/CI-only in the current release qualification; PowerShell 7 is CI-validated unless a real host actually has `pwsh` installed
-- Published-service NAT is designed around keeping the same Data Relay Link service port on the public and internal sides
+- Published-service NAT is designed around keeping the same DataRelay Link service port on the public and internal sides
 - External cloud firewalls, security groups, host firewalls, and NAT rules are not configured automatically
 - In published stable **v2.2.1**, there is no built-in per-service source-IP allowlist policy or application-style RBAC layer for published TCP services; use external firewall/ACL controls and the target service's own authentication/authorization
 - SSH accounts, passwords, SSH keys, and `sshd` configuration are not managed automatically
@@ -26,4 +26,4 @@ Data Relay Link is intentionally focused on lightweight remote-access management
 
 The product is aimed at operators who need to make remote systems behind NAT/firewalls reachable without building a full VPN or enterprise remote-management stack.
 
-When requirements grow into large-scale policy orchestration, endpoint compliance, inventory CMDB, or hundreds/thousands of agents, use tooling designed for that scope rather than stretching Data Relay Link beyond its intended operating model.
+When requirements grow into large-scale policy orchestration, endpoint compliance, inventory CMDB, or hundreds/thousands of agents, use tooling designed for that scope rather than stretching DataRelay Link beyond its intended operating model.

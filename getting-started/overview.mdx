@@ -1,11 +1,11 @@
 ---
-title: "What is Data Relay Link?"
-description: "Understand the problem Data Relay Link solves and its operating model."
+title: "What is DataRelay Link?"
+description: "Understand the problem DataRelay Link solves and its operating model."
 ---
 
-# What is Data Relay Link?
+# What is DataRelay Link?
 
-Data Relay Link is a **lightweight secure-connectivity gateway for small isolated, restricted, and NAT/firewall-protected environments**. It is designed around a simple rule:
+DataRelay Link is a **lightweight secure-connectivity gateway for small isolated, restricted, and NAT/firewall-protected environments**. It is designed around a simple rule:
 
 > **Do not connect entire networks. Relay only the connections that are actually needed.**
 
@@ -38,16 +38,16 @@ flowchart LR
     X --> P[Need only approved destinations]
 ```
 
-Data Relay Link addresses both cases without turning the environment into one flat connected network.
+DataRelay Link addresses both cases without turning the environment into one flat connected network.
 
 ## Secure Remote Access model
 
-Install a public Data Relay Link Server once. Remote clients enroll and initiate outbound relay-control sessions toward it.
+Install a public DataRelay Link Server once. Remote clients enroll and initiate outbound relay-control sessions toward it.
 
 ```mermaid
 flowchart LR
     O[Operator]
-    S[Data Relay Link Server\npublic entry point]
+    S[DataRelay Link Server\npublic entry point]
     C[Remote Client\nbehind NAT/firewall]
     LOCAL[Local services\n127.0.0.1:*]
     LAN[Other LAN hosts\n10.x / 172.16-31.x / 192.168.x]
@@ -63,11 +63,11 @@ A client can publish its own services or selected services on other LAN hosts th
 
 ## Controlled Egress model
 
-A restricted host uses the Data Relay Link Server as an HTTP/HTTPS forward proxy. The host itself does not require a Data Relay Link agent for this v1 model.
+A restricted host uses the DataRelay Link Server as an HTTP/HTTPS forward proxy. The host itself does not require a DataRelay Link agent for this v1 model.
 
 ```mermaid
 flowchart LR
-    R[Restricted host] -->|HTTP_PROXY / HTTPS_PROXY| S[Data Relay Link Server]
+    R[Restricted host] -->|HTTP_PROXY / HTTPS_PROXY| S[DataRelay Link Server]
     S --> P{Policy}
     P -->|allow| A[Approved FQDN:port]
     P -->|deny| D[Everything else]
@@ -99,11 +99,11 @@ The policy model includes source CIDR, FQDN, destination port, controlled wildca
   </Card>
 </CardGroup>
 
-## What Data Relay Link manages
+## What DataRelay Link manages
 
 ```mermaid
 flowchart TB
-    D[Data Relay Link]
+    D[DataRelay Link]
     D --> I[Install / update]
     D --> E[Enrollment / trust]
     D --> ID[CLIENT ID / metadata]

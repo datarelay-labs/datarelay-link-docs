@@ -7,7 +7,7 @@ description: "원격 사용자에게 한 줄 명령만 전달해 클라이언트
 
 Zero-Touch는 서버 관리자가 초기 Client 프로필을 정하고 원격 사용자에게 **한 줄 명령만 실행하게 하는** 권장 onboarding 방식입니다.
 
-![기존 실사용 가이드의 Data Relay Link Client lifecycle](/images/guides/client-lifecycle.webp)
+![기존 실사용 가이드의 DataRelay Link Client lifecycle](/images/guides/client-lifecycle.webp)
 
 이 그림에서 Enrollment는 첫 등록 단계이고, 이후 서비스 변경/업데이트/운영은 persistent CLIENT ID를 유지한 채 진행됩니다.
 
@@ -16,7 +16,7 @@ Zero-Touch는 서버 관리자가 초기 Client 프로필을 정하고 원격 �
 ```mermaid
 sequenceDiagram
     participant A as 서버 관리자
-    participant S as Data Relay Link 서버
+    participant S as DataRelay Link 서버
     participant C as 원격 Client
 
     A->>S: Zero-Touch profile 생성
@@ -24,10 +24,10 @@ sequenceDiagram
     A-->>C: 비공개 채널로 전달
     C->>S: Verified HTTPS bootstrap + enrollment
     S-->>C: Persistent identity + service config
-    C->>S: Outbound Data Relay Link tunnel 시작
+    C->>S: Outbound DataRelay Link tunnel 시작
 ```
 
-원격 사용자는 Data Relay Link 설정 파일을 이해할 필요가 없습니다. 서버가 출력한 정확한 명령을 한 번 실행하면 됩니다.
+원격 사용자는 DataRelay Link 설정 파일을 이해할 필요가 없습니다. 서버가 출력한 정확한 명령을 한 번 실행하면 됩니다.
 
 ## 가장 쉬운 생성 방식
 
@@ -62,7 +62,7 @@ sudo drlink create enrollment \
 - client firewall 변경
 - 외부 NAT 변경
 
-즉 OS/application provisioning이 아니라 **Data Relay Link onboarding**을 자동화합니다.
+즉 OS/application provisioning이 아니라 **DataRelay Link onboarding**을 자동화합니다.
 
 ## 생성 명령은 민감 정보입니다
 

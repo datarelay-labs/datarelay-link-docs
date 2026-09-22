@@ -1,6 +1,6 @@
 ---
 title: "OCI Free Tier Server Preparation"
-description: "Prepare an Ubuntu Data Relay Link server with an OCI Always Free-eligible VM and a persistent Reserved Public IPv4 address."
+description: "Prepare an Ubuntu DataRelay Link server with an OCI Always Free-eligible VM and a persistent Reserved Public IPv4 address."
 sidebarTitle: "OCI Free Tier Server"
 icon: "cloud"
 keywords:
@@ -11,12 +11,12 @@ keywords:
   - "Reserved Public IP"
   - "static IP"
   - "Ubuntu"
-  - "Data Relay Link server"
+  - "DataRelay Link server"
 ---
 
-# OCI Free Tier Data Relay Link Server
+# OCI Free Tier DataRelay Link Server
 
-This guide takes you from an empty OCI tenancy to a working **Data Relay Link v2.2.1** server and the first SSH client. It reuses the actual OCI Console screenshots from the original deployment guide while updating all commands and product behavior to the current Data Relay Link stable release.
+This guide takes you from an empty OCI tenancy to a working **DataRelay Link v2.2.1** server and the first SSH client. It reuses the actual OCI Console screenshots from the original deployment guide while updating all commands and product behavior to the current DataRelay Link stable release.
 
 <Note>
   OCI Console labels, Free Tier eligibility, capacity, and pricing can change. Treat the current Console's **Always Free Eligible** indicator and cost estimate as the final source before creating resources. Oracle also documents that idle Always Free compute instances may be reclaimed after a sustained low-usage period, so do not treat a Free Tier VM as an SLA-backed production host without reviewing the current OCI policy.
@@ -27,24 +27,24 @@ This guide takes you from an empty OCI tenancy to a working **Data Relay Link v2
 ```mermaid
 flowchart TD
     U[Remote user] -->|SSH / HTTP / HTTPS / TCP service port| PUB[OCI Reserved Public IPv4]
-    C[Remote Data Relay Link client\nbehind NAT/firewall] -->|Outbound TCP 443 / WSS| PUB
-    PUB --> VM[Ubuntu 24.04\nData Relay Link server]
+    C[Remote DataRelay Link client\nbehind NAT/firewall] -->|Outbound TCP 443 / WSS| PUB
+    PUB --> VM[Ubuntu 24.04\nDataRelay Link server]
     VM -->|public 443| FE[single-443 frontend]
     FE -->|loopback 7000| RS[relay backend]
     FE -->|loopback 6099| ENR[Enrollment / management]
     VM --> PORTS[Published service ports\n6000-6098]
 ```
 
-The high-resolution architecture diagram below shows the same deployment from the operator's point of view: one OCI Reserved Public IP fronts the Data Relay Link server, while each remote client publishes one or more local or reachable LAN services through its assigned persistent public ports.
+The high-resolution architecture diagram below shows the same deployment from the operator's point of view: one OCI Reserved Public IP fronts the DataRelay Link server, while each remote client publishes one or more local or reachable LAN services through its assigned persistent public ports.
 
-![Data Relay Link SSH access architecture using an OCI Reserved Public IP](/images/oci/53.png)
+![DataRelay Link SSH access architecture using an OCI Reserved Public IP](/images/oci/53.png)
 
 For this OCI walkthrough we use **Enterprise single-443** because it gives a simple public policy:
 
 | Public ingress | Purpose |
 | --- | --- |
 | TCP 22 | OCI server administration; restrict to your admin IP `/32` |
-| TCP 443 | Data Relay Link control over WSS + enrollment/management HTTPS |
+| TCP 443 | DataRelay Link control over WSS + enrollment/management HTTPS |
 | TCP 6000-6098 | Published client services; restrict further when practical |
 | TCP 6099 | **Do not expose** in single-443 |
 | TCP 7000 | **Do not expose** in single-443 |
@@ -53,7 +53,7 @@ Direct mode is also fully supported. In Direct mode, TCP 6099 is a separate publ
 
 ## 10-minute map
 
-| Step | OCI / Data Relay Link action | Value used in this guide |
+| Step | OCI / DataRelay Link action | Value used in this guide |
 | --: | --- | --- |
 | 1 | Create VCN | `data-relay-vcn` / `10.0.0.0/16` |
 | 2 | Internet Gateway + route | `0.0.0.0/0` → Internet Gateway |
@@ -62,7 +62,7 @@ Direct mode is also fully supported. In Direct mode, TCP 6099 is a separate publ
 | 5 | Create VM | Ubuntu 24.04 x86_64 / `VM.Standard.E2.1.Micro` when eligible |
 | 6 | Public address | attach a **Reserved Public IPv4** |
 | 7 | SSH | `ubuntu@<RESERVED-IP>` |
-| 8 | Install Data Relay Link | immutable `v2.2.1` |
+| 8 | Install DataRelay Link | immutable `v2.2.1` |
 | 9 | Verify | `drlink doctor` + listener checks |
 | 10 | Add first client | current one-line Zero-Touch enrollment |
 
@@ -162,7 +162,7 @@ Review the ingress rules on the **Default Security List**.
 
 ![Picture 13. Review the Default Security List ingress rules](/images/oci/13.png)
 
-For Data Relay Link in single-443 mode, add TCP 443 and the published-service range TCP 6000-6098. Keep SSH 22 for administration, preferably restricted to your administrator public IP `/32`.
+For DataRelay Link in single-443 mode, add TCP 443 and the published-service range TCP 6000-6098. Keep SSH 22 for administration, preferably restricted to your administrator public IP `/32`.
 
 ![Picture 14. Add ingress rules for TCP 443 and TCP 6000-6098](/images/oci/14.png)
 
@@ -293,7 +293,7 @@ Name                  data-relay-reserved-public-ip
 
 ![Picture 30. Create and attach a new Reserved Public IP](/images/oci/30.png)
 
-A Reserved Public IP is the address you should treat as the persistent public entry point for Data Relay Link. OCI performs the public/private mapping outside the Ubuntu guest, so `ip addr` on the VM normally shows the private `10.x.x.x` address rather than the public address.
+A Reserved Public IP is the address you should treat as the persistent public entry point for DataRelay Link. OCI performs the public/private mapping outside the Ubuntu guest, so `ip addr` on the VM normally shows the private `10.x.x.x` address rather than the public address.
 
 Confirm that the Reserved Public IP is attached to the Primary Private IP. The public IP value in this screenshot has been masked before publication.
 
@@ -328,7 +328,7 @@ OS             Ubuntu 24.04 LTS
 PID 1          systemd
 ```
 
-# Part II — Install Data Relay Link v2.2.1
+# Part II — Install DataRelay Link v2.2.1
 
 ## 6. Prepare only the packages you need
 
@@ -346,7 +346,7 @@ sudo iptables -S INPUT
 ```
 
 <Warning>
-  The older field notes contained an environment-specific procedure that flushed the Ubuntu `INPUT` chain. **Do not blindly run `iptables -F` or change the default INPUT policy just for Data Relay Link.** OCI Security Lists/NSGs and the Ubuntu host firewall are separate security boundaries; configure each deliberately for your environment.
+  The older field notes contained an environment-specific procedure that flushed the Ubuntu `INPUT` chain. **Do not blindly run `iptables -F` or change the default INPUT policy just for DataRelay Link.** OCI Security Lists/NSGs and the Ubuntu host firewall are separate security boundaries; configure each deliberately for your environment.
 </Warning>
 
 ## 7. Install the immutable stable release
@@ -363,7 +363,7 @@ For this OCI walkthrough, choose **Enterprise single-443** when the installer as
 Public host                  <RESERVED-PUBLIC-IP or DNS>
 Deployment mode              Enterprise single-443
 Public control               TCP 443
-Data Relay Link backend                  127.0.0.1:7000
+DataRelay Link backend                  127.0.0.1:7000
 Public enrollment/management HTTPS 443
 Allocator backend            127.0.0.1:6099
 Published service range      TCP 6000-6098
@@ -423,7 +423,7 @@ The services and listener topology should return without re-enrollment or manual
 
 ## 10. Generate a Zero-Touch SSH enrollment
 
-On the Data Relay Link server:
+On the DataRelay Link server:
 
 ```bash
 sudo drlink create enrollment \
@@ -439,7 +439,7 @@ The command printed by the server contains a short-lived, one-time bootstrap cre
   Treat a generated Zero-Touch command as sensitive until it expires or is used. Do not paste a live ticket into public chat, documentation, or issue trackers.
 </Warning>
 
-On the client, run the generated line. Data Relay Link does not create the SSH user or `sshd`; they must already exist.
+On the client, run the generated line. DataRelay Link does not create the SSH user or `sshd`; they must already exist.
 
 ## 11. Verify the client and connect
 
@@ -466,7 +466,7 @@ Then use the assigned persistent public service port:
 ssh -p <PUBLIC-SERVICE-PORT> <CLIENT-USER>@<RESERVED-PUBLIC-IP>
 ```
 
-The **client does not manually choose the public port**. The Data Relay Link server allocates and persists the service reservation.
+The **client does not manually choose the public port**. The DataRelay Link server allocates and persists the service reservation.
 
 # Final checklist
 
@@ -481,7 +481,7 @@ The **client does not manually choose the public port**. The Data Relay Link ser
 - [ ] Ubuntu 24.04 x86_64 VM is running
 - [ ] Reserved Public IPv4 is attached
 - [ ] SSH to the VM succeeds
-- [ ] Data Relay Link reports project 2.2.1 / bundled relay engine 0.71.0
+- [ ] DataRelay Link reports project 2.2.1 / bundled relay engine 0.71.0
 - [ ] `drlink doctor` has no blocking finding
 - [ ] listener exposure matches the selected topology
 - [ ] state survives reboot
@@ -492,10 +492,10 @@ The **client does not manually choose the public port**. The Data Relay Link ser
 When a published service cannot be reached, test both halves independently:
 
 ```bash
-# From an external workstation: Internet -> Data Relay Link server
+# From an external workstation: Internet -> DataRelay Link server
 nc -vz -w 3 <RESERVED-PUBLIC-IP> <PUBLIC-SERVICE-PORT>
 
-# From the Data Relay Link client: client -> local/LAN target
+# From the DataRelay Link client: client -> local/LAN target
 nc -vz -w 3 <TARGET-IP> <TARGET-PORT>
 ```
 

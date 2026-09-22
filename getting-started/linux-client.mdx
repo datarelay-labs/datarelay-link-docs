@@ -12,17 +12,17 @@ Linux/systemd remains the product's server and Linux-client foundation. In stabl
 Before enrollment, confirm:
 
 - `sudo`/root access is available for installation
-- the client can make outbound connections to the Data Relay Link server public endpoints
+- the client can make outbound connections to the DataRelay Link server public endpoints
 - any service you want to publish already exists and is reachable from the client
 - for SSH, the SSH user already exists and `sshd` is running
 
-Data Relay Link does not create operating-system users, passwords, SSH keys, or application services.
+DataRelay Link does not create operating-system users, passwords, SSH keys, or application services.
 
 ## Client lifecycle at a glance
 
 The original field guide used the following lifecycle diagram to show where enrollment, service configuration, normal operation, updates, and removal fit together.
 
-![Data Relay Link client lifecycle](/images/guides/50.png)
+![DataRelay Link client lifecycle](/images/guides/50.png)
 
 The current v2.2.1 rule is the same at a high level: enroll once, keep the persistent CLIENT ID, change services through `drlink`, update without re-enrollment, and use the explicit lifecycle operations when retiring a client or releasing ports.
 
@@ -84,13 +84,13 @@ Run the generated client bootstrap command and enter the short-lived Enrollment 
 ```mermaid
 sequenceDiagram
     participant C as Linux client
-    participant S as Data Relay Link server
+    participant S as DataRelay Link server
 
     C->>S: bootstrap credential over HTTPS
     C->>C: verify server trust / CA path
     C->>S: enrollment
     S-->>C: CLIENT identity + service config
-    C->>S: start outbound Data Relay Link control tunnel
+    C->>S: start outbound DataRelay Link control tunnel
 ```
 
 ## Verify on the client

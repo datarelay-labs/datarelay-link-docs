@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Data Relay Link",
+  "name": "DataRelay Link",
   "description": "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and agentless outbound egress.",
   "colors": {
     "primary": "#16A34A"
@@ -20,7 +20,7 @@
     }
   },
   "search": {
-    "prompt": "Search Data Relay Link docs..."
+    "prompt": "Search DataRelay Link docs..."
   },
   "seo": {
     "indexing": "navigable",

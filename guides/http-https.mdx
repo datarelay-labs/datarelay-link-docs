@@ -1,18 +1,18 @@
 ---
 title: "HTTP & HTTPS"
-description: "Publish HTTP and HTTPS applications through Data Relay Link using TCP forwarding."
+description: "Publish HTTP and HTTPS applications through DataRelay Link using TCP forwarding."
 ---
 
 # HTTP & HTTPS
 
-Data Relay Link publishes HTTP and HTTPS as **TCP services**. It is not an application-layer reverse proxy for the published service.
+DataRelay Link publishes HTTP and HTTPS as **TCP services**. It is not an application-layer reverse proxy for the published service.
 
 ## HTTP path
 
 ```mermaid
 flowchart LR
-    B[Browser] -->|http://server:6001| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
+    B[Browser] -->|http://server:6001| S[DataRelay Link Server]
+    S --> C[DataRelay Link Client]
     C -->|127.0.0.1:80| W[HTTP App]
 ```
 
@@ -23,13 +23,13 @@ Example targets:
 10.10.20.40:80
 ```
 
-## HTTPS path: TLS stays encrypted through Data Relay Link
+## HTTPS path: TLS stays encrypted through DataRelay Link
 
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant S as Data Relay Link Server
-    participant C as Data Relay Link Client
+    participant S as DataRelay Link Server
+    participant C as DataRelay Link Client
     participant W as HTTPS App
 
     B->>S: TLS connection to public service port
@@ -38,7 +38,7 @@ sequenceDiagram
     W-->>B: target application's certificate + TLS response
 ```
 
-Data Relay Link does **not** terminate, replace, or automatically issue the target application's TLS certificate.
+DataRelay Link does **not** terminate, replace, or automatically issue the target application's TLS certificate.
 
 ## DNS hostname and certificate
 
@@ -63,7 +63,7 @@ The certificate presented by the **target application** must be valid for `fw.ex
 ```mermaid
 flowchart LR
     U[Users]
-    S[Data Relay Link Server]
+    S[DataRelay Link Server]
     C[Client A]
     A[web-admin\n127.0.0.1:443]
     B[api\n127.0.0.1:8080]
@@ -85,11 +85,11 @@ Give each service a stable Service ID so later lifecycle and target changes rema
 | Symptom | Likely layer to check |
 | --- | --- |
 | Connection timeout | public firewall/NAT/service port |
-| Data Relay Link path works but target returns connection refused | target listener/bind address |
+| DataRelay Link path works but target returns connection refused | target listener/bind address |
 | IP works, hostname does not | DNS/hairpin NAT |
 | HTTPS certificate warning | target app certificate/SAN |
 | LAN web target fails only | client-to-LAN routing/ACL |
 
 <Tip>
-  First prove the target is reachable from the Data Relay Link client. Then prove the public service port is reachable. Treat DNS and TLS hostname validation as later layers.
+  First prove the target is reachable from the DataRelay Link client. Then prove the public service port is reachable. Treat DNS and TLS hostname validation as later layers.
 </Tip>

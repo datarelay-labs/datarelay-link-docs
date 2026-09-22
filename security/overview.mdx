@@ -5,15 +5,15 @@ description: "Understand enrollment trust, management identity, secret handling,
 
 # Security Overview
 
-Data Relay Link separates **Data Relay Link tunnel authentication** from **management-plane trust**. Keeping those responsibilities separate is important when troubleshooting or reviewing risk.
+DataRelay Link separates **DataRelay Link tunnel authentication** from **management-plane trust**. Keeping those responsibilities separate is important when troubleshooting or reviewing risk.
 
 ## Security model at a glance
 
 ```mermaid
 flowchart TB
-    subgraph TUNNEL[Data Relay Link tunnel plane]
-      FT[Data Relay Link token]
-      FC[Data Relay Link native TLS or WSS]
+    subgraph TUNNEL[DataRelay Link tunnel plane]
+      FT[DataRelay Link token]
+      FC[DataRelay Link native TLS or WSS]
     end
 
     subgraph MGMT[Enrollment / management plane]
@@ -26,7 +26,7 @@ flowchart TB
     FT --> FC
 ```
 
-The Data Relay Link token is **not** an Enrollment Code, Bootstrap Ticket, or management API credential.
+The DataRelay Link token is **not** an Enrollment Code, Bootstrap Ticket, or management API credential.
 
 ## Trust establishment
 
@@ -45,12 +45,12 @@ sequenceDiagram
 
 Enrollment and signed client management use verified HTTPS. There is no supported production plain-HTTP fallback.
 
-## Data Relay Link tunnel plane
+## DataRelay Link tunnel plane
 
-- Direct mode uses Data Relay Link native TLS for control.
-- Enterprise single-443 carries Data Relay Link control over WSS.
-- The Data Relay Link token authenticates the tunnel.
-- Published service traffic is forwarded through Data Relay Link after the proxy is registered.
+- Direct mode uses DataRelay Link native TLS for control.
+- Enterprise single-443 carries DataRelay Link control over WSS.
+- The DataRelay Link token authenticates the tunnel.
+- Published service traffic is forwarded through DataRelay Link after the proxy is registered.
 
 ## Persistent management identity
 
@@ -75,20 +75,20 @@ Do not paste generated bootstrap commands into public issue trackers, public cha
 
 | Secret | Why it matters |
 | --- | --- |
-| Data Relay Link server token | authenticates Data Relay Link tunnel clients |
+| DataRelay Link server token | authenticates DataRelay Link tunnel clients |
 | Enrollment Code | first-time manual enrollment secret |
 | Bootstrap Ticket | first-time Zero-Touch secret |
 | Client management private key | persistent management identity |
 | Management MAC material | management request authentication |
 | CA private key | project management trust root |
 | TLS private key | server-side TLS identity where applicable |
-| Generated Data Relay Link config containing token | can expose tunnel credential |
+| Generated DataRelay Link config containing token | can expose tunnel credential |
 
 ## Security boundaries
 
 ```mermaid
 flowchart LR
-    P[Data Relay Link protects] --> A[Enrollment trust]
+    P[DataRelay Link protects] --> A[Enrollment trust]
     P --> B[Credential separation]
     P --> C[Identity consistency]
     P --> D[Fail-closed management behavior]
@@ -104,7 +104,7 @@ The product does not claim to protect secrets from a fully compromised root acco
 
 ## Published stable access-control boundary
 
-The current published stable release is **v2.2.1**. In that release, Data Relay Link does **not** provide a built-in per-service source-IP allowlist policy or an application-style RBAC layer for published TCP services.
+The current published stable release is **v2.2.1**. In that release, DataRelay Link does **not** provide a built-in per-service source-IP allowlist policy or an application-style RBAC layer for published TCP services.
 
 For v2.2.1, restrict who can reach a published service with the controls that own that boundary, such as the external firewall/security group, target-host ACLs, SSH keys/accounts, database ACLs, or the target application's own authentication and authorization.
 

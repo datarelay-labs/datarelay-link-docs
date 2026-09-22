@@ -5,19 +5,19 @@ description: "SSH, HTTP, HTTPS, Custom TCP와 LAN 서비스를 게시하는 방�
 
 # 서비스 게시
 
-**Service**는 Enrollment된 Client가 Data Relay Link server를 통해 외부에 게시하는 TCP target 하나입니다. 한 Client에 여러 Service를 둘 수 있습니다.
+**Service**는 Enrollment된 Client가 DataRelay Link server를 통해 외부에 게시하는 TCP target 하나입니다. 한 Client에 여러 Service를 둘 수 있습니다.
 
 ## 모든 서비스의 공통 경로
 
 ```mermaid
 flowchart LR
     U[인터넷 사용자]
-    S[Data Relay Link Server\npublic-port]
-    C[Data Relay Link Client]
+    S[DataRelay Link Server\npublic-port]
+    C[DataRelay Link Client]
     T[target-host:target-port]
 
     U -->|public TCP port| S
-    S -->|Data Relay Link tunnel| C
+    S -->|DataRelay Link tunnel| C
     C -->|normal TCP| T
 ```
 
@@ -36,7 +36,7 @@ Target은 Client 자신의 localhost일 수도 있고 Client가 접근 가능한
 
 ```mermaid
 flowchart LR
-    U[관리자] -->|TCP 6000| S[Data Relay Link Server]
+    U[관리자] -->|TCP 6000| S[DataRelay Link Server]
     S --> C[Client A]
     C -->|127.0.0.1:22| SSH[sshd]
 ```
@@ -46,7 +46,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     U[Internet user]
-    S[Data Relay Link Server]
+    S[DataRelay Link Server]
     C[Client A]
     A[SSH\n127.0.0.1:22]
     B[HTTPS\n127.0.0.1:443]
@@ -68,8 +68,8 @@ flowchart LR
 ```mermaid
 flowchart LR
     U[Internet user]
-    S[Data Relay Link Server]
-    C[Data Relay Link Client\ngateway host]
+    S[DataRelay Link Server]
+    C[DataRelay Link Client\ngateway host]
     H1[10.10.20.30:22\nLAN SSH]
     H2[10.10.20.40:80\nLAN HTTP]
     H3[10.10.20.50:443\nLAN HTTPS]
@@ -86,7 +86,7 @@ Client가 해당 LAN target에 normal IP/TCP로 도달할 수 있어야 합니�
 
 한 Client에서 자신의 서비스와 내부 LAN의 다른 서버 서비스를 동시에 게시할 수 있습니다.
 
-| 사용 예 | Data Relay Link Client에서 보이는 Target | 설명 |
+| 사용 예 | DataRelay Link Client에서 보이는 Target | 설명 |
 | --- | --- | --- |
 | Client SSH | `127.0.0.1:22` | Client 자체 관리 |
 | Client HTTPS | `127.0.0.1:443` | Client의 로컬 Web UI |
@@ -96,17 +96,17 @@ Client가 해당 LAN target에 normal IP/TCP로 도달할 수 있어야 합니�
 | 내부 API | `10.10.10.50:8080` | Application별 TCP Client |
 | PostgreSQL | `10.10.10.60:5432` | DB 인증/ACL을 유지한 상태로 사용 |
 
-LAN Target을 등록하기 전에 먼저 **Data Relay Link Client 자체에서** 해당 Target에 도달되는지 확인합니다.
+LAN Target을 등록하기 전에 먼저 **DataRelay Link Client 자체에서** 해당 Target에 도달되는지 확인합니다.
 
 ```bash
 nc -vz -w 3 10.10.10.20 22
 nc -vz -w 3 10.10.10.30 80
 ```
 
-여기서 실패하면 Data Relay Link 문제가 아니라 Client→LAN Target 사이의 routing, target firewall 또는 application 문제입니다. 이 경로를 먼저 해결한 뒤 Service를 게시하세요.
+여기서 실패하면 DataRelay Link 문제가 아니라 Client→LAN Target 사이의 routing, target firewall 또는 application 문제입니다. 이 경로를 먼저 해결한 뒤 Service를 게시하세요.
 
 <Note>
-  모든 LAN 서버에 Data Relay Link Client를 각각 설치할 필요는 없습니다. 하나의 Enrollment된 Client가 자신이 정상적으로 접근 가능한 내부 서버의 작은 gateway 역할을 할 수 있습니다. 다만 제품 목표 규모는 몇 대~몇십 대이므로 불필요하게 내부망 전체를 광범위하게 노출하지 마세요.
+  모든 LAN 서버에 DataRelay Link Client를 각각 설치할 필요는 없습니다. 하나의 Enrollment된 Client가 자신이 정상적으로 접근 가능한 내부 서버의 작은 gateway 역할을 할 수 있습니다. 다만 제품 목표 규모는 몇 대~몇십 대이므로 불필요하게 내부망 전체를 광범위하게 노출하지 마세요.
 </Note>
 
 ## HTTPS는 passthrough
@@ -114,8 +114,8 @@ nc -vz -w 3 10.10.10.30 80
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant S as Data Relay Link Server
-    participant C as Data Relay Link Client
+    participant S as DataRelay Link Server
+    participant C as DataRelay Link Client
     participant W as HTTPS App
 
     B->>S: TLS to public service port
@@ -124,7 +124,7 @@ sequenceDiagram
     W-->>B: target app certificate
 ```
 
-Data Relay Link가 TLS를 종료하거나 인증서를 교체하지 않습니다. 사용자가 `fw.example.com`으로 접속한다면 실제 target application certificate가 해당 hostname에 유효해야 합니다.
+DataRelay Link가 TLS를 종료하거나 인증서를 교체하지 않습니다. 사용자가 `fw.example.com`으로 접속한다면 실제 target application certificate가 해당 hostname에 유효해야 합니다.
 
 ## Public port lifecycle
 

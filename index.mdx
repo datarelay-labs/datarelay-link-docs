@@ -1,23 +1,23 @@
 ---
-title: "Data Relay Link"
+title: "DataRelay Link"
 description: "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and agentless outbound egress."
 ---
 
-# Data Relay Link
+# DataRelay Link
 
 **Relay only the connections you actually need — into private systems for remote access, or out from restricted networks to approved Internet destinations.**
 
-Data Relay Link is a lightweight secure-connectivity gateway for small environments. It combines two complementary connection models:
+DataRelay Link is a lightweight secure-connectivity gateway for small environments. It combines two complementary connection models:
 
 - **Secure Remote Access** — publish selected SSH, HTTP, HTTPS, or custom TCP services from systems behind NAT/firewalls without requiring inbound access on every remote client.
 - **Controlled Egress** — allow systems in isolated or restricted networks to reach only approved external destinations through an agentless HTTP/HTTPS proxy policy.
 
 <Note>
-  **Free Early Access:** Data Relay Link is currently available free of charge under the **Data Relay Link Early Access License 1.0**. It is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed. Early Access has no SLA and support is best effort. Commercial General Availability is planned with a **perpetual-license** model. See [License](/reference/license).
+  **Free Early Access:** DataRelay Link is currently available free of charge under the **DataRelay Link Early Access License 1.0**. It is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed. Early Access has no SLA and support is best effort. Commercial General Availability is planned with a **perpetual-license** model. See [License](/reference/license).
 </Note>
 
 <Note>
-  The target scale is **a few systems to a few dozen clients**. Data Relay Link is intentionally not a large-fleet orchestration, VPN mesh, SWG, or SASE platform.
+  The target scale is **a few systems to a few dozen clients**. DataRelay Link is intentionally not a large-fleet orchestration, VPN mesh, SWG, or SASE platform.
 </Note>
 
 ## Understand it in 30 seconds
@@ -25,7 +25,7 @@ Data Relay Link is a lightweight secure-connectivity gateway for small environme
 ```mermaid
 flowchart LR
     U[Operator / Internet user]
-    S[Data Relay Link Server\npublic entry point]
+    S[DataRelay Link Server\npublic entry point]
     C[Remote Client\nbehind NAT/firewall]
     L[Private services\nSSH / HTTPS / TCP]
     R[Restricted host]
@@ -76,7 +76,7 @@ The core principle is simple:
 ```mermaid
 sequenceDiagram
     participant A as Server admin
-    participant S as Data Relay Link Server
+    participant S as DataRelay Link Server
     participant C as Remote Client
     participant U as Remote user
     participant T as Target service
@@ -92,7 +92,7 @@ sequenceDiagram
     C->>T: Connect to target host:port
 ```
 
-A remote client normally needs **outbound** connectivity to the Data Relay Link Server, not a public IP or inbound NAT rule of its own.
+A remote client normally needs **outbound** connectivity to the DataRelay Link Server, not a public IP or inbound NAT rule of its own.
 
 ## Controlled Egress
 
@@ -134,12 +134,12 @@ See [Supported Platforms](/reference/platforms) for the validation matrix and [R
 ## Boundaries that matter
 
 <AccordionGroup>
-  <Accordion title="Data Relay Link does not configure your cloud firewall, NAT, or DNS provider">
+  <Accordion title="DataRelay Link does not configure your cloud firewall, NAT, or DNS provider">
     AWS Security Groups, OCI Security Lists, external NAT/DNAT, host firewall policy, and DNS records remain infrastructure responsibilities.
   </Accordion>
 
   <Accordion title="Published HTTPS is TCP passthrough">
-    The target application, not Data Relay Link, presents the application TLS certificate.
+    The target application, not DataRelay Link, presents the application TLS certificate.
   </Accordion>
 
   <Accordion title="Controlled Egress is not TLS inspection">
@@ -151,9 +151,9 @@ See [Supported Platforms](/reference/platforms) for the validation matrix and [R
   </Accordion>
 </AccordionGroup>
 
-## Help improve Data Relay Link
+## Help improve DataRelay Link
 
-Found a problem or have an idea that would make Data Relay Link easier or safer to operate?
+Found a problem or have an idea that would make DataRelay Link easier or safer to operate?
 
 <CardGroup cols={2}>
   <Card title="Report a Bug" icon="bug" href="/feedback">

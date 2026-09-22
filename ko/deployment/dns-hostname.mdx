@@ -7,11 +7,11 @@ icon: "globe"
 
 # DNS & Public Hostname
 
-Data Relay Link에서는 **Public IP**와 선택적 **Public Hostname**을 서로 다른 개념으로 봅니다.
+DataRelay Link에서는 **Public IP**와 선택적 **Public Hostname**을 서로 다른 개념으로 봅니다.
 
 ```mermaid
 flowchart TD
-    S[Data Relay Link Server]
+    S[DataRelay Link Server]
     IP[Public IP\nInfrastructure/control fallback]
     DNS[Public Hostname\n사용자용 service alias]
     S --> IP
@@ -53,18 +53,18 @@ sudo drlink set server hostname fw.example.com
 sudo drlink unset server hostname
 ```
 
-Hostname metadata를 바꿔도 CLIENT ID, Service ID, public-port reservation, project CA, Data Relay Link control identity는 바뀌지 않습니다.
+Hostname metadata를 바꿔도 CLIENT ID, Service ID, public-port reservation, project CA, DataRelay Link control identity는 바뀌지 않습니다.
 
 ## DNS record는 직접 관리
 
 ```mermaid
 flowchart LR
     U[User] -->|fw.example.com| D[DNS provider]
-    D -->|A / AAAA| P[Public Data Relay Link entry point]
-    P --> S[Data Relay Link server 또는 firewall/NAT]
+    D -->|A / AAAA| P[Public DataRelay Link entry point]
+    P --> S[DataRelay Link server 또는 firewall/NAT]
 ```
 
-Data Relay Link는 Route53, Cloudflare, DNSZi 같은 DNS provider API를 자동 호출하지 않습니다.
+DataRelay Link는 Route53, Cloudflare, DNSZi 같은 DNS provider API를 자동 호출하지 않습니다.
 
 Server가 NAT 뒤라면 hostname은 보통 private server IP가 아니라 **public firewall/NAT IP**를 가리켜야 합니다.
 
@@ -75,8 +75,8 @@ Published HTTPS는 TCP passthrough입니다.
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant S as Data Relay Link Server
-    participant C as Data Relay Link Client
+    participant S as DataRelay Link Server
+    participant C as DataRelay Link Client
     participant W as Target HTTPS App
 
     B->>S: TLS to fw.example.com:6005
@@ -92,5 +92,5 @@ sequenceDiagram
 내부 LAN 사용자가 public hostname/public IP를 통해 다시 내부 server로 들어가야 한다면 firewall hairpin NAT 지원이 필요할 수 있습니다. 지원하지 않는다면 split DNS를 고려하세요.
 
 <Tip>
-  IP + public port는 되는데 hostname만 실패한다면 Data Relay Link state보다 DNS, certificate, hairpin NAT를 먼저 확인하세요.
+  IP + public port는 되는데 hostname만 실패한다면 DataRelay Link state보다 DNS, certificate, hairpin NAT를 먼저 확인하세요.
 </Tip>

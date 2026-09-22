@@ -5,9 +5,9 @@ description: "Enroll remote clients with Zero-Touch or a manual Enrollment Code.
 
 # Client Enrollment
 
-Enrollment is the secure **first-time pairing** of a client with the Data Relay Link server. It establishes persistent management identity; it is not the same thing as the published SSH/web connection itself.
+Enrollment is the secure **first-time pairing** of a client with the DataRelay Link server. It establishes persistent management identity; it is not the same thing as the published SSH/web connection itself.
 
-![Data Relay Link client lifecycle from the original field guide](/images/guides/50.png)
+![DataRelay Link client lifecycle from the original field guide](/images/guides/50.png)
 
 The lifecycle view helps separate first-time enrollment from normal service changes, updates, and final client/port retirement.
 
@@ -26,7 +26,7 @@ flowchart TD
     Z --> E[Secure enrollment]
     M --> E
     E --> I[Persistent CLIENT ID + management identity]
-    I --> T[Outbound Data Relay Link tunnel]
+    I --> T[Outbound DataRelay Link tunnel]
 ```
 
 ## Zero-Touch
@@ -55,7 +55,7 @@ sudo drlink create enrollment \
 
 The generated bootstrap command contains a short-lived credential. Send it only through an appropriate private channel.
 
-The SSH user must already exist. Data Relay Link does not create users, enable SSH, change passwords, or install SSH keys.
+The SSH user must already exist. DataRelay Link does not create users, enable SSH, change passwords, or install SSH keys.
 
 ## Manual Enrollment Code
 

@@ -10,17 +10,17 @@ Linux/systemd는 Server와 Linux Client의 기반입니다. Stable v2.2.1에서�
 ## 등록 전 확인
 
 - `sudo`/root 권한이 있음
-- 클라이언트에서 Data Relay Link 서버 public endpoint로 outbound 연결 가능
+- 클라이언트에서 DataRelay Link 서버 public endpoint로 outbound 연결 가능
 - 게시할 target 서비스가 실제로 실행 중이거나 클라이언트에서 접근 가능
 - SSH를 게시한다면 SSH 계정과 `sshd`가 이미 준비됨
 
-Data Relay Link는 OS user/password/SSH key/application service를 자동 생성하지 않습니다.
+DataRelay Link는 OS user/password/SSH key/application service를 자동 생성하지 않습니다.
 
 ## Client lifecycle 한눈에 보기
 
 기존 실사용 가이드의 lifecycle 그림은 Enrollment, 서비스 구성, 정상 운영, 업데이트와 제거의 관계를 빠르게 이해하는 데 유용합니다.
 
-![Data Relay Link Client 관리 lifecycle](/images/guides/client-lifecycle.webp)
+![DataRelay Link Client 관리 lifecycle](/images/guides/client-lifecycle.webp)
 
 현재 v2.2.1에서도 큰 원칙은 같습니다. 한 번 등록한 CLIENT ID를 유지하고, 서비스 변경은 `drlink`로 처리하며, 정상 업데이트 때문에 재등록하지 않습니다. 장비를 폐기하거나 public port를 반환할 때만 명시적인 lifecycle 작업을 사용합니다.
 
@@ -80,13 +80,13 @@ sudo drlink create enrollment
 ```mermaid
 sequenceDiagram
     participant C as Linux Client
-    participant S as Data Relay Link Server
+    participant S as DataRelay Link Server
 
     C->>S: Bootstrap credential over HTTPS
     C->>C: Server trust / CA 검증
     C->>S: Enrollment
     S-->>C: CLIENT identity + service config
-    C->>S: Outbound Data Relay Link control tunnel
+    C->>S: Outbound DataRelay Link control tunnel
 ```
 
 ## Client에서 확인

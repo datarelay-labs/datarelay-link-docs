@@ -6,14 +6,14 @@ icon: "globe"
 
 # HTTP & HTTPS
 
-Data Relay Link는 HTTP/HTTPS를 **TCP service**로 게시합니다. Published service용 application reverse proxy가 아닙니다.
+DataRelay Link는 HTTP/HTTPS를 **TCP service**로 게시합니다. Published service용 application reverse proxy가 아닙니다.
 
 ## HTTP
 
 ```mermaid
 flowchart LR
-    B[Browser] -->|http://server:6001| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
+    B[Browser] -->|http://server:6001| S[DataRelay Link Server]
+    S --> C[DataRelay Link Client]
     C -->|127.0.0.1:80| W[HTTP App]
 ```
 
@@ -29,8 +29,8 @@ Target은 Client local 또는 LAN host일 수 있습니다.
 ```mermaid
 sequenceDiagram
     participant B as Browser
-    participant S as Data Relay Link Server
-    participant C as Data Relay Link Client
+    participant S as DataRelay Link Server
+    participant C as DataRelay Link Client
     participant W as HTTPS App
 
     B->>S: TLS to public service port
@@ -39,7 +39,7 @@ sequenceDiagram
     W-->>B: target app certificate + TLS response
 ```
 
-Data Relay Link가 TLS를 종료하거나 certificate를 발급/교체하지 않습니다.
+DataRelay Link가 TLS를 종료하거나 certificate를 발급/교체하지 않습니다.
 
 ## Hostname과 certificate
 
@@ -64,7 +64,7 @@ https://fw.example.com:6005
 ```mermaid
 flowchart LR
     U[Users]
-    S[Data Relay Link Server]
+    S[DataRelay Link Server]
     C[Client A]
     A[web-admin\n127.0.0.1:443]
     B[api\n127.0.0.1:8080]

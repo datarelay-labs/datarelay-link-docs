@@ -1,6 +1,6 @@
 ---
 title: "Zero-Touch Enrollment"
-description: "Generate a one-time client bootstrap command from the Data Relay Link server."
+description: "Generate a one-time client bootstrap command from the DataRelay Link server."
 ---
 
 # Zero-Touch Enrollment
@@ -12,7 +12,7 @@ Zero-Touch is the recommended onboarding flow when the server administrator want
 ```mermaid
 sequenceDiagram
     participant A as Server admin
-    participant S as Data Relay Link server
+    participant S as DataRelay Link server
     participant C as Remote client
 
     A->>S: Create Zero-Touch profile
@@ -20,10 +20,10 @@ sequenceDiagram
     A-->>C: Send command privately
     C->>S: Bootstrap + enroll over verified HTTPS
     S-->>C: Persistent identity + service config
-    C->>S: Start outbound Data Relay Link tunnel
+    C->>S: Start outbound DataRelay Link tunnel
 ```
 
-The remote user does not need to understand Data Relay Link configuration. They run the exact generated command once.
+The remote user does not need to understand DataRelay Link configuration. They run the exact generated command once.
 
 ## Create Zero-Touch
 
@@ -62,7 +62,7 @@ Zero-Touch does **not**:
 - change the client firewall
 - change external NAT rules
 
-It automates Data Relay Link onboarding, not the operating system's application/security configuration.
+It automates DataRelay Link onboarding, not the operating system's application/security configuration.
 
 ## Treat the command as sensitive
 

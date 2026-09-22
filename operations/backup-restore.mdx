@@ -1,11 +1,11 @@
 ---
 title: "Backup & Restore"
-description: "Protect Data Relay Link identity, PKI, registry, and configuration before disaster recovery or major maintenance."
+description: "Protect DataRelay Link identity, PKI, registry, and configuration before disaster recovery or major maintenance."
 ---
 
 # Backup & Restore
 
-The Data Relay Link server contains state that is more important than the software binaries themselves. Backups protect the trust and reservation data needed to keep existing clients working after recovery.
+The DataRelay Link server contains state that is more important than the software binaries themselves. Backups protect the trust and reservation data needed to keep existing clients working after recovery.
 
 ## What you are protecting
 
@@ -14,7 +14,7 @@ flowchart TB
     B[Server backup]
     B --> C[Configuration]
     B --> P[Project PKI / CA]
-    B --> T[Data Relay Link token]
+    B --> T[DataRelay Link token]
     B --> R[Client registry]
     B --> E[Enrollment state where applicable]
 

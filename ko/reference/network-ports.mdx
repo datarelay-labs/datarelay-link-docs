@@ -7,16 +7,16 @@ icon: "ethernet"
 
 # 네트워크 포트
 
-Data Relay Link의 현재 stable core scope는 **TCP**입니다. 기본 published service range는 `6000-6098`입니다.
+DataRelay Link의 현재 stable core scope는 **TCP**입니다. 기본 published service range는 `6000-6098`입니다.
 
 ## 한눈에 보기
 
 ```mermaid
 flowchart LR
-    I[Internet] -->|443| S[Data Relay Link Server]
+    I[Internet] -->|443| S[DataRelay Link Server]
     I -->|6099 Direct only| S
     I -->|6000-6098| S
-    S -->|Data Relay Link tunnel| C[Remote Client]
+    S -->|DataRelay Link tunnel| C[Remote Client]
     C --> T[Target TCP services]
 ```
 
@@ -24,24 +24,24 @@ flowchart LR
 
 | 목적 | 기본 public TCP | 기본 listen TCP |
 | --- | ---: | ---: |
-| Data Relay Link control | 443 | 443 |
+| DataRelay Link control | 443 | 443 |
 | Enrollment / management HTTPS | 6099 | 6099 |
 | Published services | 6000-6098 | 6000-6098 |
 
-`TCP/22`는 Data Relay Link product path가 아니라 서버 자체 관리용 SSH일 뿐입니다.
+`TCP/22`는 DataRelay Link product path가 아니라 서버 자체 관리용 SSH일 뿐입니다.
 
 ## Enterprise single-443
 
 | 목적 | Public TCP | 내부/backend TCP |
 | --- | ---: | ---: |
-| Enrollment HTTPS + Data Relay Link control over WSS | 443 | allocator 6099 + relay backend 7000 loopback |
+| Enrollment HTTPS + DataRelay Link control over WSS | 443 | allocator 6099 + relay backend 7000 loopback |
 | Published services | 6000-6098 | 6000-6098 |
 
 ```mermaid
 flowchart LR
     I[Internet] -->|443 HTTPS/WSS| P[443 Frontend]
     P -->|Enrollment| A[Allocator :6099 loopback]
-    P -->|Data Relay Link control| F[relay backend :7000 loopback]
+    P -->|DataRelay Link control| F[relay backend :7000 loopback]
     I -->|6000-6098| F
 ```
 

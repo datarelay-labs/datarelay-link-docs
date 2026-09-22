@@ -6,7 +6,7 @@ description: "Zero-Touch와 Manual Enrollment Code 중 어떤 등록 방식을 �
 
 # 클라이언트 등록
 
-Enrollment는 Client와 Data Relay Link Server를 **처음 한 번 안전하게 연결하는 과정**입니다. 등록이 완료되면 persistent CLIENT ID와 management identity가 생성되며, 일반적인 reboot·서비스 변경·stable update 때문에 다시 등록할 필요는 없습니다.
+Enrollment는 Client와 DataRelay Link Server를 **처음 한 번 안전하게 연결하는 과정**입니다. 등록이 완료되면 persistent CLIENT ID와 management identity가 생성되며, 일반적인 reboot·서비스 변경·stable update 때문에 다시 등록할 필요는 없습니다.
 
 ## 어떤 방식을 선택하나요?
 
@@ -23,7 +23,7 @@ flowchart TD
     Z --> E[Verified HTTPS Enrollment]
     M --> E
     E --> I[Persistent CLIENT ID + management identity]
-    I --> T[Outbound Data Relay Link tunnel]
+    I --> T[Outbound DataRelay Link tunnel]
 ```
 
 ## Zero-Touch
@@ -85,7 +85,7 @@ sudo drlink doctor
 
 ## 꼭 기억할 것
 
-- Data Relay Link는 OS user, password, SSH key, `sshd`, Windows RDP 설정을 자동 생성하지 않습니다.
+- DataRelay Link는 OS user, password, SSH key, `sshd`, Windows RDP 설정을 자동 생성하지 않습니다.
 - Enrollment credential revoke, Client management revoke, service/client release는 서로 다른 lifecycle 작업입니다.
 - Client uninstall만으로 Server의 public-port reservation이 반환되지는 않습니다.
 

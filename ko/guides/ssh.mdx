@@ -12,8 +12,8 @@ SSH는 가장 자주 사용하는 서비스입니다.
 
 ```mermaid
 flowchart LR
-    U[관리자 PC] -->|ssh -p 6000| S[Data Relay Link Server]
-    S -->|Data Relay Link tunnel| C[Remote Client]
+    U[관리자 PC] -->|ssh -p 6000| S[DataRelay Link Server]
+    S -->|DataRelay Link tunnel| C[Remote Client]
     C -->|127.0.0.1:22| D[sshd]
 ```
 
@@ -43,8 +43,8 @@ ssh -p <public-port> <ssh-user>@fw.example.com
 
 ```mermaid
 flowchart LR
-    U[관리자] -->|public port| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
+    U[관리자] -->|public port| S[DataRelay Link Server]
+    S --> C[DataRelay Link Client]
     C -->|10.10.20.30:22| H[LAN Server]
 ```
 
@@ -56,7 +56,7 @@ Client에서 해당 `10.10.20.30:22`로 직접 연결 가능해야 합니다.
 flowchart TD
     A[SSH 실패] --> B{Target sshd가 listen 중?}
     B -->|아니오| C[Target SSH 수정]
-    B -->|예| D{Data Relay Link Client가 target:22 연결 가능?}
+    B -->|예| D{DataRelay Link Client가 target:22 연결 가능?}
     D -->|아니오| E[LAN routing/firewall/ACL]
     D -->|예| F{Server에 Service + public port 보임?}
     F -->|아니오| G[Service config / apply]

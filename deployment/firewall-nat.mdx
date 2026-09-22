@@ -1,28 +1,28 @@
 ---
 title: "Firewall & NAT"
-description: "Deploy the Data Relay Link server directly on the Internet or behind a firewall with DNAT."
+description: "Deploy the DataRelay Link server directly on the Internet or behind a firewall with DNAT."
 ---
 
 # Firewall & NAT
 
-The remote **client** normally does not need inbound port forwarding. The **Data Relay Link server side** still needs a reachable public entry point for control, enrollment, and published service ports.
+The remote **client** normally does not need inbound port forwarding. The **DataRelay Link server side** still needs a reachable public entry point for control, enrollment, and published service ports.
 
 ![Direct, NAT, and Enterprise single-443 layouts from the original field guide](/images/guides/51.png)
 
-The diagram is useful for separating **where the server lives** from **which Data Relay Link mode it uses**. A private server behind DNAT can still run Direct mode; Enterprise single-443 is a different transport layout for constrained client networks.
+The diagram is useful for separating **where the server lives** from **which DataRelay Link mode it uses**. A private server behind DNAT can still run Direct mode; Enterprise single-443 is a different transport layout for constrained client networks.
 
 ## Topology A — server has a public IP
 
 ```mermaid
 flowchart LR
-    C[Remote client\nbehind NAT] -->|outbound 443 / 6099| S[Data Relay Link server\npublic IP]
+    C[Remote client\nbehind NAT] -->|outbound 443 / 6099| S[DataRelay Link server\npublic IP]
     U[Internet user] -->|assigned 6000-6098 port| S
 ```
 
 Direct defaults:
 
 ```text
-TCP 443       Data Relay Link control
+TCP 443       DataRelay Link control
 TCP 6099      Enrollment / management HTTPS
 TCP 6000-6098 Published services
 ```
@@ -33,7 +33,7 @@ TCP 6000-6098 Published services
 flowchart LR
     C[Remote client] -->|public 8443 / 9443| F[Firewall / NAT\n203.0.113.10]
     U[Internet user] -->|public service port| F
-    F -->|8443 -> 443| S[Data Relay Link server\n192.0.2.50]
+    F -->|8443 -> 443| S[DataRelay Link server\n192.0.2.50]
     F -->|9443 -> 6099| S
     F -->|6000-6098 -> same ports| S
 ```
@@ -50,12 +50,12 @@ The client configuration must use the **public** endpoints (`203.0.113.10:8443`,
 
 ## Enterprise single-443 behind a firewall
 
-In single-443, the public firewall only forwards the frontend control/enrollment endpoint on TCP 443. The internal backends remain loopback-only on the Data Relay Link server:
+In single-443, the public firewall only forwards the frontend control/enrollment endpoint on TCP 443. The internal backends remain loopback-only on the DataRelay Link server:
 
 ```text
-Public firewall TCP 443  -> Data Relay Link server TCP 443 frontend
-Data Relay Link server 127.0.0.1:7000 -> relay backend
-Data Relay Link server 127.0.0.1:6099 -> enrollment/management backend
+Public firewall TCP 443  -> DataRelay Link server TCP 443 frontend
+DataRelay Link server 127.0.0.1:7000 -> relay backend
+DataRelay Link server 127.0.0.1:6099 -> enrollment/management backend
 Published service ports   -> 6000-6098 (normally 1:1)
 ```
 
@@ -70,7 +70,7 @@ The distinction between a **public port** and a **local listen/backend port** ma
 ```mermaid
 flowchart LR
     R[Server registry\nService public port = 6001] --> F[Firewall]
-    F --> S[Private Data Relay Link server\nlisten 6001]
+    F --> S[Private DataRelay Link server\nlisten 6001]
 ```
 
 Keeping public `6001 -> internal 6001` means the product's persistent reservation is also the port users actually connect to.
@@ -79,9 +79,9 @@ If an external firewall arbitrarily remaps every service port, the registry and 
 
 ## Who is responsible for what?
 
-| Component | Data Relay Link configures it? |
+| Component | DataRelay Link configures it? |
 | --- | --- |
-| Data Relay Link server/client config | **Yes** |
+| DataRelay Link server/client config | **Yes** |
 | Service-port reservation | **Yes** |
 | AWS Security Group | No |
 | OCI Security List / NSG | No |
@@ -97,7 +97,7 @@ An internal user may fail to reach `fw.example.com` if that hostname resolves to
 ```mermaid
 flowchart LR
     I[Internal user] -->|fw.example.com -> public IP| F[Firewall]
-    F -. hairpin required .-> S[Internal Data Relay Link server]
+    F -. hairpin required .-> S[Internal DataRelay Link server]
 ```
 
 If hairpin NAT is unavailable, use split DNS or another appropriate internal routing design.

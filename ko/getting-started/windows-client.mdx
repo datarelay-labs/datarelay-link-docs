@@ -6,7 +6,7 @@ description: "v2.2.1 stable 기준으로 Windows amd64 클라이언트를 등록
 
 # Windows 클라이언트
 
-Data Relay Link v2.2.1은 다른 플랫폼과 동일한 server enrollment protocol과 bundled relay engine **0.71.0**을 사용하는 Windows amd64 Client 경로를 포함합니다.
+DataRelay Link v2.2.1은 다른 플랫폼과 동일한 server enrollment protocol과 bundled relay engine **0.71.0**을 사용하는 Windows amd64 Client 경로를 포함합니다.
 
 ## 지원 범위와 검증 수준
 
@@ -78,15 +78,15 @@ doctor
 v2.2.1은 다음 이름의 product-owned Windows Scheduled Task를 사용합니다.
 
 ```text
-Data Relay LinkAutoDeployClient
+DataRelay LinkAutoDeployClient
 ```
 
-이 task는 **SYSTEM** 권한의 boot trigger로 동작하며 interactive login 없이 managed Data Relay Link Client를 시작합니다.
+이 task는 **SYSTEM** 권한의 boot trigger로 동작하며 interactive login 없이 managed DataRelay Link Client를 시작합니다.
 
 확인:
 
 ```powershell
-schtasks.exe /Query /TN Data Relay LinkAutoDeployClient
+schtasks.exe /Query /TN DataRelay LinkAutoDeployClient
 ```
 
 ## RDP와 다른 서비스
@@ -94,7 +94,7 @@ schtasks.exe /Query /TN Data Relay LinkAutoDeployClient
 Windows는 RDP(`3389`)나 다른 TCP 서비스를 게시할 수 있고, Windows Client가 접근 가능한 다른 LAN host의 서비스도 전달할 수 있습니다.
 
 <Warning>
-  Data Relay Link는 Remote Desktop을 활성화하거나 Windows Firewall을 변경하거나 credential을 생성하거나 NLA를 설정하지 않습니다. Public RDP mapping은 외부 firewall/ACL과 강한 Windows authentication으로 별도 보호해야 합니다.
+  DataRelay Link는 Remote Desktop을 활성화하거나 Windows Firewall을 변경하거나 credential을 생성하거나 NLA를 설정하지 않습니다. Public RDP mapping은 외부 firewall/ACL과 강한 Windows authentication으로 별도 보호해야 합니다.
 </Warning>
 
 v2.2.1에서는 built-in per-service source-IP allowlist가 stable 기능이라고 가정하지 마세요. 자세한 내용은 [보안 개요](/ko/security/overview)를 확인하세요.

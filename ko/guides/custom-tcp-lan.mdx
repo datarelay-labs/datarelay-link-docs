@@ -18,8 +18,8 @@ Custom agent  127.0.0.1:9000
 
 ```mermaid
 flowchart LR
-    U[Internet client] -->|assigned public port| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
+    U[Internet client] -->|assigned public port| S[DataRelay Link Server]
+    S --> C[DataRelay Link Client]
     C -->|127.0.0.1:3000| G[Grafana]
 ```
 
@@ -28,8 +28,8 @@ flowchart LR
 ```mermaid
 flowchart LR
     U[Internet users]
-    S[Data Relay Link Server]
-    C[Data Relay Link Client\ngateway host]
+    S[DataRelay Link Server]
+    C[DataRelay Link Client\ngateway host]
     DB[10.10.30.30:5432\nPostgreSQL]
     UI[10.10.40.50:8443\nAppliance UI]
     API[10.10.30.20:8080\nAPI]
@@ -40,7 +40,7 @@ flowchart LR
     C --> API
 ```
 
-Data Relay Link Client가 `target-host:target-port`로 normal TCP 연결을 할 수 있어야 합니다.
+DataRelay Link Client가 `target-host:target-port`로 normal TCP 연결을 할 수 있어야 합니다.
 
 ## 게시 전에 먼저 확인
 
@@ -48,7 +48,7 @@ Data Relay Link Client가 `target-host:target-port`로 normal TCP 연결을 할 
 flowchart TD
     A[LAN target 게시] --> B{Client에서 target을\n직접 연결 가능?}
     B -->|아니오| C[Routing/ACL/target firewall/listener 수정]
-    B -->|예| D[Data Relay Link service 추가]
+    B -->|예| D[DataRelay Link service 추가]
     D --> E[Public port 확인]
     E --> F[외부 네트워크에서 테스트]
 ```
@@ -65,7 +65,7 @@ branch-api
 
 ## 보안
 
-Database나 appliance admin port를 public endpoint로 게시하면 공격 표면이 외부에서 도달 가능해집니다. Data Relay Link는 database account/ACL, app auth, target firewall, network segmentation을 대신 설정하지 않습니다.
+Database나 appliance admin port를 public endpoint로 게시하면 공격 표면이 외부에서 도달 가능해집니다. DataRelay Link는 database account/ACL, app auth, target firewall, network segmentation을 대신 설정하지 않습니다.
 
 <Warning>
   "포트가 연결된다"와 "서비스가 안전하게 공개되었다"는 같은 의미가 아닙니다. Target application의 자체 authentication/authorization을 유지하세요.

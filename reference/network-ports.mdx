@@ -5,17 +5,17 @@ description: "Default public and internal TCP ports used by Direct and Enterpris
 
 # Network Ports
 
-Data Relay Link publishes **TCP** services. Default published service range: **6000-6098**.
+DataRelay Link publishes **TCP** services. Default published service range: **6000-6098**.
 
 ## Port direction at a glance
 
 ```mermaid
 flowchart LR
     C[Remote client]
-    S[Data Relay Link server]
+    S[DataRelay Link server]
     U[Internet user]
 
-    C -->|outbound Data Relay Link control| S
+    C -->|outbound DataRelay Link control| S
     C -->|outbound enrollment / management HTTPS| S
     U -->|inbound published service port| S
 ```
@@ -26,11 +26,11 @@ The remote client normally initiates its connections outbound. The server/public
 
 | Purpose | Who initiates | Default public TCP | Default server listen TCP |
 | --- | --- | --: | --: |
-| Data Relay Link control | Client → Server | 443 | 443 |
+| DataRelay Link control | Client → Server | 443 | 443 |
 | Enrollment / management HTTPS | Client → Server | 6099 | 6099 |
 | Published service | User → Server | 6000-6098 | 6000-6098 |
 
-TCP/22 is optional for your own administrative SSH access to the server and is not part of the Data Relay Link product path.
+TCP/22 is optional for your own administrative SSH access to the server and is not part of the DataRelay Link product path.
 
 ## Enterprise single-443
 
@@ -38,17 +38,17 @@ TCP/22 is optional for your own administrative SSH access to the server and is n
 flowchart LR
     C[Remote client] -->|HTTPS + WSS TCP 443| FE[Public frontend]
     FE -->|enrollment| A[127.0.0.1:6099]
-    FE -->|Data Relay Link control| F[127.0.0.1:7000]
+    FE -->|DataRelay Link control| F[127.0.0.1:7000]
     U[Internet user] -->|6000-6098| P[Published services]
 ```
 
 | Purpose | Public TCP | Internal/backend TCP |
 | --- | ---: | ---: |
-| HTTPS enrollment + Data Relay Link control over WSS | 443 | allocator 6099 + relay backend 7000 on loopback |
+| HTTPS enrollment + DataRelay Link control over WSS | 443 | allocator 6099 + relay backend 7000 on loopback |
 | Published services | 6000-6098 | 6000-6098 |
 
 <Warning>
-  In single-443 mode, allocator backend `6099` and Data Relay Link backend `7000` are not intended to be Internet-exposed.
+  In single-443 mode, allocator backend `6099` and DataRelay Link backend `7000` are not intended to be Internet-exposed.
 </Warning>
 
 ## NAT deployments
@@ -63,7 +63,7 @@ Public 9443  -> Server 6099
 Public 6001  -> Server 6001
 ```
 
-Published service ports should normally stay 1:1 so the persistent Data Relay Link reservation matches the port users actually connect to.
+Published service ports should normally stay 1:1 so the persistent DataRelay Link reservation matches the port users actually connect to.
 
 ## TCP only
 

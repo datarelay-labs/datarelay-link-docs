@@ -47,7 +47,7 @@ sudo drlink doctor
 | Permissions | secret-file modes and ownership |
 | PKI / trust | CA material and consistency |
 | Runtime | systemd service state |
-| Data Relay Link | generated config, transport, local consistency |
+| DataRelay Link | generated config, transport, local consistency |
 | Enrollment | allocator/HTTPS reachability and trust path |
 | State | registry/client-state consistency |
 | Topology | Direct/single-443 and common network mismatch |
@@ -59,7 +59,7 @@ sudo drlink doctor
 ```mermaid
 flowchart TD
     A[Service unreachable] --> B{Client/service state healthy?}
-    B -->|No| C[Product state / Data Relay Link config / identity]
+    B -->|No| C[Product state / DataRelay Link config / identity]
     B -->|Yes| D{Public service port reachable?}
     D -->|No| E[Cloud firewall / NAT / external firewall]
     D -->|Yes| F{Client can reach target?}
@@ -67,7 +67,7 @@ flowchart TD
     F -->|Yes| H[Protocol-specific investigation]
 ```
 
-Data Relay Link does not automatically control external security groups, NAT, DNS, or the target application's own listener/authentication.
+DataRelay Link does not automatically control external security groups, NAT, DNS, or the target application's own listener/authentication.
 
 ## Useful target checks
 
@@ -77,7 +77,7 @@ For a local SSH target:
 ss -lntp | grep ':22'
 ```
 
-For a LAN target, prove the client itself can reach `target-host:target-port` before debugging the Data Relay Link public path.
+For a LAN target, prove the client itself can reach `target-host:target-port` before debugging the DataRelay Link public path.
 
 ## Avoid destructive diagnosis
 

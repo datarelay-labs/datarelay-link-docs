@@ -12,7 +12,7 @@ This is the shortest stable **v2.2.1** path from an empty server to a working re
 ```mermaid
 flowchart LR
     U[Your laptop]
-    S[Data Relay Link server]
+    S[DataRelay Link server]
     C[Remote Linux client\nbehind NAT/firewall]
     SSH[sshd\n127.0.0.1:22]
 
@@ -42,12 +42,12 @@ For a first deployment, **Ubuntu 24.04 x86_64** is the clearest real-validated b
 
 | Direction | Purpose | Default TCP |
 | --- | --- | --: |
-| Client → Server | Data Relay Link control | 443 |
+| Client → Server | DataRelay Link control | 443 |
 | Client → Server | Enrollment / management HTTPS | 6099 |
 | User → Server | Published services | 6000-6098 as assigned |
 
 <Warning>
-  Data Relay Link does not automatically change cloud security groups, external firewalls, NAT rules, UFW, firewalld, or iptables.
+  DataRelay Link does not automatically change cloud security groups, external firewalls, NAT rules, UFW, firewalld, or iptables.
 </Warning>
 
 ## 1. Install the server
@@ -106,7 +106,7 @@ sudo drlink create enrollment \
 
 Replace `<ssh-user>` with an SSH user that **already exists on the remote client**.
 
-Data Relay Link does not create OS users, install/configure `sshd`, change passwords, or manage SSH keys.
+DataRelay Link does not create OS users, install/configure `sshd`, change passwords, or manage SSH keys.
 
 ## 4. Run the generated command on the client
 
@@ -115,7 +115,7 @@ Send the **exact generated command** to the remote operator through an appropria
 ```mermaid
 sequenceDiagram
     participant A as Server admin
-    participant S as Data Relay Link server
+    participant S as DataRelay Link server
     participant C as Remote client
 
     A->>S: create zero-touch / enrollment
@@ -123,7 +123,7 @@ sequenceDiagram
     A-->>C: send privately
     C->>S: HTTPS bootstrap + enrollment
     S-->>C: persistent identity + service config
-    C->>S: outbound Data Relay Link control tunnel
+    C->>S: outbound DataRelay Link control tunnel
 ```
 
 Treat the generated bootstrap command as sensitive until it is used, expires, or is revoked.
@@ -156,7 +156,7 @@ The client receives a persistent CLIENT ID and the SSH service receives a persis
 ## 7. Connect over SSH
 
 ```bash
-ssh -p <public-port> <ssh-user>@<Data Relay Link-server-public-IP>
+ssh -p <public-port> <ssh-user>@<DataRelay Link-server-public-IP>
 ```
 
 With an optional public service hostname:
@@ -172,7 +172,7 @@ You are finished when all of these are true:
 - the client appears in `show clients`
 - the client has a CLIENT ID
 - the SSH service has an assigned public port
-- the client reports healthy Data Relay Link state
+- the client reports healthy DataRelay Link state
 - the public service port is allowed through the server-side firewall/NAT
 - SSH reaches the intended target
 

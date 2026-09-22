@@ -1,11 +1,11 @@
 ---
 title: "Updates"
-description: "Update Data Relay Link safely while preserving identity, trust, and persistent public ports."
+description: "Update DataRelay Link safely while preserving identity, trust, and persistent public ports."
 ---
 
 # Updates
 
-Data Relay Link separates **project updates** from **upstream Data Relay Link binary updates**.
+DataRelay Link separates **project updates** from **upstream DataRelay Link binary updates**.
 
 ## Update decision flow
 
@@ -16,9 +16,9 @@ flowchart TD
     C -->|Yes| D[Create backup when change risk warrants it]
     D --> E[update project]
     E --> F[show status + doctor + test service]
-    C -->|No| G{Checking upstream Data Relay Link?}
+    C -->|No| G{Checking upstream DataRelay Link?}
     G -->|Yes| H[show upstream / update relay-engine --check]
-    H --> I[Only pinned/tested Data Relay Link is accepted]
+    H --> I[Only pinned/tested DataRelay Link is accepted]
 ```
 
 ## Project update
@@ -39,7 +39,7 @@ A normal supported project update is designed to preserve:
 
 - CLIENT ID and client management identity
 - project private CA
-- Data Relay Link token
+- DataRelay Link token
 - registry state
 - enrollment state where applicable
 - service definitions
@@ -62,19 +62,19 @@ A normal update is **not** a re-enrollment operation.
 
 Do not copy a development-only command into stable field documentation unless the operator explicitly opted into development behavior.
 
-## Data Relay Link binary update
+## DataRelay Link binary update
 
 ```bash
 sudo drlink show upstream
 sudo drlink update relay-engine --check
 ```
 
-`show upstream` is informational. Data Relay Link does **not** automatically install the newest upstream Data Relay Link release. The current stable release remains pinned to the qualified version, **v0.71.0**.
+`show upstream` is informational. DataRelay Link does **not** automatically install the newest upstream DataRelay Link release. The current stable release remains pinned to the qualified version, **v0.71.0**.
 
 ```mermaid
 flowchart LR
-    U[Newest upstream Data Relay Link] -. informational .-> C[show upstream]
-    P[Pinned/tested Data Relay Link 0.71.0] --> A[Allowed normal update path]
+    U[Newest upstream DataRelay Link] -. informational .-> C[show upstream]
+    P[Pinned/tested DataRelay Link 0.71.0] --> A[Allowed normal update path]
 ```
 
 ## Same-version refreshes

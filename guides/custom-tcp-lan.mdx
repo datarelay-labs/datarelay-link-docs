@@ -1,11 +1,11 @@
 ---
 title: "Custom TCP & LAN Targets"
-description: "Publish arbitrary TCP services and services hosted on other LAN systems reachable from the Data Relay Link client."
+description: "Publish arbitrary TCP services and services hosted on other LAN systems reachable from the DataRelay Link client."
 ---
 
 # Custom TCP & LAN Targets
 
-Data Relay Link is not limited to SSH/web. The stable core can publish arbitrary **TCP** targets reachable from an enrolled client.
+DataRelay Link is not limited to SSH/web. The stable core can publish arbitrary **TCP** targets reachable from an enrolled client.
 
 ## Local custom TCP examples
 
@@ -17,20 +17,20 @@ Custom agent  127.0.0.1:9000
 
 ```mermaid
 flowchart LR
-    U[Internet client] -->|assigned public port| S[Data Relay Link Server]
-    S --> C[Data Relay Link Client]
+    U[Internet client] -->|assigned public port| S[DataRelay Link Server]
+    S --> C[DataRelay Link Client]
     C -->|127.0.0.1:3000| G[Grafana]
 ```
 
 ## LAN gateway pattern
 
-The target does not have to run on the Data Relay Link client itself.
+The target does not have to run on the DataRelay Link client itself.
 
 ```mermaid
 flowchart LR
     U[Internet users]
-    S[Data Relay Link Server]
-    C[Data Relay Link Client\ngateway host]
+    S[DataRelay Link Server]
+    C[DataRelay Link Client\ngateway host]
     DB[10.10.30.30:5432\nPostgreSQL]
     UI[10.10.40.50:8443\nAppliance UI]
     API[10.10.30.20:8080\nAPI]
@@ -41,15 +41,15 @@ flowchart LR
     C --> API
 ```
 
-The only Data Relay Link-specific requirement for the target path is that the Data Relay Link client can make a normal TCP connection to the configured `target-host:target-port`.
+The only DataRelay Link-specific requirement for the target path is that the DataRelay Link client can make a normal TCP connection to the configured `target-host:target-port`.
 
 ## Before publishing a LAN target
 
 ```mermaid
 flowchart TD
-    A[Want to publish LAN target] --> B{Can the Data Relay Link client reach\ntarget-host:target-port directly?}
+    A[Want to publish LAN target] --> B{Can the DataRelay Link client reach\ntarget-host:target-port directly?}
     B -->|No| C[Fix routing / ACL / target firewall / listener]
-    B -->|Yes| D[Add Data Relay Link service]
+    B -->|Yes| D[Add DataRelay Link service]
     D --> E[Verify assigned public port]
     E --> F[Test from external network]
 ```
@@ -68,7 +68,7 @@ Changing the display name or target later should not require changing the Servic
 
 ## Security responsibility
 
-Publishing a database, appliance, or API makes that TCP endpoint reachable through the public Data Relay Link entry point. Data Relay Link does not automatically configure:
+Publishing a database, appliance, or API makes that TCP endpoint reachable through the public DataRelay Link entry point. DataRelay Link does not automatically configure:
 
 - database users or ACLs
 - application authentication

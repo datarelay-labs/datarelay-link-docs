@@ -1,11 +1,11 @@
 ---
 title: "서버 설치"
-description: "Data Relay Link 서버를 설치하기 전에 필요한 네트워크와 설치 절차"
+description: "DataRelay Link 서버를 설치하기 전에 필요한 네트워크와 설치 절차"
 ---
 
 # 서버 설치
 
-Data Relay Link 서버는 인터넷의 공인 진입점입니다. bundled relay runtime와 enrollment/registry/lifecycle/`drlink` 관리 계층이 함께 동작합니다.
+DataRelay Link 서버는 인터넷의 공인 진입점입니다. bundled relay runtime와 enrollment/registry/lifecycle/`drlink` 관리 계층이 함께 동작합니다.
 
 ## 처음이라면 권장 환경
 
@@ -21,7 +21,7 @@ Data Relay Link 서버는 인터넷의 공인 진입점입니다. bundled relay 
 
 기존 실사용 가이드의 구성도를 먼저 보면 Direct, NAT 뒤 Direct, Enterprise single-443의 차이를 훨씬 쉽게 이해할 수 있습니다.
 
-![Data Relay Link 배포 방식: Direct, NAT, Enterprise single-443](/images/guides/deployment-modes.webp)
+![DataRelay Link 배포 방식: Direct, NAT, Enterprise single-443](/images/guides/deployment-modes.webp)
 
 <Note>
   그림은 **Direct**, **NAT 뒤 Direct**, **Enterprise single-443**의 네트워크 배치를 비교합니다. NAT 자체가 세 번째 제품 모드는 아니며 실제 제품 모드는 Direct와 Enterprise single-443 두 가지입니다.
@@ -47,13 +47,13 @@ flowchart TD
 ```mermaid
 flowchart LR
     I[Internet]
-    S[Data Relay Link Server]
-    I -->|TCP 443\nData Relay Link control| S
+    S[DataRelay Link Server]
+    I -->|TCP 443\nDataRelay Link control| S
     I -->|TCP 6099\nEnrollment / management HTTPS| S
     I -->|TCP 6000-6098\nPublished services| S
 ```
 
-TCP/22는 서버 자체 관리 SSH용 선택 포트이며 Data Relay Link의 tunnel 경로는 아닙니다.
+TCP/22는 서버 자체 관리 SSH용 선택 포트이며 DataRelay Link의 tunnel 경로는 아닙니다.
 
 ## 서버가 NAT 뒤인 경우
 
@@ -61,7 +61,7 @@ TCP/22는 서버 자체 관리 SSH용 선택 포트이며 Data Relay Link의 tun
 flowchart LR
     I[Internet\n203.0.113.10]
     F[Firewall / NAT]
-    S[Data Relay Link Server\n192.0.2.50]
+    S[DataRelay Link Server\n192.0.2.50]
 
     I -->|8443| F -->|443| S
     I -->|9443| F -->|6099| S

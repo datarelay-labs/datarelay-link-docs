@@ -7,7 +7,7 @@ icon: "database"
 
 # 백업 & 복구
 
-Data Relay Link 서버는 단순 설정 파일만이 아니라 **신뢰와 식별 상태**를 보관합니다. 따라서 서버 장애 대비에서 백업은 매우 중요합니다.
+DataRelay Link 서버는 단순 설정 파일만이 아니라 **신뢰와 식별 상태**를 보관합니다. 따라서 서버 장애 대비에서 백업은 매우 중요합니다.
 
 ## 무엇을 보호하나요?
 
@@ -15,7 +15,7 @@ Data Relay Link 서버는 단순 설정 파일만이 아니라 **신뢰와 식�
 flowchart TB
     B[Backup] --> C[config.json]
     B --> P[Private CA / PKI]
-    B --> T[Data Relay Link server token]
+    B --> T[DataRelay Link server token]
     B --> R[registry.json]
     R --> I[CLIENT ID]
     R --> S[Service records]

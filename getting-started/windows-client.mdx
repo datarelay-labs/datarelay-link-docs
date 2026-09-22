@@ -6,7 +6,7 @@ description: "Enroll and operate a Windows amd64 client with the v2.2.1 stable w
 
 # Windows Client
 
-Data Relay Link v2.2.1 includes a native Windows amd64 client path using the same server enrollment protocol and bundled/tested relay engine **0.71.0**.
+DataRelay Link v2.2.1 includes a native Windows amd64 client path using the same server enrollment protocol and bundled/tested relay engine **0.71.0**.
 
 ## Support and validation
 
@@ -78,15 +78,15 @@ doctor
 v2.2.1 installs a product-owned Windows Scheduled Task named:
 
 ```text
-Data Relay LinkAutoDeployClient
+DataRelay LinkAutoDeployClient
 ```
 
-It runs as **SYSTEM** on a boot trigger and starts the managed Data Relay Link client without requiring an interactive login.
+It runs as **SYSTEM** on a boot trigger and starts the managed DataRelay Link client without requiring an interactive login.
 
 You can inspect it with:
 
 ```powershell
-schtasks.exe /Query /TN Data Relay LinkAutoDeployClient
+schtasks.exe /Query /TN DataRelay LinkAutoDeployClient
 ```
 
 ## RDP and other services
@@ -94,7 +94,7 @@ schtasks.exe /Query /TN Data Relay LinkAutoDeployClient
 Windows can publish RDP (`3389`) or other reachable TCP services, including services on another LAN host.
 
 <Warning>
-  Data Relay Link does not enable Remote Desktop, change Windows Firewall, create credentials, or configure NLA. A publicly mapped RDP service should be protected with appropriate external firewall/ACL policy and strong Windows authentication.
+  DataRelay Link does not enable Remote Desktop, change Windows Firewall, create credentials, or configure NLA. A publicly mapped RDP service should be protected with appropriate external firewall/ACL policy and strong Windows authentication.
 </Warning>
 
 For v2.2.1, do not assume built-in per-service source-IP allowlists; see [Security Overview](/security/overview).

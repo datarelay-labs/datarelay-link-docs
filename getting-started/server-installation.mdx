@@ -1,11 +1,11 @@
 ---
 title: "Server Installation"
-description: "Install and verify the Data Relay Link server using the current stable release."
+description: "Install and verify the DataRelay Link server using the current stable release."
 ---
 
 # Server Installation
 
-The Data Relay Link server is the public entry point. It runs the bundled relay-server runtime plus enrollment, registry, lifecycle, and `drlink` management components.
+The DataRelay Link server is the public entry point. It runs the bundled relay-server runtime plus enrollment, registry, lifecycle, and `drlink` management components.
 
 ## Recommended first environment
 
@@ -21,7 +21,7 @@ Other Linux families have different validation levels; see [Supported Platforms]
 
 The original field guide summarized the three common network layouts in one diagram. Use it as a visual map before choosing the actual product mode.
 
-![Data Relay Link deployment layouts: Direct, NAT, and Enterprise single-443](/images/guides/51.png)
+![DataRelay Link deployment layouts: Direct, NAT, and Enterprise single-443](/images/guides/51.png)
 
 <Note>
   The diagram shows **Direct**, **Direct behind NAT**, and **Enterprise single-443** as network layouts. NAT itself is not a third product mode; the product modes are Direct and Enterprise single-443.
@@ -39,7 +39,7 @@ flowchart TD
 ```
 
 <Note>
-  NAT is a network topology, not a third Data Relay Link mode. The two product modes are **Direct** and **Enterprise single-443**.
+  NAT is a network topology, not a third DataRelay Link mode. The two product modes are **Direct** and **Enterprise single-443**.
 </Note>
 
 ## Direct mode defaults
@@ -47,13 +47,13 @@ flowchart TD
 ```mermaid
 flowchart LR
     I[Internet]
-    S[Data Relay Link server]
-    I -->|TCP 443\nData Relay Link control| S
+    S[DataRelay Link server]
+    I -->|TCP 443\nDataRelay Link control| S
     I -->|TCP 6099\nEnrollment / management HTTPS| S
     I -->|TCP 6000-6098\nPublished services| S
 ```
 
-TCP/22 is optional for your own administrative SSH access to the server; it is not part of the Data Relay Link tunnel path.
+TCP/22 is optional for your own administrative SSH access to the server; it is not part of the DataRelay Link tunnel path.
 
 ## If the server is behind NAT
 
@@ -63,7 +63,7 @@ Example:
 flowchart LR
     I[Internet\n203.0.113.10]
     F[Firewall / NAT]
-    S[Data Relay Link server\n192.0.2.50]
+    S[DataRelay Link server\n192.0.2.50]
 
     I -->|8443| F -->|443| S
     I -->|9443| F -->|6099| S

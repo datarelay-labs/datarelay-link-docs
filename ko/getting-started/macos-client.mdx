@@ -22,12 +22,12 @@ xcode-select --install
 ```
 
 <Note>
-  Data Relay Link는 **Remote Login을 켜거나**, macOS 사용자 계정을 만들거나, firewall을 변경하거나, Homebrew package를 설치하지 않습니다. SSH를 게시하려면 SSH 서비스와 계정이 먼저 로컬에서 정상 동작해야 합니다.
+  DataRelay Link는 **Remote Login을 켜거나**, macOS 사용자 계정을 만들거나, firewall을 변경하거나, Homebrew package를 설치하지 않습니다. SSH를 게시하려면 SSH 서비스와 계정이 먼저 로컬에서 정상 동작해야 합니다.
 </Note>
 
 ## Mac 등록
 
-Data Relay Link Server에서 Zero-Touch enrollment를 생성합니다.
+DataRelay Link Server에서 Zero-Touch enrollment를 생성합니다.
 
 ```bash
 sudo drlink
@@ -39,7 +39,7 @@ sudo drlink
 create zero-touch
 ```
 
-Server가 출력한 명령을 Mac으로 안전하게 전달하고 **stable server가 출력한 명령 그대로** 실행하세요. Shared bootstrap이 Darwin/Apple Silicon을 감지하고, pinned macOS Data Relay Link Client runtime를 다운로드해 SHA-256을 검증한 뒤 verified HTTPS enrollment와 launchd runtime 설치를 진행합니다.
+Server가 출력한 명령을 Mac으로 안전하게 전달하고 **stable server가 출력한 명령 그대로** 실행하세요. Shared bootstrap이 Darwin/Apple Silicon을 감지하고, pinned macOS DataRelay Link Client runtime를 다운로드해 SHA-256을 검증한 뒤 verified HTTPS enrollment와 launchd runtime 설치를 진행합니다.
 
 SSH용 profile이라면 관리자가 지정한 SSH 계정이 Mac에 이미 존재해야 하고, SSH 접속이 필요하면 Remote Login도 미리 활성화돼 있어야 합니다.
 
@@ -71,7 +71,7 @@ LaunchDaemon:
 
 ## 재부팅 동작
 
-Stable macOS Client는 system LaunchDaemon을 사용하므로 interactive login 없이도 재부팅 후 Data Relay Link Client가 다시 올라오도록 설계되어 있습니다. v2.2.1 qualification에는 macOS lifecycle과 reboot/autostart 검증이 포함됩니다.
+Stable macOS Client는 system LaunchDaemon을 사용하므로 interactive login 없이도 재부팅 후 DataRelay Link Client가 다시 올라오도록 설계되어 있습니다. v2.2.1 qualification에는 macOS lifecycle과 reboot/autostart 검증이 포함됩니다.
 
 ## 서비스 게시
 

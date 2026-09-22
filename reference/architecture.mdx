@@ -15,22 +15,22 @@ This page is the deeper technical view. For the beginner model, start with [Conc
 flowchart LR
     U[Operator / Internet user]
     F[Public firewall / NAT\noptional]
-    S[Data Relay Link server]
-    C1[Client A\nData Relay Link client runtime + management identity]
-    C2[Client B\nData Relay Link client runtime + management identity]
+    S[DataRelay Link server]
+    C1[Client A\nDataRelay Link client runtime + management identity]
+    C2[Client B\nDataRelay Link client runtime + management identity]
     L1[Local services\n127.0.0.1:*]
     L2[Reachable LAN services\n10.x / 172.16-31.x / 192.168.x]
 
     U -->|published TCP port| F
     F --> S
-    C1 -->|outbound Data Relay Link control| S
-    C2 -->|outbound Data Relay Link control| S
+    C1 -->|outbound DataRelay Link control| S
+    C2 -->|outbound DataRelay Link control| S
     C1 --> L1
     C1 --> L2
     C2 --> L1
 ```
 
-The product intentionally uses a **bundled relay engine behind the Data Relay Link product layer** rather than exposing low-level transport configuration as the operator experience.
+The product intentionally uses a **bundled relay engine behind the DataRelay Link product layer** rather than exposing low-level transport configuration as the operator experience.
 
 ## Control plane vs data plane
 
@@ -47,9 +47,9 @@ These planes use different credentials and should not be treated as interchangea
 ```mermaid
 flowchart TB
     I[Internet]
-    S[Data Relay Link server]
+    S[DataRelay Link server]
     A[Enrollment / management HTTPS\nTCP 6099]
-    C[Data Relay Link control\nTCP 443]
+    C[DataRelay Link control\nTCP 443]
     P[Published services\nTCP 6000-6098]
 
     I --> A
@@ -74,7 +74,7 @@ flowchart TB
 
     I --> FE
     FE -->|HTTPS enrollment paths| A
-    FE -->|Data Relay Link control over WSS| F
+    FE -->|DataRelay Link control over WSS| F
     I --> P
 ```
 
@@ -142,4 +142,4 @@ The management layer should fail rather than guess when it encounters conditions
 
 ## Scale boundary
 
-Data Relay Link is optimized for a few systems to a few dozen clients. It does not aim to become a large-fleet orchestrator, CMDB, endpoint compliance platform, or high-availability management cluster.
+DataRelay Link is optimized for a few systems to a few dozen clients. It does not aim to become a large-fleet orchestrator, CMDB, endpoint compliance platform, or high-availability management cluster.

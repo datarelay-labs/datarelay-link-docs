@@ -5,13 +5,13 @@ description: "등록 신뢰, CLIENT ID, credential과 관리 경계를 이해합
 
 # 보안 개요
 
-Data Relay Link는 **Data Relay Link tunnel authentication**과 **management-plane trust**를 분리합니다. 문제 해결이나 보안 검토에서 두 자격 증명을 혼동하지 않는 것이 중요합니다.
+DataRelay Link는 **DataRelay Link tunnel authentication**과 **management-plane trust**를 분리합니다. 문제 해결이나 보안 검토에서 두 자격 증명을 혼동하지 않는 것이 중요합니다.
 
 ## 한눈에 보는 보안 모델
 
 ```mermaid
 flowchart TB
-    subgraph TUNNEL[Data Relay Link tunnel plane]
+    subgraph TUNNEL[DataRelay Link tunnel plane]
       FT[Relay transport token]
       FC[bundled relay transport의 TLS 또는 WSS]
     end
@@ -45,12 +45,12 @@ sequenceDiagram
 
 Enrollment와 signed client management는 verified HTTPS를 사용하며 production plain-HTTP fallback은 지원하지 않습니다.
 
-## Data Relay Link tunnel plane
+## DataRelay Link tunnel plane
 
-- Direct: Data Relay Link native TLS control
-- Enterprise single-443: Data Relay Link control over WSS
+- Direct: DataRelay Link native TLS control
+- Enterprise single-443: DataRelay Link control over WSS
 - Relay transport token: tunnel authentication
-- Published service traffic: proxy 등록 후 Data Relay Link를 통해 전달
+- Published service traffic: proxy 등록 후 DataRelay Link를 통해 전달
 
 ## Persistent management identity
 
@@ -75,14 +75,14 @@ Generated bootstrap command를 public issue, public chat, analytics, long-lived 
 
 | Secret | 역할 |
 | --- | --- |
-| Data Relay Link server token | Data Relay Link tunnel client 인증 |
+| DataRelay Link server token | DataRelay Link tunnel client 인증 |
 | Enrollment Code | Manual first enrollment |
 | Bootstrap Ticket | Zero-Touch first enrollment |
 | Client management private key | Persistent management identity |
 | Management MAC material | Management request authentication |
 | CA private key | Project management trust root |
 | TLS private key | 해당 TLS endpoint identity |
-| Token 포함 generated Data Relay Link config | Tunnel credential 노출 가능 |
+| Token 포함 generated DataRelay Link config | Tunnel credential 노출 가능 |
 
 ## 보안 경계
 

@@ -1,13 +1,13 @@
 ---
 title: "개념과 동작 원리"
-description: "Data Relay Link의 서버, 클라이언트, 서비스, CLIENT ID, 공개 포트와 연결 흐름을 처음부터 쉽게 이해합니다."
+description: "DataRelay Link의 서버, 클라이언트, 서비스, CLIENT ID, 공개 포트와 연결 흐름을 처음부터 쉽게 이해합니다."
 sidebarTitle: "개념과 동작 원리"
 icon: "diagram-project"
 ---
 
 # 개념과 동작 원리
 
-Data Relay Link, NAT, reverse tunnel을 잘 몰라도 이 페이지부터 보면 됩니다.
+DataRelay Link, NAT, reverse tunnel을 잘 몰라도 이 페이지부터 보면 됩니다.
 
 ## 한 문장으로 이해하기
 
@@ -23,8 +23,8 @@ flowchart LR
       N --> H1[내부 서버]
     end
 
-    subgraph AFTER[Data Relay Link]
-      C[NAT 뒤 클라이언트] -->|아웃바운드 터널| S[Data Relay Link 서버]
+    subgraph AFTER[DataRelay Link]
+      C[NAT 뒤 클라이언트] -->|아웃바운드 터널| S[DataRelay Link 서버]
       O2[지원 엔지니어] -->|공개 서비스 포트| S
       S -->|터널| C
     end
@@ -37,7 +37,7 @@ flowchart LR
 | 용어 | 쉬운 설명 | 예 |
 | --- | --- | --- |
 | **Server** | 인터넷의 공인 진입점 | `203.0.113.10` |
-| **Client** | 보통 NAT/방화벽 뒤에서 Data Relay Link Client runtime이 실행되는 원격 장비 | 지점 Linux 서버 |
+| **Client** | 보통 NAT/방화벽 뒤에서 DataRelay Link Client runtime이 실행되는 원격 장비 | 지점 Linux 서버 |
 | **CLIENT ID** | 관리 시 사용하는 변경되지 않는 장비 식별자 | `8f31a2c4` |
 | **Service** | 클라이언트가 외부에 게시하는 TCP 서비스 하나 | `ssh -> 127.0.0.1:22` |
 | **Public port** | 인터넷 사용자가 접속하는 서버 측 영구 포트 예약 | `6003` |
@@ -49,7 +49,7 @@ label, hostname, note, tag는 사람이 보기 좋은 **metadata**이고 CLIENT 
 ```mermaid
 flowchart LR
     I[인터넷 사용자]
-    S[Data Relay Link 서버]
+    S[DataRelay Link 서버]
     C[Client A]
     SSH[127.0.0.1:22\nSSH]
     WEB[127.0.0.1:443\nHTTPS]
@@ -69,19 +69,19 @@ flowchart LR
 ```mermaid
 flowchart TB
     C[원격 클라이언트]
-    S[Data Relay Link 서버]
+    S[DataRelay Link 서버]
     U[관리자 / 인터넷 사용자]
     T[Target 서비스]
 
     C -->|1. Enrollment / management HTTPS| S
-    C -->|2. Outbound Data Relay Link control| S
+    C -->|2. Outbound DataRelay Link control| S
     U -->|3. Published service port| S
     S -->|서비스 트래픽| C
     C --> T
 ```
 
 1. **Enrollment / management**는 신뢰와 관리 identity를 만듭니다.
-2. **Data Relay Link control**은 reverse tunnel을 유지합니다.
+2. **DataRelay Link control**은 reverse tunnel을 유지합니다.
 3. **Published service**는 실제 SSH/HTTP/HTTPS/TCP 사용자 트래픽입니다.
 
 ## Zero-Touch는 무엇을 하나요?
@@ -91,7 +91,7 @@ Zero-Touch는 새 장비를 서버와 안전하게 페어링하는 과정이라�
 ```mermaid
 sequenceDiagram
     participant A as 서버 관리자
-    participant S as Data Relay Link 서버
+    participant S as DataRelay Link 서버
     participant C as 원격 클라이언트
 
     A->>S: Zero-Touch 등록 생성
@@ -99,7 +99,7 @@ sequenceDiagram
     A-->>C: 비공개 채널로 전달
     C->>S: HTTPS bootstrap / enrollment
     S-->>C: 신뢰 + persistent identity + 서비스 설정
-    C->>S: Outbound Data Relay Link control 시작
+    C->>S: Outbound DataRelay Link control 시작
 ```
 
 정상 등록 후에는 일반적인 재부팅이나 지원되는 업데이트 때문에 다시 등록할 필요가 없습니다.

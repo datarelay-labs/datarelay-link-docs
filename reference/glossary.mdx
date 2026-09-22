@@ -1,6 +1,6 @@
 ---
 title: "Glossary"
-description: "Plain-language definitions of Data Relay Link terms for beginners and operators."
+description: "Plain-language definitions of DataRelay Link terms for beginners and operators."
 sidebarTitle: "Glossary"
 icon: "book-open"
 ---
@@ -11,9 +11,9 @@ Use this page when a guide uses a term you do not recognize.
 
 | Term | Meaning |
 | --- | --- |
-| **Data Relay Link** | Lightweight secure-connectivity product for selected remote access and controlled outbound connectivity. |
-| **Data Relay Link Server** | Linux public entry point running the relay runtime plus enrollment, management, policy, audit, and lifecycle components. |
-| **Client** | Remote machine running the Data Relay Link client runtime and persistent management identity. |
+| **DataRelay Link** | Lightweight secure-connectivity product for selected remote access and controlled outbound connectivity. |
+| **DataRelay Link Server** | Linux public entry point running the relay runtime plus enrollment, management, policy, audit, and lifecycle components. |
+| **Client** | Remote machine running the DataRelay Link client runtime and persistent management identity. |
 | **Relay engine** | Bundled low-level transport runtime used to carry remote-access relay sessions. |
 | **Relay token** | Credential used to authenticate relay transport; separate from enrollment and management credentials. |
 | **CLIENT ID** | Immutable machine identity used by the server for canonical administration. |
@@ -23,13 +23,13 @@ Use this page when a guide uses a term you do not recognize.
 | **Service** | One published TCP target, such as SSH or a web application. |
 | **Service ID** | Stable identifier for a service on a client, such as `ssh` or `web-admin`. |
 | **Target host / port** | Where the client forwards a published connection, for example `127.0.0.1:22` or `10.10.20.30:443`. |
-| **Public service port** | Internet-facing TCP port assigned to a service on the Data Relay Link Server. It is treated as a persistent reservation. |
+| **Public service port** | Internet-facing TCP port assigned to a service on the DataRelay Link Server. It is treated as a persistent reservation. |
 | **Enrollment** | Secure first-time pairing of a client with the server. |
 | **Enrollment Code** | Short-lived secret used during manual enrollment. |
 | **Bootstrap Ticket** | Short-lived secret used by Zero-Touch enrollment. |
 | **Zero-Touch** | Onboarding method where the server prepares the profile and the remote user runs one generated command. |
 | **Allocator** | Server-side enrollment/management HTTPS component that coordinates enrollment and service-port assignment. |
-| **Project private CA** | CA maintained by Data Relay Link to establish and verify management HTTPS trust. |
+| **Project private CA** | CA maintained by DataRelay Link to establish and verify management HTTPS trust. |
 | **Direct mode** | Default server mode with relay control and enrollment HTTPS exposed on separate public endpoints. |
 | **single-443** | Deployment mode that carries enrollment HTTPS and relay control/WSS through public TCP/443. |
 | **Public hostname** | Optional DNS alias for user-facing published-service access. |

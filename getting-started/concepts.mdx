@@ -1,13 +1,13 @@
 ---
 title: "Concepts & Mental Model"
-description: "Understand Data Relay Link from first principles: server, client, service, identity, ports, and traffic flow."
+description: "Understand DataRelay Link from first principles: server, client, service, identity, ports, and traffic flow."
 sidebarTitle: "Concepts & Mental Model"
 icon: "diagram-project"
 ---
 
 # Concepts & Mental Model
 
-If you are new to NAT, reverse tunnels, or relay gateways, start here. You do **not** need to understand relay-engine internals before using Data Relay Link.
+If you are new to NAT, reverse tunnels, or relay gateways, start here. You do **not** need to understand relay-engine internals before using DataRelay Link.
 
 ## The one-sentence model
 
@@ -23,8 +23,8 @@ flowchart LR
       N --> H1[Private server]
     end
 
-    subgraph AFTER[Data Relay Link]
-      C[Client behind NAT] -->|outbound tunnel| S[Data Relay Link server]
+    subgraph AFTER[DataRelay Link]
+      C[Client behind NAT] -->|outbound tunnel| S[DataRelay Link server]
       O2[Support engineer] -->|public service port| S
       S -->|tunnel| C
     end
@@ -36,8 +36,8 @@ The important difference is **who starts the connection**. The remote client sta
 
 | Object | Plain-English meaning | Example |
 | --- | --- | --- |
-| **Server** | Public entry point that runs Data Relay Link server + management layer | `203.0.113.10` |
-| **Client** | Remote machine running the Data Relay Link client runtime, usually behind NAT/firewall | branch Linux host |
+| **Server** | Public entry point that runs DataRelay Link server + management layer | `203.0.113.10` |
+| **Client** | Remote machine running the DataRelay Link client runtime, usually behind NAT/firewall | branch Linux host |
 | **CLIENT ID** | Immutable machine identity used for administration | `8f31a2c4` |
 | **Service** | One TCP target reachable from a client | `ssh -> 127.0.0.1:22` |
 | **Public port** | Persistent Internet-facing reservation for a service | `6003` |
@@ -49,7 +49,7 @@ Labels, hostnames, notes, and tags help humans organize clients, but they are **
 ```mermaid
 flowchart LR
     I[Internet user]
-    S[Data Relay Link server]
+    S[DataRelay Link server]
     C[Client A]
     SSH[127.0.0.1:22\nSSH]
     WEB[127.0.0.1:443\nHTTPS]
@@ -68,24 +68,24 @@ Each service has a stable Service ID and a persistent public-port reservation.
 
 ## Three different network paths
 
-Data Relay Link has three paths that beginners often mix together:
+DataRelay Link has three paths that beginners often mix together:
 
 ```mermaid
 flowchart TB
     C[Remote client]
-    S[Data Relay Link server]
+    S[DataRelay Link server]
     U[Operator / Internet user]
     T[Target service]
 
     C -->|1. Enrollment / management HTTPS| S
-    C -->|2. Outbound Data Relay Link control tunnel| S
+    C -->|2. Outbound DataRelay Link control tunnel| S
     U -->|3. Published service port| S
     S -->|service traffic through tunnel| C
     C --> T
 ```
 
 1. **Enrollment / management** establishes trust and manages client state.
-2. **Data Relay Link control** keeps the reverse tunnel available.
+2. **DataRelay Link control** keeps the reverse tunnel available.
 3. **Published service traffic** is the actual SSH/HTTP/HTTPS/custom TCP connection.
 
 ## What Zero-Touch actually does
@@ -95,7 +95,7 @@ Enrollment is similar to securely pairing a new client with the server.
 ```mermaid
 sequenceDiagram
     participant A as Server admin
-    participant S as Data Relay Link server
+    participant S as DataRelay Link server
     participant C as Remote client
     participant T as Target service
 
@@ -104,7 +104,7 @@ sequenceDiagram
     A-->>C: Send command privately
     C->>S: HTTPS bootstrap / enrollment
     S-->>C: Trust + persistent identity + service config
-    C->>S: Start outbound Data Relay Link control tunnel
+    C->>S: Start outbound DataRelay Link control tunnel
     C->>T: Reach configured local/LAN target
 ```
 
@@ -119,7 +119,7 @@ Public Hostname = optional human-friendly alias for published services
 
 A hostname does not change CLIENT ID, Service ID, or public-port reservations.
 
-## What Data Relay Link does not do
+## What DataRelay Link does not do
 
 It intentionally leaves these responsibilities outside the product:
 
