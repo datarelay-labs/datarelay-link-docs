@@ -1,6 +1,6 @@
 ---
 title: "DataRelay Link"
-description: "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and agentless outbound egress."
+description: "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and outbound egress."
 ---
 
 # DataRelay Link
@@ -16,56 +16,29 @@ AI Access         authenticated AI Identity → approved target permissions
 ```
 
 <Note>
-  **v2.4 documentation:** This site describes the current **v2.4.0 development target**. A stable v2.4.0 tag does not exist until exact-HEAD qualification and immutable release publication complete. See [Release Status](/reference/release-status).
+  This site documents the current **v2.4.0 development target**. The latest published stable line remains **v2.3.0** until v2.4 exact-HEAD qualification and immutable release publication complete. See [Release Status](/reference/release-status).
 </Note>
 
-<Note>
-  **Free Early Access:** DataRelay Link is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed under the current license. See [License](/reference/license).
-</Note>
-
-## Understand it in 30 seconds
+## Mental model
 
 ```mermaid
 flowchart LR
-    O[Operator / approved source]
-    S[DataRelay Link Server]
-    A[Managed Host<br/>DRLink Agent]
-    T[Local or LAN target]
-    I[Approved Internet destination]
-    AI[Authenticated AI Identity]
-
-    A -->|outbound relay / management| S
-    O -->|Remote Access| S
+    O[Operator / approved source] --> S[DataRelay Link Server]
+    A[Managed Host / Agent] -->|outbound relay| S
     S -->|Remote Service| A
-    A --> T
+    A --> T[Local or LAN target]
     A -->|Internet Access| S
-    S --> I
-    AI -->|MCP / AI Access| S
-    S --> A
+    S --> I[Approved Internet destination]
+    AI[Authenticated AI Identity] -->|AI Access / MCP| S
 ```
 
-## Current public model
+The key distinction is simple:
 
-```text
-Managed Host / DRLink Agent
+- **Remote Service** creates or represents connectivity.
+- **Access Policy** decides whether that connectivity may be used.
+- **Rules do not create Remote Services.**
 
-Network Object / Network Group
-Service Object / Service Group
-Permission Object / Permission Group
-
-AI Identity
-Remote Service
-
-Remote Access
-Internet Access
-AI Access
-
-BLACKLIST / WHITELIST
-
-ConfigurationBundle
-```
-
-A **Remote Service creates connectivity**. An **Access Policy authorizes or denies use of that connectivity**. A Rule never creates a Remote Service.
+For the complete object model, policy behavior, and role boundaries, read [Concepts & Mental Model](/getting-started/concepts).
 
 ## Choose your path
 
@@ -95,39 +68,12 @@ A **Remote Service creates connectivity**. An **Access Policy authorizes or deni
   </Card>
 </CardGroup>
 
-## Policy model
+## Product boundary
 
-Each Access Policy family uses BLACKLIST or WHITELIST Mode plus ENABLED or DISABLED enforcement.
+DataRelay Link relays explicitly configured services and approved destinations. It is not a full VPN, transparent network overlay, automatic cloud firewall/DNS manager, or large fleet-management platform.
 
-- No Policy / No Rules → effective ALLOW.
-- BLACKLIST: matching enabled Rule → DENY; otherwise ALLOW.
-- WHITELIST: matching enabled Rule → ALLOW; otherwise DENY.
-- Rules are **not ordered** and do **not** carry a per-rule ALLOW/DENY action.
-- Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL.
-- Policy Reset removes Mode and Rules.
+External firewall/NAT rules, cloud security groups, DNS-provider records, OS accounts, and application certificates remain operator responsibilities unless a separately documented feature says otherwise.
 
-AI authentication remains mandatory even when AI Access enforcement is disabled.
-
-## Boundaries that matter
-
-<AccordionGroup>
-  <Accordion title="DataRelay Link is not a VPN or full-network overlay">
-    It relays explicitly configured services and approved destinations rather than joining entire networks.
-  </Accordion>
-
-  <Accordion title="External infrastructure stays outside the product boundary">
-    Cloud security groups, firewalls, NAT/DNAT, DNS-provider records, OS accounts, and application certificates remain operator responsibilities unless a separately approved feature says otherwise.
-  </Accordion>
-
-  <Accordion title="Remote Service health and policy result are separate">
-    Policy can evaluate ALLOW while a target is temporarily unreachable. The Remote Service can remain configured as DEGRADED.
-  </Accordion>
-
-  <Accordion title="Target scale is intentionally small">
-    The current target is roughly a few hosts to a few dozen Managed Hosts, not hundreds or thousands of endpoints.
-  </Accordion>
-</AccordionGroup>
-
-<Tip>
-  New users should read [Concepts & Mental Model](/getting-started/concepts) and then [Quick Start](/getting-started/quickstart).
-</Tip>
+<Note>
+  DataRelay Link is **Source Available**, not Open Source. See [License](/reference/license).
+</Note>
