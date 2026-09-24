@@ -1,0 +1,117 @@
+---
+title: "Install DataRelay Link on OCI"
+description: "Install, verify, and operate DataRelay Link on the prepared OCI Ubuntu host."
+sidebarTitle: "Install DataRelay Link"
+icon: "server"
+---
+
+# Part II — Install and operate DataRelay Link
+
+<Note>
+  The latest published stable release is **v2.3.0**. This site documents the **v2.4.0 development target**. For stable deployment use the immutable stable release. For v2.4 testing use an exact qualified SHA or candidate artifact.
+</Note>
+
+## 6. Prepare the Ubuntu host
+
+```bash
+sudo apt update
+sudo apt -y install curl ca-certificates
+```
+
+Review OCI Security Lists/NSGs and the Ubuntu host firewall deliberately. Do not flush firewall chains merely to make DataRelay Link work.
+
+## 7. Install the Server
+
+Continue with [Server Installation](/getting-started/server-installation). For a v2.4 candidate, use the exact source or artifact identity provided by qualification.
+
+For this OCI topology, Enterprise single-443 is usually the simplest public exposure model:
+
+```text
+TCP/22          optional OCI administration; restrict to admin source
+TCP/443         public management/enrollment + Relay control
+TCP/6000-6098   default Remote Service endpoint pool
+TCP/6099        loopback/internal in single-443
+TCP/7000        loopback/internal in single-443
+```
+
+If Fixed TCP is enabled, expose only the separately configured Fixed TCP endpoint pool actually required.
+
+## 8. Verify the Server
+
+```text
+show version
+show status
+system diagnostics
+```
+
+Confirm the role is DRLink Server and product version, release channel, exact Source HEAD, and Relay Engine version are truthful.
+
+## 9. Verify reboot persistence
+
+Reboot the OCI VM and verify the same Server identity, control-plane state, listener topology, and diagnostics return without rebuilding configuration.
+
+## 10. Enroll the first Managed Host
+
+On the Server:
+
+```text
+set enrollment zero-touch
+```
+
+Run the generated one-time command on the target host. Then verify on that Agent Host:
+
+```text
+show status
+show agent
+system info
+system diagnostics
+```
+
+Create the first Remote Service on the Agent Host:
+
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
+```
+
+Remote Access policy is configured separately on the Server if the endpoint should be restricted.
+
+## Final checklist
+
+- [ ] OCI VCN, Internet Gateway, route, and public subnet are ready
+- [ ] Reserved Public IPv4 is attached
+- [ ] SSH administration is restricted appropriately
+- [ ] only listeners required by the selected deployment mode are public
+- [ ] internal single-443 backends are not publicly exposed
+- [ ] Server reports the correct role/version/source identity
+- [ ] system diagnostics has no blocking finding
+- [ ] state survives reboot
+- [ ] first Managed Host enrolls with Zero-Touch
+- [ ] Agent-owned Remote Service receives an endpoint and works
+- [ ] optional Remote Access policy is tested separately from runtime health
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Remote Services" icon="network-wired" href="/guides/services">
+    Create local or LAN TCP/Fixed TCP connectivity on an Agent Host.
+  </Card>
+
+  <Card title="Remote Access" icon="arrow-right-to-bracket" href="/guides/remote-access">
+    Authorize use of existing Remote Services.
+  </Card>
+
+  <Card title="Firewall & NAT" icon="shield-halved" href="/deployment/firewall-nat">
+    Review Direct and single-443 exposure.
+  </Card>
+
+  <Card title="Quick Start" icon="rocket" href="/getting-started/quickstart">
+    Follow the current v2.4 Managed Host workflow.
+  </Card>
+</CardGroup>
+
+## Official OCI references
+
+- [Oracle Cloud Always Free Resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+- [Launching Your First Linux Instance](https://docs.oracle.com/en-us/iaas/Content/Compute/tutorials/first-linux-instance/overview.htm)
+- [Public IP Addresses](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm)
