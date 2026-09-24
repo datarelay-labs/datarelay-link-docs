@@ -1,0 +1,117 @@
+---
+title: "OCI에 DataRelay Link 설치"
+description: "준비된 OCI Ubuntu Host에 DataRelay Link를 설치하고 검증합니다."
+sidebarTitle: "DataRelay Link 설치"
+icon: "server"
+---
+
+# Part II — DataRelay Link 설치와 운영
+
+<Note>
+  현재 공개 stable release는 **v2.3.0**이며 이 사이트는 **v2.4.0 development target**을 설명합니다. Stable 운영 설치는 immutable stable release를 사용하고, v2.4 검증은 exact qualified SHA 또는 candidate artifact를 사용합니다.
+</Note>
+
+## 6. Ubuntu Host 준비
+
+```bash
+sudo apt update
+sudo apt -y install curl ca-certificates
+```
+
+OCI Security List/NSG와 Ubuntu host firewall은 각각 의도적으로 설정합니다. DataRelay Link 동작을 위해 firewall chain을 무작정 flush하지 마십시오.
+
+## 7. Server 설치
+
+[서버 설치](/ko/getting-started/server-installation)의 현재 절차를 따릅니다. v2.4 candidate는 qualification workflow가 지정한 exact source 또는 artifact identity를 사용합니다.
+
+```text
+TCP/22          선택적 OCI 관리용; 관리자 source로 제한
+TCP/443         public management/enrollment + Relay control
+TCP/6000-6098   기본 Remote Service endpoint pool
+TCP/6099        single-443에서 internal/loopback
+TCP/7000        single-443에서 internal/loopback
+```
+
+Fixed TCP를 사용하면 실제로 설정된 전용 Fixed TCP endpoint pool만 추가로 노출합니다.
+
+## 8. Server 확인
+
+```text
+show version
+show status
+system diagnostics
+```
+
+Role이 DRLink Server인지, product version/release channel/exact Source HEAD/Relay Engine version이 실제 상태와 일치하는지 확인합니다.
+
+## 9. Reboot persistence 확인
+
+OCI VM을 reboot한 뒤 동일한 Server identity, control-plane state, listener topology와 diagnostics가 자동 복구되는지 확인합니다.
+
+## 10. 첫 Managed Host 등록
+
+Server에서:
+
+```text
+set enrollment zero-touch
+```
+
+생성된 1회용 명령을 대상 Host에서 실행합니다.
+
+Agent Host에서:
+
+```text
+show status
+show agent
+system info
+system diagnostics
+```
+
+첫 Remote Service를 Agent Host에서 생성합니다.
+
+```text
+set remote-service ssh-access destination this-host service ssh enabled
+show remote-service ssh-access
+```
+
+endpoint 사용을 제한해야 하면 Server에서 Remote Access policy를 별도로 구성하고 test합니다.
+
+## 최종 체크리스트
+
+- [ ] OCI VCN / Internet Gateway / route / public subnet 준비
+- [ ] Reserved Public IPv4 연결
+- [ ] SSH 관리 source 제한
+- [ ] 선택한 deployment mode에 필요한 listener만 public 노출
+- [ ] single-443 internal backend 비노출
+- [ ] Server role/version/source identity 정상
+- [ ] system diagnostics blocking finding 없음
+- [ ] reboot 후 state 유지
+- [ ] 첫 Managed Host Zero-Touch 등록 성공
+- [ ] Agent-owned Remote Service endpoint 정상
+- [ ] 필요 시 Remote Access policy를 runtime health와 별도로 test
+
+## 다음 단계
+
+<CardGroup cols={2}>
+  <Card title="Remote Service" icon="network-wired" href="/ko/guides/services">
+    Agent Host에서 local/LAN TCP/Fixed TCP 연결을 생성합니다.
+  </Card>
+
+  <Card title="Remote Access" icon="arrow-right-to-bracket" href="/ko/guides/remote-access">
+    기존 Remote Service의 사용 권한을 제어합니다.
+  </Card>
+
+  <Card title="방화벽 & NAT" icon="shield-halved" href="/ko/deployment/firewall-nat">
+    Direct와 single-443 노출 범위를 확인합니다.
+  </Card>
+
+  <Card title="빠른 시작" icon="rocket" href="/ko/getting-started/quickstart">
+    현재 v2.4 Managed Host workflow를 따라갑니다.
+  </Card>
+</CardGroup>
+
+## OCI 공식 참고 문서
+
+- [Oracle Cloud Always Free Resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+- [Launching Your First Linux Instance](https://docs.oracle.com/en-us/iaas/Content/Compute/tutorials/first-linux-instance/overview.htm)
+- [Public IP Addresses](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm)
