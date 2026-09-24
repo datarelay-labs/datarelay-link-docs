@@ -1,0 +1,268 @@
+---
+title: "OCI Network and VM"
+description: "Create the OCI network, Ubuntu VM, and Reserved Public IPv4 for a DataRelay Link server."
+sidebarTitle: "OCI Network & VM"
+icon: "cloud"
+---
+
+# Part I — Build the OCI network and VM
+
+## 1. Open Virtual Cloud Networks
+
+From the OCI Home page, enter **Networking → Virtual Cloud Networks**. The image below is the **original Picture 1** from the field-deployment Word guide; it is used without conversion or downscaling.
+
+![Picture 1. OCI Home - enter Networking / Instances](/images/oci/1.png)
+
+## 2. Create the VCN, Internet Gateway, route, subnet, and ingress rules
+
+Use these values:
+
+```text
+VCN name             data-relay-vcn
+VCN IPv4 CIDR         10.0.0.0/16
+Internet Gateway      data-relay-internet-gateway
+Default route         0.0.0.0/0 -> Internet Gateway
+Public subnet         data-relay-public-subnet
+Public subnet CIDR    10.0.0.0/24
+Subnet type           Regional / Public
+```
+
+### 2-1. Create the VCN
+
+Open **Virtual Cloud Networks → Create VCN**.
+
+![Picture 2. Select Create VCN in Virtual Cloud Networks](/images/oci/2.png)
+
+Set the VCN name to `data-relay-vcn` and the IPv4 CIDR to `10.0.0.0/16`.
+
+![Picture 3. Configure the VCN name and IPv4 CIDR](/images/oci/3.png)
+
+### 2-2. Create the Internet Gateway
+
+In the new `data-relay-vcn`, open the **Gateways** tab and create an Internet Gateway.
+
+![Picture 4. Create an Internet Gateway from the VCN Gateways tab](/images/oci/4.png)
+
+Use `data-relay-internet-gateway` as the example gateway name.
+
+![Picture 5. Internet Gateway name example: data-relay-internet-gateway](/images/oci/5.png)
+
+### 2-3. Add the Internet route to the default route table
+
+Open the **Routing** tab and select `Default Route Table for data-relay-vcn`.
+
+![Picture 6. Select the default route table from the VCN Routing tab](/images/oci/6.png)
+
+Choose **Route Rules → Add Route Rules**.
+
+![Picture 7. Add a route rule](/images/oci/7.png)
+
+Add the following route:
+
+```text
+Target Type        Internet Gateway
+Destination CIDR   0.0.0.0/0
+Target             data-relay-internet-gateway
+```
+
+![Picture 8. Add the 0.0.0.0/0 route through the Internet Gateway](/images/oci/8.png)
+
+Confirm that the route rule is present after saving.
+
+![Picture 9. Confirm the applied route rule](/images/oci/9.png)
+
+### 2-4. Start creating the public subnet
+
+Open the **Subnets** tab and select **Create Subnet**.
+
+![Picture 10. Start creating the public subnet](/images/oci/10.png)
+
+### 2-5. Configure the public subnet
+
+Create the public subnet with the following values:
+
+```text
+Name           data-relay-public-subnet
+Subnet Type    Regional
+IPv4 CIDR      10.0.0.0/24
+Route Table    Default Route Table for data-relay-vcn
+Subnet Access  Public Subnet
+```
+
+![Picture 11. Configure the public subnet](/images/oci/11.png)
+
+### 2-6. Configure the Security List
+
+Open the VCN's **Security Lists** page.
+
+![Picture 12. Open the VCN Security Lists page](/images/oci/12.png)
+
+Review the ingress rules on the **Default Security List**.
+
+![Picture 13. Review the Default Security List ingress rules](/images/oci/13.png)
+
+For DataRelay Link in single-443 mode, add TCP 443 and the Remote Service endpoint pool TCP 6000-6098. Keep SSH 22 for administration, preferably restricted to your administrator public IP `/32`.
+
+![Picture 14. Add ingress rules for TCP 443 and TCP 6000-6098](/images/oci/14.png)
+
+Confirm that the ingress rules were applied.
+
+![Picture 15. Confirm the applied ingress rules](/images/oci/15.png)
+
+### Recommended single-443 ingress
+
+| Protocol | Destination port | Source | Purpose |
+| --- | --: | --- | --- |
+| TCP | 22 | **your admin public IP/32** | SSH administration |
+| TCP | 443 | client networks or `0.0.0.0/0` if required | WSS control + enrollment/management |
+| TCP | 6000-6098 | only networks/users that need the services | Remote Services |
+
+<Warning>
+  In **single-443** mode, do not create public OCI ingress or DNAT for **6099** or **7000**. They are internal loopback backends. Also do not blindly copy a broad `All Protocols` rule from a generic OCI tutorial.
+</Warning>
+
+If you do not want the whole `6000-6098` range exposed, allow only the service ports that are actually assigned, and constrain source CIDRs where possible.
+
+## 3. Create the Ubuntu compute instance
+
+Recommended values for this walkthrough:
+
+```text
+Name           data-relay-link-server
+Image          Canonical Ubuntu 24.04 LTS x86_64
+Shape          VM.Standard.E2.1.Micro (when Console marks it eligible/free)
+VCN            data-relay-vcn
+Subnet         data-relay-public-subnet
+Boot volume    default
+```
+
+Before creating the Compute Instance, confirm that the VCN, Internet Gateway, route, public subnet, and Security List created above are ready, then open **Compute → Instances**.
+
+![Picture 16. Confirm the network resources and open Compute](/images/oci/16.png)
+
+### 3-1. Enter the basic Compute Instance settings
+
+Start on **Create compute instance** and confirm the instance name and placement.
+
+![Picture 17. Compute Instance basic settings](/images/oci/17.png)
+
+### 3-2. Select Canonical Ubuntu 24.04
+
+Choose **Change image** and select Canonical Ubuntu 24.04. Treat the image/version currently shown in OCI Console as authoritative.
+
+![Picture 18. Select the Ubuntu image](/images/oci/18.png)
+
+Unless your environment requires something different, keep the Security settings at their defaults.
+
+![Picture 19. Security settings - use the defaults unless required otherwise](/images/oci/19.png)
+
+### 3-3. Select the VCN and public subnet
+
+Under Primary VNIC, select the `data-relay-vcn` and `data-relay-public-subnet` created earlier.
+
+![Picture 20. Select the existing data-relay-vcn and data-relay-public-subnet](/images/oci/20.png)
+
+### 3-4. Disable automatic public IPv4 and configure the SSH key
+
+Because this guide attaches a Reserved Public IP later, turn off **Automatically assign public IPv4 address**. Then upload an existing SSH public key or let OCI generate a new key pair, and store the private key securely.
+
+![Picture 21. Disable automatic public IPv4 and create/download the SSH key](/images/oci/21.png)
+
+### 3-5. Review the boot volume
+
+Unless you have a separate storage requirement, keep the boot-volume settings at their defaults.
+
+![Picture 22. Boot Volume settings - keep the defaults unless required otherwise](/images/oci/22.png)
+
+### 3-6. Review before creating the instance
+
+Confirm that the image is Ubuntu 24.04 and that the shape, VCN/subnet, and SSH key match the intended configuration before creating the instance.
+
+![Picture 23. Review the Ubuntu 24.04 and VM.Standard.E2.1.Micro configuration](/images/oci/23.png)
+
+### 3-7. Confirm the created instance and Free/Eligible indicator
+
+Confirm the instance state in the Compute Instances list.
+
+![Picture 24. Confirm the created instance in the instance list](/images/oci/24.png)
+
+The **Always Free** indicator shown in the original screenshot reflects the OCI Console at the time of the field deployment. Current Free Tier/Eligible status can vary by region and tenancy, so use the current Console's eligibility and cost display as the final authority.
+
+![Picture 25. Confirm the Always Free indicator and select the created instance](/images/oci/25.png)
+
+Important points from the original deployment:
+
+- choose the existing `data-relay-vcn`
+- choose `data-relay-public-subnet`
+- allow OCI to assign the **private IPv4** automatically
+- turn off **Automatically assign public IPv4 address** for the final persistent-IP design
+- generate/download or upload an SSH public key
+- if OCI generated the key pair, store the private key securely; do not assume it can be downloaded again later
+- keep the boot volume simple unless you have another storage requirement
+
+<Warning>
+  `VM.Standard.E2.1.Micro` availability and Free Tier treatment are tenancy/region dependent. If the Console does not show it as eligible at creation time, do not assume this guide makes it free.
+</Warning>
+
+## 4. Attach a Reserved Public IPv4
+
+From the instance details page, open **Networking → Primary VNIC**.
+
+![Picture 26. Open the instance Networking page and Primary VNIC](/images/oci/26.png)
+
+In the VNIC, open **IP administration → Primary Private IP**.
+
+![Picture 27. Open VNIC IP administration and the Primary Private IP](/images/oci/27.png)
+
+If an ephemeral public IP is currently attached, edit the private IP and select **No public IP** first.
+
+![Picture 28. Select No public IP in Edit Private IP Address](/images/oci/28.png)
+
+Confirm that no public IP is currently assigned.
+
+![Picture 29. Confirm that the public IP is unassigned](/images/oci/29.png)
+
+Edit the private IP again and choose:
+
+```text
+Public IP type        Reserved public IP
+Option                Create new Reserved IP Address
+Name                  data-relay-reserved-public-ip
+```
+
+![Picture 30. Create and attach a new Reserved Public IP](/images/oci/30.png)
+
+A Reserved Public IP is the address you should treat as the persistent public entry point for DataRelay Link. OCI performs the public/private mapping outside the Ubuntu guest, so `ip addr` on the VM normally shows the private `10.x.x.x` address rather than the public address.
+
+Confirm that the Reserved Public IP is attached to the Primary Private IP. The public IP value in this screenshot has been masked before publication.
+
+![Picture 31. Confirm the Reserved Public IP is attached](/images/oci/31.png)
+
+<Note>
+  Picture 32 (successful SSH session) from the original Word guide is still not published because it contains field connection details. The SSH procedure below uses the `<RESERVED-PUBLIC-IP>` placeholder instead.
+</Note>
+
+## 5. Test SSH access
+
+For OCI Ubuntu images the default account is normally `ubuntu`:
+
+```bash
+chmod 600 ~/Downloads/<private-key-file>
+ssh -i ~/Downloads/<private-key-file> ubuntu@<RESERVED-PUBLIC-IP>
+```
+
+Then verify the host:
+
+```bash
+uname -m
+cat /etc/os-release
+systemctl --version
+```
+
+Expected for this guide:
+
+```text
+Architecture   x86_64
+OS             Ubuntu 24.04 LTS
+PID 1          systemd
+```
