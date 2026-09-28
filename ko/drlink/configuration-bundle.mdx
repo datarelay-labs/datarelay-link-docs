@@ -1,11 +1,11 @@
 ---
 title: "ConfigurationBundle"
-description: "의존성이 있는 여러 리소스를 validate, diff, atomic apply합니다."
+description: "서로 의존하는 여러 리소스를 한 번에 검증하고 변경 내용을 비교한 뒤 원자적으로 적용합니다."
 ---
 
 # ConfigurationBundle
 
-독립적인 리소스 하나는 one-shot CLI를 사용하고, 여러 의존 리소스를 함께 성공 또는 실패시켜야 하면 ConfigurationBundle을 사용합니다.
+독립적인 리소스 하나만 바꿀 때는 one-shot CLI를 사용합니다. 여러 리소스를 함께 검증하고 모두 성공해야 적용되도록 하려면 ConfigurationBundle을 사용합니다.
 
 ## Server 예
 
@@ -34,7 +34,7 @@ configurationBundle:
         enabled: true
 ~~~
 
-Agent bundle은 context: agent와 remoteServices section을 사용합니다.
+Agent용 bundle은 `context: agent`와 `remoteServices` 섹션을 사용합니다.
 
 ~~~text
 test configuration <FILE|->
@@ -54,4 +54,4 @@ state: absent    → 명시적 삭제/reset
 동일한 desired   → NO CHANGE
 ~~~
 
-Server와 Agent bundle은 각각 atomic합니다. Server와 여러 Agent를 하나의 distributed transaction으로 묶지는 않습니다. export와 AI copy/paste에는 enrollment ticket, OAuth/bearer secret, private key 등 보호값이 포함되면 안 됩니다.
+Server bundle과 Agent bundle은 각각 원자적으로 적용됩니다. 다만 Server와 여러 Agent를 하나의 분산 트랜잭션으로 묶지는 않습니다. 내보내기나 AI에 복사해 붙이는 내용에는 enrollment ticket, OAuth/bearer secret, private key 같은 민감한 값이 포함되어서는 안 됩니다.
