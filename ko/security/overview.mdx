@@ -1,6 +1,6 @@
 ---
 title: "보안 개요"
-description: "Enrollment trust, Agent identity, Access Policy, AI 인증, secret handling을 설명합니다."
+description: "Enrollment 신뢰 관계, Agent identity, Access Policy, AI 인증과 비밀값 처리 방식을 설명합니다."
 ---
 
 # 보안 개요
@@ -15,7 +15,7 @@ Managed Host identity는 호스트명, label, 관찰된 NAT/공인 IP만으로 �
 
 ## Access Policy
 
-Remote Access, Internet Access, AI Access는 BLACKLIST 또는 WHITELIST Mode와 ENABLED/DISABLED Enforcement를 사용합니다.
+Remote Access, Internet Access, AI Access는 BLACKLIST 또는 WHITELIST 모드와 ENABLED/DISABLED 적용 상태를 사용합니다.
 
 Rule은 순서로 평가하지 않으며 각 Rule에 별도 action을 지정하지 않습니다.
 
@@ -31,4 +31,4 @@ AI 표시 이름만으로는 인증되지 않습니다. 지원되는 OAuth 또�
 
 ## Secret
 
-설정 내보내기, support bundle, 로그, AI에 복사해 붙이는 내용에서는 enrollment ticket, OAuth/bearer secret, private key 같은 민감한 값을 제거해야 합니다.
+설정 내보내기, 지원 번들, 로그, AI에 복사해 붙이는 내용에서는 enrollment ticket, OAuth/bearer secret, private key 같은 민감한 값을 제거해야 합니다.
