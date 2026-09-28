@@ -36,7 +36,7 @@ description: "DataRelay Link를 주요 터널링·원격접속 대안과 운영 
 | 이 프로젝트의 목표 규모 | **몇 대~몇십 대 Managed Host** | 운영 방식에 따라 다름 | Vendor-managed | Vendor-managed | Vendor-managed |
 
 <Note>
-  DataRelay Link는 Enterprise ZTNA, SASE, endpoint compliance, DLP 또는 완전한 VPN/mesh 플랫폼의 대체 제품으로 설명하면 안 됩니다. Internet Access v2.4은 의도적으로 Secure Web Gateway보다 훨씬 좁은 범위에 집중합니다.
+  DataRelay Link는 Enterprise ZTNA, SASE, endpoint compliance, DLP 또는 완전한 VPN/mesh 플랫폼을 대체하는 제품이 아닙니다. Internet Access v2.4의 범위도 Secure Web Gateway보다 훨씬 좁습니다.
 </Note>
 
 ## DataRelay Link가 잘 맞는 경우
@@ -47,13 +47,13 @@ description: "DataRelay Link를 주요 터널링·원격접속 대안과 운영 
 - 원격 시스템이 NAT/방화벽 뒤에 있고 outbound 방식으로 연결되어야 한다.
 - 기술지원 인력이 VPN에 먼저 접속하지 않고 SSH/HTTP/HTTPS/custom TCP에 직접 접근해야 한다.
 - 하나의 Agent Host에서 여러 local 또는 reachable LAN target을 Remote Service로 연결해야 한다.
-- Zero-Touch enrollment, Managed Host identity, persistent Remote Service endpoint, lifecycle control, diagnostics, backup/restore가 필요하다.
+- Zero-Touch 등록, Managed Host identity, 고정 Remote Service endpoint, 상태 관리, 진단, 백업/복구가 필요하다.
 - 제한망 시스템이 전체 Internet이 아니라 승인된 HTTP/HTTPS 목적지에만 접근해야 한다.
 - 환경 규모가 대규모 fleet이 아니라 수 대에서 수십 대 수준이다.
 
 ## 수동 Self-hosted reverse proxy가 더 나은 경우
 
-저수준 프로토콜과 설정에 대한 최대한의 자유도가 필요하고 enrollment, identity, policy, lifecycle, diagnostics, backup, upgrade를 직접 구축하고 유지할 수 있다면 수동 Self-hosted reverse proxy/tunnel이 더 적합할 수 있습니다.
+저수준 프로토콜과 설정을 자유롭게 다뤄야 하고 등록, identity, 정책, 상태 관리, 진단, 백업과 업그레이드를 직접 구축·유지할 수 있다면 수동 Self-hosted reverse proxy/tunnel이 더 적합할 수 있습니다.
 
 DataRelay Link는 이런 저수준 자유도를 일부 줄이는 대신 소규모 환경에서 더 단순하고 일관된 운영 모델을 제공하는 것을 목표로 합니다.
 
@@ -63,11 +63,11 @@ DataRelay Link는 이런 저수준 자유도를 일부 줄이는 대신 소규�
 
 ## Cloudflare Tunnel이 더 나은 경우
 
-조직에서 이미 Cloudflare Zero Trust를 사용하고 있거나 application을 Cloudflare edge 뒤에 배치하려는 경우 Cloudflare Tunnel이 잘 맞습니다. Outbound-only connector를 사용하므로 공개적으로 routable한 origin이 없어도 되고, private networking과 Gateway policy까지 포함하는 더 넓은 관리형 Zero Trust 생태계를 제공합니다.
+조직에서 이미 Cloudflare Zero Trust를 사용하거나 애플리케이션을 Cloudflare edge 뒤에 배치하려는 경우 Cloudflare Tunnel이 잘 맞습니다. Outbound-only connector를 사용하므로 인터넷에서 직접 접근 가능한 origin이 없어도 되고, private networking과 Gateway 정책까지 포함하는 더 넓은 관리형 Zero Trust 기능을 제공합니다.
 
 ## Tailscale이 더 나은 경우
 
-주된 목적이 **raw public service port 공개가 아니라 private network membership**이라면 Tailscale이 더 적합합니다. WireGuard 기반 mesh network를 만들고 identity 및 access-control policy를 결합합니다.
+주된 목적이 **서비스 포트를 인터넷에 직접 공개하는 것이 아니라 사설 네트워크에 참여시키는 것**이라면 Tailscale이 더 적합합니다. WireGuard 기반 mesh network와 identity/access-control 정책을 함께 제공합니다.
 
 ## 선택 가이드
 
