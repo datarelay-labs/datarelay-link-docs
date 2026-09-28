@@ -14,7 +14,7 @@ system backup
 system restore <FILE>
 ```
 
-The v2.4 Server authoritative state includes the control-plane SQLite database plus required trust, secret, and configuration material.
+The v2.4 Server state that must be preserved includes the control-plane SQLite database plus required trust, secret, and configuration material.
 
 A live WAL database must be backed up with a consistent SQLite backup or snapshot method. Naive copying of a live database file is not the canonical backup method.
 
