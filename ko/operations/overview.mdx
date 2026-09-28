@@ -1,7 +1,7 @@
 ---
 title: "운영 개요"
 sidebarTitle: "운영 개요"
-description: "업데이트, 백업/복구, 진단, lifecycle 변경과 문제 해결을 안전한 순서로 선택합니다."
+description: "업데이트, 백업/복구, 진단, 상태 변경, 문제 해결 작업을 어떤 순서로 진행할지 설명합니다."
 icon: "screwdriver-wrench"
 ---
 
@@ -30,6 +30,6 @@ system info
 system diagnostics
 ```
 
-독립적인 리소스 하나는 direct CLI를 사용하고, 의존성이 있는 여러 설정은 ConfigurationBundle의 test → diff → apply 순서를 사용합니다.
+리소스 하나만 바꿀 때는 직접 CLI를 사용합니다. 서로 의존하는 여러 설정을 바꿀 때는 ConfigurationBundle의 `test → diff → apply` 순서를 사용합니다.
 
-복구가 필요하면 authoritative state를 직접 수정하지 말고 revision과 일관된 backup/restore workflow를 사용합니다.
+복구가 필요해도 기준 상태를 직접 수정하지 마십시오. revision을 확인하고 제품의 백업/복구 절차를 사용합니다.
