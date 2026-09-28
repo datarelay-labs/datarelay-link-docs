@@ -25,6 +25,6 @@ Management/Enrollment HTTPS와 Relay control이 public TCP/443을 공유하고 �
 
 Remote Service endpoint는 설정된 endpoint pool에서 별도로 할당됩니다.
 
-배포 모드 변경은 v2.4 authoritative control-plane DB, Managed Host/Agent identity, Remote Service, endpoint reservation, policy, trust material을 보존해야 합니다.
+배포 모드를 바꾸더라도 v2.4 control-plane DB, Managed Host/Agent identity, Remote Service, endpoint 예약, 정책, 신뢰 정보는 그대로 유지되어야 합니다.
 
 설치 프로그램은 cloud security group, 외부 firewall/NAT, DNS provider record를 자동 변경하지 않습니다.
