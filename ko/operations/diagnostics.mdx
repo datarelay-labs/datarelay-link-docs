@@ -1,6 +1,6 @@
 ---
 title: "진단 & Doctor"
-description: "Server와 Client 상태를 read-only로 확인하고 위험한 수동 수정 전에 evidence를 수집합니다."
+description: "Server와 Agent 상태를 읽기 전용으로 확인하고 수동 수정 전에 필요한 진단 정보를 수집합니다."
 sidebarTitle: "진단 & Doctor"
 icon: "stethoscope"
 ---
@@ -28,6 +28,6 @@ system info
 system diagnostics
 ```
 
-Policy의 ALLOW 결과와 Remote Service runtime 상태는 서로 다른 문제를 설명합니다. authorization은 test 명령으로, connectivity는 Agent/Remote Service 상태로 확인합니다.
+Policy의 ALLOW 결과와 Remote Service의 실제 연결 상태는 서로 다른 문제입니다. 권한은 `test` 명령으로 확인하고, 연결 상태는 Agent와 Remote Service 상태에서 확인합니다.
 
 지원 요청 시 ticket, bearer/OAuth secret, private key, secret-bearing database를 그대로 붙여 넣지 말고 sanitized support bundle을 사용합니다.

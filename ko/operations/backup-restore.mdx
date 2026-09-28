@@ -1,21 +1,21 @@
 ---
 title: "백업 & 복구"
 sidebarTitle: "백업 & 복구"
-description: "v2.4 authoritative control-plane database와 trust/configuration state를 안전하게 보존하고 복구합니다."
+description: "v2.4 control-plane 데이터베이스와 신뢰·설정 상태를 안전하게 백업하고 복구합니다."
 icon: "database"
 ---
 
 # 백업 & 복구
 
-선택한 live 파일을 수동으로 복사하지 말고 제품의 backup/restore workflow를 사용합니다.
+실행 중인 파일 일부를 수동으로 복사하지 말고 제품의 백업/복구 기능을 사용합니다.
 
 ```text
 system backup
 system restore <FILE>
 ```
 
-v2.4 Server authoritative state에는 SQLite control-plane DB와 필요한 trust, secret, configuration material이 포함됩니다.
+v2.4 Server의 기준 상태에는 SQLite control-plane DB와 필요한 신뢰 정보, 비밀값, 설정 데이터가 포함됩니다.
 
-live WAL database는 일관된 SQLite backup/snapshot 방식으로 백업해야 합니다. 실행 중인 DB 파일 하나만 복사하는 방식은 canonical backup이 아닙니다.
+WAL 모드로 실행 중인 데이터베이스는 SQLite가 보장하는 일관된 백업/스냅샷 방식으로 저장해야 합니다. 실행 중인 DB 파일 하나만 복사하는 방식은 올바른 백업이 아닙니다.
 
-복구 후 Managed Host, Object/Group, Server에서 보이는 Remote Service 상태, Access Policy, AI Identity, revision, runtime health를 확인합니다.
+복구 후 Managed Host, Object/Group, Server에서 보이는 Remote Service 상태, Access Policy, AI Identity, revision과 런타임 상태를 확인합니다.

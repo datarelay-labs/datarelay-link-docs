@@ -1,6 +1,6 @@
 ---
 title: "업데이트"
-description: "Stable project와 bundled relay engine을 identity, CA, registry, port reservation을 보존하며 안전하게 업데이트합니다."
+description: "DataRelay Link와 포함된 relay engine을 identity, CA, 등록 정보, 포트 예약을 유지하면서 업데이트합니다."
 icon: "arrows-rotate"
 ---
 
@@ -21,8 +21,8 @@ system update product
 system update engine
 ```
 
-Stable update는 immutable qualified release를 사용합니다. Development/pre-release 검증은 exact immutable SHA 또는 qualified artifact를 사용합니다. immutable ref가 없다고 mutable main/latest로 자동 fallback하면 안 됩니다.
+안정 릴리스 업데이트에는 검증된 변경 불가능 릴리스를 사용합니다. 개발/프리릴리스 검증에는 정확한 SHA 또는 검증된 artifact를 사용하고, 고정된 참조가 없다는 이유로 `main`이나 `latest`로 자동 대체해서는 안 됩니다.
 
-정상 upgrade는 Managed Host/Agent identity, enrollment trust, Remote Service identity, endpoint reservation, authoritative control-plane state, policy state, release provenance를 보존해야 합니다.
+정상 업그레이드에서는 Managed Host/Agent identity, enrollment 신뢰 관계, Remote Service identity, endpoint 예약, control-plane 상태, 정책과 릴리스 출처가 유지되어야 합니다.
 
-v2.4 authoritative Server state는 /var/lib/drlink/drlink.db SQLite DB이며 ordered migration과 integrity validation을 사용합니다.
+v2.4 Server의 기준 상태는 `/var/lib/drlink/drlink.db` SQLite DB에 저장됩니다. 스키마 변경은 순서가 정해진 migration으로 적용하고 무결성을 확인합니다.

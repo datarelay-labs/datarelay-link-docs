@@ -22,6 +22,6 @@ system update engine
 
 Stable updates use immutable qualified releases. Development or pre-release testing uses an exact immutable SHA or qualified artifact. Never silently fall back from a missing immutable ref to mutable main/latest.
 
-Normal upgrade must preserve Managed Host/Agent identity, enrollment trust, Remote Service identity, endpoint reservations, authoritative control-plane state, policy state, and release provenance.
+A normal upgrade must preserve Managed Host/Agent identity, enrollment trust, Remote Service identity, endpoint reservations, control-plane state, policies, and release provenance.
 
-The v2.4 authoritative Server state is SQLite at /var/lib/drlink/drlink.db; migration uses ordered schema migrations and integrity validation.
+The v2.4 Server state is stored in SQLite at `/var/lib/drlink/drlink.db`; schema changes use ordered migrations with integrity validation.

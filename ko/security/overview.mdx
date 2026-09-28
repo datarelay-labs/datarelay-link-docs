@@ -7,28 +7,28 @@ description: "Enrollment trust, Agent identity, Access Policy, AI 인증, secret
 
 ## Enrollment
 
-Zero-Touch ticket은 single-use이며 TTL이 있습니다. raw ticket은 정상적인 재조회 가능한 persistent secret으로 저장하지 않습니다.
+Zero-Touch ticket은 한 번만 사용할 수 있고 유효 시간이 있습니다. 원본 ticket 값은 나중에 다시 조회할 수 있는 비밀값으로 저장하지 않습니다.
 
 ## Agent identity
 
-Managed Host identity는 hostname, label, 관찰된 NAT/public IP만으로 결정되지 않고 enrolled Agent/machine identity를 사용합니다.
+Managed Host identity는 호스트명, label, 관찰된 NAT/공인 IP만으로 결정하지 않고 등록된 Agent와 machine identity를 기준으로 합니다.
 
 ## Access Policy
 
 Remote Access, Internet Access, AI Access는 BLACKLIST 또는 WHITELIST Mode와 ENABLED/DISABLED Enforcement를 사용합니다.
 
-Rule은 unordered이고 Rule별 action이 없습니다.
+Rule은 순서로 평가하지 않으며 각 Rule에 별도 action을 지정하지 않습니다.
 
-Enforcement disabled는 Mode/Rule을 유지하면서 effective ALLOW ALL이며 Reset은 Mode/Rule을 제거합니다.
+Enforcement를 비활성화하면 Mode와 Rule은 유지되지만 실제 결과는 모두 허용입니다. Reset은 Mode와 Rule을 제거합니다.
 
 ## Internet Access
 
-Open proxy가 되지 않도록 destination/protocol/port 검증, 안전한 DNS 처리, rebinding 저항, SSRF/private/local/metadata destination 차단이 필요합니다.
+Open proxy가 되지 않도록 목적지·프로토콜·포트를 검증하고, DNS rebinding과 SSRF를 방어하며 private/local/metadata 주소 접근을 차단합니다.
 
 ## AI 인증
 
-AI display name은 인증이 아닙니다. 지원되는 OAuth 또는 명시적 credential path로 AI Identity를 검증해야 합니다. AI Access enforcement가 disabled여도 인증은 필수입니다.
+AI 표시 이름만으로는 인증되지 않습니다. 지원되는 OAuth 또는 명시적인 인증 정보로 AI Identity를 확인해야 합니다. AI Access enforcement가 disabled여도 인증은 필수입니다.
 
 ## Secret
 
-Configuration export, support bundle, log, AI copy/paste에는 enrollment ticket, OAuth/bearer secret, private key 등 보호값이 redaction되어야 합니다.
+설정 내보내기, support bundle, 로그, AI에 복사해 붙이는 내용에서는 enrollment ticket, OAuth/bearer secret, private key 같은 민감한 값을 제거해야 합니다.

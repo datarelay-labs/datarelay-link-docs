@@ -1,6 +1,6 @@
 ---
 title: "아키텍처"
-description: "Control plane, 서비스 데이터 경로, 신뢰 경계와 persistent state를 기술적으로 설명합니다."
+description: "Control plane, 서비스 데이터 경로, 신뢰 경계와 저장되는 상태 정보를 기술적으로 설명합니다."
 sidebarTitle: "아키텍처"
 icon: "sitemap"
 ---
@@ -26,11 +26,11 @@ flowchart LR
     S --> A
 ```
 
-Server는 Enrollment, Managed Host inventory, Network/Service/Permission Object와 Group, AI Identity, Access Policy, Revision, Audit, Backup/Restore, Server ConfigurationBundle을 관리합니다.
+Server는 Enrollment, Managed Host 목록, Network/Service/Permission Object와 Group, AI Identity, Access Policy, Revision, Audit, 백업/복구, Server ConfigurationBundle을 관리합니다.
 
-Agent는 로컬 lifecycle과 Remote Service를 관리합니다. Remote Service는 destination 하나와 Service Object 하나를 연결하고 안정적인 DataRelay Link endpoint를 가집니다.
+Agent는 로컬 실행 상태와 Remote Service를 관리합니다. Remote Service는 하나의 목적지와 하나의 Service Object를 연결하고 고정된 DataRelay Link endpoint를 사용합니다.
 
-Remote Access, Internet Access, AI Access는 독립 policy family이며 BLACKLIST/WHITELIST + Enforcement 모델을 사용합니다. Rule은 unordered이며 Rule별 action이 없습니다.
+Remote Access, Internet Access, AI Access는 서로 독립된 정책 영역이며 BLACKLIST/WHITELIST + Enforcement 모델을 사용합니다. Rule은 순서로 평가하지 않고 각 Rule에 별도 동작을 지정하지 않습니다.
 
 v2.4 authoritative Server state는 다음 SQLite DB입니다.
 
@@ -40,4 +40,4 @@ v2.4 authoritative Server state는 다음 SQLite DB입니다.
 
 Enrollment bootstrap credential, persistent Agent management identity, Relay Engine credential, AI OAuth credential은 서로 다른 trust boundary입니다.
 
-MCP는 Server-side authenticated bridge이며 AI Access policy, Agent identity, target OS permission을 우회하지 않습니다.
+MCP는 Server에서 인증되는 연결 계층이며 AI Access 정책, Agent identity, 대상 OS 권한을 우회하지 않습니다.

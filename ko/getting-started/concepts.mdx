@@ -9,38 +9,38 @@ icon: "diagram-project"
 
 ## 한 문장으로 이해하기
 
-> Managed Host에 DRLink Agent를 설치하고 Agent가 Server로 아웃바운드 연결합니다. 실제 필요한 Remote Service만 만들고 Server에서 Remote/Internet/AI Access를 제어합니다.
+> Managed Host에 DRLink Agent를 설치하면 Agent가 Server로 아웃바운드 연결합니다. 필요한 Remote Service만 만들고, Server에서 Remote/Internet/AI Access 정책을 관리합니다.
 
 ## 핵심 객체
 
 | 객체 | 의미 |
 | --- | --- |
 | DRLink Server | 중앙 제어/정책 권한과 공인 진입점 |
-| Managed Host | DataRelay Link로 관리되는 실제 Host |
-| DRLink Agent | Managed Host에서 실행되는 Agent |
+| Managed Host | DataRelay Link로 관리되는 실제 시스템 |
+| DRLink Agent | Managed Host에서 실행되는 DRLink Agent |
 | Network Object / Group | IP, CIDR, FQDN, Managed Host selector와 Group |
 | Service Object / Group | TCP, UDP, Fixed TCP 서비스 정의와 Group |
-| Permission Object / Group | AI 작업 권한과 Group |
+| Permission Object / Group | AI 작업 권한과 이를 묶은 Group |
 | AI Identity | AI Access에서 인증된 주체 |
 | Remote Service | Agent가 소유하는 실제 연결 객체 |
 | Access Policy | Remote / Internet / AI Access 정책 |
 
 ## Server와 Agent의 책임
 
-Server는 Object/Group, AI Identity, Access Policy, Enrollment, Audit, Backup/Restore를 관리합니다.
+Server는 Object/Group, AI Identity, Access Policy, Enrollment, Audit, 백업/복구를 관리합니다.
 
-Agent Host는 Remote Service와 Agent lifecycle을 관리합니다. Remote Service의 일반 create/edit/delete는 해당 Agent Host에서 수행합니다.
+Agent Host는 Remote Service와 Agent의 실행 상태 및 업데이트를 관리합니다. Remote Service의 일반 create/edit/delete는 해당 Agent Host에서 수행합니다.
 
 ## Managed Host selector
 
-등록된 Managed Host는 필요한 policy context에서 Network Object type Managed Host로도 사용됩니다.
+등록된 Managed Host는 정책에서 필요할 때 `Managed Host` 유형의 Network Object처럼 참조할 수 있습니다.
 
-Internet Access에서는 Managed Host를 source로 사용할 수 있지만 destination으로는 사용할 수 없습니다. Managed Host를 포함한 Network Group도 destination에서 거부됩니다.
+Internet Access에서는 Managed Host를 출발지로 사용할 수 있지만 목적지로는 사용할 수 없습니다. Managed Host를 포함한 Network Group도 destination에서 거부됩니다.
 
 ## Fixed TCP
 
-Fixed TCP의 Service Object port는 **destination TCP port**입니다. public endpoint port는 전용 endpoint pool에서 별도로 할당됩니다.
+Fixed TCP의 Service Object 포트는 **목적지 TCP 포트**입니다. 외부에 공개되는 포트는 전용 endpoint pool에서 별도로 할당됩니다.
 
 ## Remote Service 상태
 
-HEALTHY, DEGRADED, DISABLED를 사용합니다. 일시적인 target/Server/sync 문제 때문에 유효한 설정을 자동 삭제하지 않습니다.
+HEALTHY, DEGRADED, DISABLED를 사용합니다. 일시적인 대상 연결, Server 연결, 동기화 문제 때문에 유효한 설정을 자동으로 삭제하지는 않습니다.
