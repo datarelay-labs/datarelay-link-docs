@@ -32,7 +32,7 @@ The Server owns enrollment, Managed Host inventory, Network/Service/Permission O
 
 ## Agent plane
 
-The Agent owns local lifecycle and Remote Services. A Remote Service binds one destination to one Service Object and receives a stable DataRelay Link endpoint.
+The Agent manages its local state and Remote Services. A Remote Service binds one destination to one Service Object and receives a stable DataRelay Link endpoint.
 
 ## Policy planes
 
@@ -46,7 +46,7 @@ The v2.4 target uses SQLite as authoritative Server state:
 /var/lib/drlink/drlink.db
 ```
 
-Runtime configuration is compiled from authoritative state. JSON compatibility files from older releases are not a second source of truth.
+Runtime configuration is generated from the control-plane state. JSON compatibility files from older releases are not an independent configuration source.
 
 ## Trust boundaries
 
