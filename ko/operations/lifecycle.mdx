@@ -1,6 +1,6 @@
 ---
 title: "Lifecycle 의미"
-description: "Disable, revoke, release, uninstall, update의 차이를 public-port와 identity 관점에서 설명합니다."
+description: "Disable, revoke, release, uninstall, update가 연결 포트와 identity에 어떤 차이를 만드는지 설명합니다."
 sidebarTitle: "Lifecycle 의미"
 icon: "diagram-project"
 ---
@@ -13,17 +13,17 @@ icon: "diagram-project"
 set <policy-family> disabled
 ```
 
-Mode와 Rule을 유지하면서 enforcement를 effective ALLOW ALL로 만듭니다.
+Mode와 Rule을 유지한 채 실제 적용 결과만 모두 허용으로 바꿉니다.
 
 ```text
 unset <policy-family> policy
 ```
 
-Mode와 Rule을 제거하여 초기 No Policy / No Rules 상태로 돌아갑니다.
+Mode와 Rule을 제거해 정책이 없는 초기 상태로 돌아갑니다.
 
 ## Remote Service
 
-Disable은 Remote Service object를 유지하면서 connectivity를 중지합니다. 제거는 명시적인 configuration deletion입니다.
+Disable은 Remote Service 객체를 남겨 둔 채 연결만 중지합니다. 제거는 설정 자체를 삭제하는 작업입니다.
 
 ## Agent Host
 
@@ -36,6 +36,6 @@ system update engine
 system uninstall
 ```
 
-Agent lifecycle 명령은 Agent Host에서 수행합니다.
+Agent의 중지, 재개, 재시작, 업데이트 같은 작업은 Agent Host에서 수행합니다.
 
-일반 update/restart는 identity와 설정을 보존해야 하며 uninstall과 Server-side object/policy cleanup은 별도 작업입니다.
+일반 업데이트와 재시작은 identity와 설정을 보존해야 합니다. uninstall과 Server 측 객체·정책 정리는 별도 작업입니다.
