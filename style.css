@@ -1,0 +1,221 @@
+/* DataRelay family visual system — shared across datarelay.run properties. */
+:root {
+  --dr-brand: #C2410C;
+  --dr-brand-hover: #9A3412;
+  --dr-brand-soft: #FFF7ED;
+  --dr-product-accent: #0369A1;
+  --dr-bg: #FFFFFF;
+  --dr-surface: #FFFFFF;
+  --dr-surface-subtle: #FAFAF9;
+  --dr-ink: #1C1917;
+  --dr-muted: #57534E;
+  --dr-border: #E7E5E4;
+  --dr-border-strong: #D6D3D1;
+  --dr-shadow-sm: 0 1px 2px rgb(28 25 23 / 0.05);
+  --dr-shadow-md: 0 14px 34px rgb(28 25 23 / 0.09);
+  --dr-radius-sm: 10px;
+  --dr-radius-md: 16px;
+  --dr-radius-lg: 24px;
+}
+
+.dark {
+  --dr-brand: #FB923C;
+  --dr-brand-hover: #FDBA74;
+  --dr-brand-soft: #2A160D;
+  --dr-product-accent: #38BDF8;
+  --dr-bg: #0C0A09;
+  --dr-surface: #141210;
+  --dr-surface-subtle: #1C1917;
+  --dr-ink: #FAFAF9;
+  --dr-muted: #C7C2BC;
+  --dr-border: #292524;
+  --dr-border-strong: #44403C;
+  --dr-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
+  --dr-shadow-md: 0 18px 42px rgb(0 0 0 / 0.32);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  color: var(--dr-ink);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+#navbar-transition {
+  background: rgb(255 255 255 / 0.9) !important;
+  border-color: rgb(120 113 108 / 0.16) !important;
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+.dark #navbar-transition {
+  background: rgb(12 10 9 / 0.88) !important;
+  border-color: rgb(231 229 228 / 0.1) !important;
+}
+.nav-logo { height: 2rem !important; }
+
+main h1 {
+  color: var(--dr-ink);
+  letter-spacing: -0.038em;
+  font-weight: 760;
+  line-height: 1.08;
+}
+main h2 {
+  color: var(--dr-ink);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+main h3 { letter-spacing: -0.015em; }
+main p, main li { line-height: 1.72; }
+main blockquote {
+  border-left: 3px solid var(--dr-product-accent) !important;
+  background: var(--dr-surface-subtle);
+  border-radius: 0 var(--dr-radius-sm) var(--dr-radius-sm) 0;
+  padding: 0.8rem 1rem;
+}
+main pre {
+  border: 1px solid var(--dr-border) !important;
+  border-radius: var(--dr-radius-md) !important;
+  box-shadow: var(--dr-shadow-sm);
+}
+main table {
+  border-color: var(--dr-border) !important;
+  border-radius: var(--dr-radius-sm);
+}
+
+.dr-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid #FED7AA;
+  border-radius: 999px;
+  background: #FFF7ED;
+  color: #9A3412;
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.dark .dr-hero-kicker {
+  border-color: #7C2D12;
+  background: #2A160D;
+  color: #FDBA74;
+}
+.dr-hero-kicker + h1 {
+  max-width: 950px;
+  margin-top: 0 !important;
+  font-size: clamp(2.7rem, 6vw, 4.85rem) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.055em !important;
+}
+.dr-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 1.55rem 0 1.35rem;
+}
+.dr-button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.72rem;
+  padding: 0.68rem 1rem;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 680;
+  line-height: 1;
+  text-decoration: none !important;
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+.dr-button:hover { transform: translateY(-1px); }
+.dr-button-primary {
+  background: var(--dr-brand);
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgb(194 65 12 / 0.2);
+}
+.dr-button-primary:hover { background: var(--dr-brand-hover); }
+.dr-button-secondary {
+  background: var(--dr-surface);
+  color: var(--dr-ink) !important;
+  border-color: var(--dr-border-strong);
+  box-shadow: var(--dr-shadow-sm);
+}
+.dr-button-secondary:hover { border-color: var(--dr-product-accent); }
+
+.dr-family-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 2rem;
+  padding: 0.4rem;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--dr-border);
+  border-radius: 0.85rem;
+  background: var(--dr-surface-subtle);
+  scrollbar-width: none;
+}
+.dr-family-strip::-webkit-scrollbar { display: none; }
+.dr-family-strip a,
+.dr-family-strip .dr-family-current {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.42rem 0.68rem;
+  border-radius: 0.56rem;
+  white-space: nowrap;
+  color: var(--dr-muted) !important;
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none !important;
+}
+.dr-family-strip a:hover {
+  color: var(--dr-ink) !important;
+  background: var(--dr-surface);
+}
+.dr-family-strip .dr-family-current {
+  color: #FFFFFF !important;
+  background: var(--dr-product-accent);
+  box-shadow: var(--dr-shadow-sm);
+}
+
+.card {
+  border-color: var(--dr-border) !important;
+  border-radius: var(--dr-radius-md) !important;
+  background: var(--dr-surface) !important;
+  box-shadow: var(--dr-shadow-sm);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease !important;
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--dr-product-accent) !important;
+  box-shadow: var(--dr-shadow-md);
+}
+[data-component-part="card-title"] { letter-spacing: -0.012em; }
+[data-component-part="card-icon"] { color: var(--dr-product-accent) !important; }
+.callout { border-radius: var(--dr-radius-md) !important; }
+
+footer {
+  border-top-color: var(--dr-border) !important;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--dr-brand) 48%, transparent) !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 768px) {
+  .dr-hero-kicker + h1 { font-size: clamp(2.35rem, 13vw, 3.55rem) !important; }
+  .dr-hero-actions { display: grid; grid-template-columns: 1fr; }
+  .dr-button { width: 100%; }
+  .dr-family-strip { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .dr-button, .card { transition: none !important; }
+  .dr-button:hover, .card:hover { transform: none; }
+}

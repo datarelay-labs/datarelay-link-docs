@@ -35,9 +35,7 @@ flowchart TD
     VM --> PORTS[Remote Service endpoint pool\n6000-6098]
 ```
 
-The high-resolution architecture diagram below shows the same deployment from the operator's point of view: one OCI Reserved Public IP fronts the DataRelay Link server, while each remote client publishes one or more local or reachable LAN services through its assigned persistent public ports.
-
-![DataRelay Link SSH access architecture using an OCI Reserved Public IP](/images/oci/53.png)
+The deployment uses one OCI Reserved Public IP to front the DataRelay Link server, while each remote client publishes one or more local or reachable LAN services through its assigned persistent public ports.
 
 For this OCI walkthrough we use **Enterprise single-443** because it gives a simple public policy:
 

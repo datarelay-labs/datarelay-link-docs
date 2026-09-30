@@ -4,10 +4,32 @@
   "name": "DataRelay Link",
   "description": "Lightweight secure connectivity for isolated and restricted networks with controlled remote access and agentless outbound egress.",
   "colors": {
-    "primary": "#16A34A"
+    "primary": "#C2410C",
+    "light": "#FB923C",
+    "dark": "#C75A00"
   },
   "navbar": {
     "links": [
+      {
+        "label": "DataRelay",
+        "href": "https://datarelay.run/"
+      },
+      {
+        "label": "Link",
+        "href": "https://link.datarelay.run/"
+      },
+      {
+        "label": "Control",
+        "href": "https://control.datarelay.run/"
+      },
+      {
+        "label": "Grant",
+        "href": "https://grant.datarelay.run/"
+      },
+      {
+        "label": "Engineering",
+        "href": "https://engineering.datarelay.run/"
+      },
       {
         "type": "github",
         "href": "https://github.com/datarelay-labs/datarelay-link"
@@ -242,5 +264,9 @@
     "dark": "/logo/dark.svg",
     "href": "https://link.datarelay.run"
   },
-  "favicon": "/favicon.svg"
+  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "system",
+    "strict": false
+  }
 }
