@@ -34,12 +34,7 @@
         "type": "github",
         "href": "https://github.com/datarelay-labs/datarelay-link"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Quick Start",
-      "href": "/getting-started/quickstart"
-    }
+    ]
   },
   "search": {
     "prompt": "Search DataRelay Link docs..."
