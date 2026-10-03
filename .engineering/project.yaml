@@ -8,8 +8,10 @@ engineering_system:
   policy_epoch: 9
 project:
   name: datarelay-link-docs
-  type: generic
+  type: docs-site
   maturity: development
+  user_facing: true
+  primary_user_surface: browser
 domains:
 - core
 platforms:
