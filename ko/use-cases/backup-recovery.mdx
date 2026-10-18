@@ -1,0 +1,92 @@
+---
+title: "활용 사례: Server 백업과 복원"
+description: "PKI·Managed Host·예약 포트·접근 정책을 보존하고 복원 후 실제 통신을 검증합니다."
+---
+
+# Data Relay Link Server 백업·복원·검증하기
+
+**완성 결과:** 인증서·설정·보안 정책·관리 ID·서비스 포트 예약을 일관되게 백업하고 복원 후 실제 동작을 검증합니다.
+
+<Warning>
+  운영 Server의 Restore는 상태 교체·접속 중단을 초래할 수 있습니다. 반드시 **승인된 장애 복구 또는 유지보수 창**에만 실행하세요. 운영 장비에서 단순 연습을 위해 Restore하지 마세요.
+</Warning>
+
+## 1단계 — 백업 전 상태 기록
+
+**Server 셸:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+sudo drlink show managed-hosts
+sudo drlink show remote-access
+sudo drlink show internet-access
+sudo drlink show ai-access
+~~~
+
+설치 버전/Source HEAD, Managed Host ID, Remote Service 예약 포트, 접근 정책 모드를 기록합니다.
+
+## 2단계 — 일관된 Server 백업 생성
+
+**Server REPL:**
+
+~~~text
+system backup
+~~~
+
+출력되는 **실제 백업 파일 경로**를 보존하고 암호화된 별도 저장소에 안전하게 보관합니다. PKI, 설정, 비밀값, 인벤토리, 정책 및 예약 정보를 하나의 정합성 있는 백업으로 다루어야 합니다. 활성 SQLite DB의 WAL 때문에 **drlink.db 파일만 임의 복사하는 방식은 신뢰할 수 없습니다.**
+
+## 3단계 — 복원 전 백업 검사
+
+**Server 셸:**
+
+~~~bash
+sudo drlink system backup validate <실제-백업-파일-경로>
+~~~
+
+**성공 기준:** 아카이브 형식, 무결성, 호환성이 검증됩니다. 실패하면 Restore하지 말고 정상 백업을 확보합니다.
+
+## 4단계 — 승인된 복구 시 Restore
+
+복원 대상/버전/서비스 중단 영향을 담당자가 승인한 경우:
+
+~~~bash
+sudo drlink system restore <검증된-백업-파일-경로>
+~~~
+
+화면의 변경·확인 내용을 검토하고 진행합니다. 무조건 Yes를 입력하지 마세요. 실패하면 복구/롤백 결과를 기록하고 성공으로 처리하지 않습니다.
+
+## 5단계 — 복원 후 Server와 Agent 확인
+
+**Server REPL:**
+
+~~~text
+show status
+show managed-hosts
+show remote-access
+show internet-access
+show ai-access
+system diagnostics
+system revisions
+~~~
+
+**각 Agent Host REPL:**
+
+~~~text
+show agent
+show remote-services
+system diagnostics
+system synchronize
+~~~
+
+불변 Managed Host ID, Remote Service ID와 예약 공인 포트가 보존되고 Agent가 재연결했는지 확인합니다. [SSH 원격 접속](/ko/use-cases/remote-ssh) 또는 [APT 프록시](/ko/use-cases/ubuntu-updates)를 사용해 **실제 승인 트래픽 1건의 성공**과 **비허용 트래픽 1건의 명시적 DENY**를 확인하세요. HEARTBEAT나 HEALTHY 표시만으로 애플리케이션 통신을 검증했다고 판단하지 않습니다.
+
+## 장애 대응
+
+- **검증 실패:** 파일을 복원하지 않고 오류 증거 및 호환 백업 확보
+- **Agent 재연결 실패:** 기존 신원과 관리 경로 점검 후 동기화; 무작정 재등록하지 않음
+- **정책이 달라짐:** Revision과 기존 백업의 규칙 비교. Remote Access 정책 Reset은 초기 ALLOW 상태를 만들 수 있으므로 주의
+- **HEALTHY인데 앱 실패:** 외부 포트/NAT/내부 대상 서비스를 별도로 점검
+
+추가 정보는 [백업/복원 참조](/ko/operations/backup-restore)와 [문제 해결](/ko/operations/troubleshooting)을 확인하세요.

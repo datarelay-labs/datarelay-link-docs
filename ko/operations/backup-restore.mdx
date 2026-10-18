@@ -11,6 +11,7 @@ icon: "database"
 
 ```text
 system backup
+system backup validate <FILE>
 system restore <FILE>
 ```
 
@@ -19,3 +20,5 @@ v2.4 Server의 기준 상태에는 SQLite control-plane DB와 필요한 신뢰 �
 WAL 모드로 실행 중인 데이터베이스는 SQLite가 보장하는 일관된 백업/스냅샷 방식으로 저장해야 합니다. 실행 중인 DB 파일 하나만 복사하는 방식은 올바른 백업이 아닙니다.
 
 복구 후 Managed Host, Object/Group, Server에서 보이는 Remote Service 상태, Access Policy, AI Identity, revision과 런타임 상태를 확인합니다.
+
+실제 백업 검증·복원 후 Agent/정책 및 접속 확인은 [백업과 장애 복구](/ko/use-cases/backup-recovery)를 따라 진행하세요.

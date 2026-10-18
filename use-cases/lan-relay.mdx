@@ -1,0 +1,75 @@
+---
+title: "Use case: One LAN gateway, multiple services"
+description: "Use one DRLink Agent as the relay for two independent internal servers."
+---
+
+# Publish multiple internal LAN services through one Agent
+
+**Outcome:** A single Agent Host acts as a relay for one internal SSH host and one internal HTTPS application. The destination machines do not each need their own Agent.
+
+**Example:** Agent Host at 10.20.0.10 can reach SSH host 10.20.0.21:22 and HTTPS host 10.20.0.22:443. The Agent makes outbound connectivity to the DRLink Server.
+
+## Step 1 — check LAN and enrollment
+
+Complete [Remote SSH through NAT](/use-cases/remote-ssh) through its enrollment step, but put the Agent on the **gateway** (10.20.0.10), not on the two destination machines. Independently confirm from the gateway OS that both target IPs and ports are reachable. This local LAN firewall/routing setup is outside DRLink.
+
+## Step 2 — describe both destinations and services
+
+**Server REPL:**
+
+~~~text
+set network-object lan-ssh-host type ip value 10.20.0.21
+set network-object lan-web-host type ip value 10.20.0.22
+set service-object ssh type tcp port 22
+set service-object web-https type tcp port 443
+show network-objects
+show service-objects
+~~~
+
+Each Network Object is **one destination**. A Network Group or CIDR range is not a valid Remote Service destination.
+
+## Step 3 — create two Remote Services on the gateway
+
+**Gateway Agent REPL:**
+
+~~~text
+show status
+set remote-service lan-ssh destination lan-ssh-host service ssh enabled
+set remote-service lan-web destination lan-web-host service web-https enabled
+show remote-service lan-ssh
+show remote-service lan-web
+~~~
+
+Each service has its own stable Server endpoint. An Agent can own more than one Remote Service; the target does not have to be the Agent itself.
+
+## Step 4 — test both real applications
+
+From the approved **outside workstation**:
+
+~~~bash
+ssh -p <ssh-public-port> <actual-ssh-user>@<drlink-public-host>
+~~~
+
+For HTTPS, create/confirm the DNS and application certificate for the **publicly used host name**, then open in a browser:
+
+~~~text
+https://<certificate-matching-public-host>:<web-public-port>/
+~~~
+
+Expected: SSH reaches **10.20.0.21:22** and the browser reaches **10.20.0.22:443**. DRLink passes through backend application TLS; it does not replace that host's certificate. Do not bypass invalid certificate validation to claim success.
+
+## Step 5 — check isolation
+
+**Server REPL:**
+
+~~~text
+show managed-host <gateway-managed-host-name> remote-services
+show remote-access
+system audit
+~~~
+
+Confirm that there are only two intended Remote Services. Set a narrow Remote Access WHITELIST for the gateway and each selected service if the endpoint must not be broadly reachable. Do not assume an existing Rule creates a third tunnel.
+
+## Recovery / cleanup
+
+If one destination fails, the other service can remain operational. On the gateway, use **system diagnostics** and **system synchronize**; fix the target service or LAN route. To retire an individual mapping, use **unset remote-service lan-ssh** or **unset remote-service lan-web** on the owning Agent after reviewing any service interruption. Do not delete the gateway's Managed Host just to remove one mapping.

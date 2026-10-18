@@ -1,0 +1,76 @@
+---
+title: "활용 사례: 여러 지점의 Agent 일괄 등록"
+description: "일회용 등록 정보를 안전하게 발급하고 Managed Host Group으로 관리합니다."
+---
+
+# 지점별 서버 여러 대를 한 번에 등록·분류하기
+
+**완성 결과:** 지점 Linux 서버 또는 PC 두 대를 안전하게 등록하고, 서비스 포트를 추가로 공개하지 않고 **Managed Host Group**으로 관리합니다.
+
+## 1단계 — 지점별 준비
+
+각 호스트에서 DRLink Server의 등록·관리 엔드포인트로 아웃바운드 연결할 수 있는지 확인합니다. Agent 설치 권한과 [Linux](/ko/getting-started/linux-client), [Windows](/ko/getting-started/windows-client), [macOS](/ko/getting-started/macos-client) 별 요구사항을 확인하세요. 서버 설치 버전은 **sudo drlink system version**으로 확인하며 검증된 v2.4 후보를 사용합니다.
+
+## 2단계 — 일괄 등록 발급
+
+**Server REPL:**
+
+~~~text
+show enrollments
+set enrollment bulk
+~~~
+
+Wizard에서 수량 또는 UTF-8 CSV 입력을 선택합니다. CSV 헤더는 다음과 같습니다.
+
+~~~csv
+label,ssh_user,note
+branch-a,operator,Branch A Linux
+branch-b,,Branch B management-only
+~~~
+
+**확인:** 최대 **한 배치당 10개**, 활성 미사용 코드 **10개**, 기본 TTL **1시간**, 최대 **24시간**입니다. SSH 사용자 힌트가 비어 있으면 관리 전용으로 등록되며, DRLink가 OS 계정을 자동 생성하지 않습니다. 각 등록 자격증명은 **1회용**이므로 공개 문서·이슈에 노출하지 마세요.
+
+## 3단계 — 개별 호스트에서 설치·검증
+
+각 지점 관리자에게 발급된 **실제 일회용 설치 명령**을 안전하게 전달하고 해당 호스트에서만 실행합니다. 임의로 설치 URL을 조합하거나 사용한 코드를 재사용하면 안 됩니다.
+
+**각 Linux Agent Host의 셸:**
+
+~~~bash
+sudo drlink show status
+sudo drlink show agent
+sudo drlink system diagnostics
+~~~
+
+**기대 결과:** Role이 **Agent Host**, 등록 신원과 Server 연결이 정상입니다. Windows/macOS의 명령 실행 방식은 각 플랫폼 가이드를 따릅니다.
+
+## 4단계 — Server에서 Managed Host 확인
+
+**Server REPL:**
+
+~~~text
+show managed-hosts
+show managed-host branch-a
+show managed-host branch-b
+show enrollments
+~~~
+
+등록된 이름과 불변 ID를 확인하세요. 실제 Managed Host 이름이 다르면 다음 단계의 branch-a/branch-b를 실제 이름으로 바꿔 실행합니다.
+
+## 5단계 — 지점 그룹으로 관리
+
+**Server REPL:**
+
+~~~text
+set managed-host-group branches
+set managed-host branch-a group branches
+set managed-host branch-b group branches
+show managed-host-groups
+show managed-host-group branches
+~~~
+
+**성공 기준:** 두 Managed Host가 branches 그룹에 표시됩니다. Managed Host Group은 인벤토리 그룹이고 접근 정책의 **Network Group**과 다릅니다. 그룹을 만든다고 Remote Service나 접근 허용 정책이 자동 생성되지 않습니다.
+
+## 장애·정리
+
+등록이 실패하면 **show enrollments**, 만료·취소 여부, Agent의 **system diagnostics**와 Server 연결을 점검합니다. 이미 소비된 코드는 새 등록에 사용할 수 없습니다. 그룹 할당만 해제하려면 **unset managed-host branch-b group branches**를 사용합니다. 전체 장치 **unset managed-host branch-b**는 별도 신원·서비스 철회이므로 그룹 정리 목적으로 실행하면 안 됩니다.

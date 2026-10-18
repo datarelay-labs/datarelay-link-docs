@@ -24,6 +24,10 @@ set internet-access github-https mode whitelist source ubuntu-prod destination g
 test internet-access source ubuntu-prod destination github service https
 ~~~
 
-Internet Access uses the same BLACKLIST / WHITELIST and Enforcement model as Remote Access.
+**Internet Access is WHITELIST-only and denies by default.** No Policy, no matching enabled Rule, and disabled Enforcement all mean **DENY ALL**. BLACKLIST is not supported. Remote Access uses different initial/disabled semantics; never transfer those assumptions to Internet Access.
+
+For the base HTTP/HTTPS path, a protected application uses an ordinary HTTP(S) proxy setting **without a DRLink Agent**. A Managed Host selector can serve as a source only when its eligible address matches the proxy-visible source; after NAT, explicitly use the observed IP/CIDR Network Object instead. A policy-test ALLOW is not real application traffic.
+
+Follow [Ubuntu APT updates](/use-cases/ubuntu-updates) or [GitHub/HTTPS API access](/use-cases/github-egress) for complete proxy, ALLOW, DENY and audit verification.
 
 DataRelay Link must not become an open proxy. The implementation validates destinations and protocol/port use, performs safe DNS handling where applicable, resists DNS rebinding and SSRF/private/local/metadata destinations, and fails closed on ambiguous unsafe state.

@@ -1,0 +1,95 @@
+---
+title: "Use case: Ubuntu APT in a restricted network"
+description: "Permit only required Ubuntu repository FQDNs through the agentless Internet Access proxy."
+---
+
+# Run Ubuntu updates through an approved outbound proxy
+
+**Outcome:** A restricted Ubuntu host can run an actual APT index update through Data Relay Link without receiving general Internet access. An unrelated Internet hostname is denied.
+
+**Example topology:** Ubuntu host 10.20.30.15 → DRLink Internet Access listener at 10.20.30.5:6080 → approved Ubuntu mirrors only. Replace both addresses and check the **actual listening port**; 6080 is an illustration, not a guaranteed installation default.
+
+## Step 1 — identify the real APT destinations
+
+**Protected Ubuntu host shell:**
+
+~~~bash
+grep -R -hE '^(URIs:|deb |deb-src )' /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null
+~~~
+
+Write down the **actual hostnames and schemes**. This example assumes HTTP requests to **archive.ubuntu.com** and **security.ubuntu.com** (TCP 80). A different mirror, proxy, PPA, CDN or HTTPS source needs its own narrowly scoped FQDN + port rule. Do not authorize an overly broad wildcard to make APT pass.
+
+## Step 2 — confirm the listener and observed source
+
+**Server shell:**
+
+~~~bash
+sudo drlink system version
+sudo drlink system diagnostics
+sudo drlink show internet-access
+~~~
+
+Confirm the Server's reachable Internet Access proxy endpoint and that the proxy sees **10.20.30.15** as the connecting source. With NAT, use the translated IP/CIDR actually observed by DRLink. External network firewall/security-group rules must allow the protected host to the proxy port; DRLink does not configure those firewalls.
+
+## Step 3 — define precise objects
+
+**Server REPL:**
+
+~~~text
+set network-object apt-source type ip value 10.20.30.15
+set network-object ubuntu-archive type fqdn value archive.ubuntu.com
+set network-object ubuntu-security type fqdn value security.ubuntu.com
+set service-object apt-http type tcp port 80
+show network-objects
+show service-object apt-http
+~~~
+
+For HTTPS repositories, additionally define **set service-object apt-https type tcp port 443** and create corresponding exact-destination rules for that service.
+
+## Step 4 — enable only the required Internet Access
+
+**Server REPL:**
+
+~~~text
+set internet-access apt-archive mode whitelist source apt-source destination ubuntu-archive service apt-http enabled
+set internet-access apt-security source apt-source destination ubuntu-security service apt-http enabled
+set internet-access enabled
+show internet-access
+test internet-access source apt-source destination ubuntu-archive service apt-http
+test internet-access source apt-source destination ubuntu-security service apt-http
+~~~
+
+Expected: WHITELIST enforcement active, both configured selectors **ALLOW**. Unmatched destinations are **DENY**. Internet Access does not support BLACKLIST, and disabling enforcement is **DENY ALL**, not ALLOW ALL.
+
+## Step 5 — run the real application with temporary proxy configuration
+
+On the **protected Ubuntu host**, use the actual proxy endpoint; this temporary APT configuration avoids permanently rewriting system proxy files. It updates package indexes only; it does not install upgrades:
+
+~~~bash
+(
+  PROXY_URL="http://10.20.30.5:6080"
+  APT_PROXY_CONFIG="$(mktemp)"
+  trap 'rm -f "$APT_PROXY_CONFIG"' EXIT
+  printf 'Acquire::http::Proxy "%s";\nAcquire::https::Proxy "%s";\n' \
+    "$PROXY_URL" "$PROXY_URL" > "$APT_PROXY_CONFIG"
+  sudo env APT_CONFIG="$APT_PROXY_CONFIG" \
+    apt-get -o APT::Update::Error-Mode=any update
+)
+~~~
+
+Expected: every required repository index is refreshed through the DRLink proxy. An unapproved mirror may fail the update; inspect which hostname it requests, authorize it individually if appropriate and retry. Never count a partial APT update as PASS merely because it returned exit status 0 on a platform with lenient APT error handling.
+
+## Step 6 — prove the deny boundary
+
+From the same protected host:
+
+~~~bash
+curl --verbose --proxy "http://10.20.30.5:6080" \
+  --head https://example.org/
+~~~
+
+Expected: explicit proxy policy **DENY** for this unlisted domain. Review **system audit** and **system diagnostics** on the Server to distinguish deny from DNS/network failure. Also confirm approved APT traffic reached DRLink; a successful direct-to-Internet update does not prove this scenario.
+
+## Cleanup and troubleshooting
+
+The shell trap deletes the temporary APT proxy file at shell exit. Leave the approved policy only if required operationally; changing destination rules affects **new** connections. If APT fails, verify the requested mirror names and HTTP/HTTPS ports, listener reachability, NAT-visible source and Internet Access policy. Preserve existing long-lived application proxy settings rather than overwriting them for a test. Do not modify external firewall state just to manufacture a qualification result.

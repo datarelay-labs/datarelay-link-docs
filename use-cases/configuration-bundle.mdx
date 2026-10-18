@@ -1,0 +1,91 @@
+---
+title: "Use case: ConfigurationBundle safely"
+description: "Validate, diff, apply and export a reviewed v2.4 Server configuration change."
+---
+
+# Roll out reviewed policy with a ConfigurationBundle
+
+**Outcome:** A Server administrator creates narrowly scoped network/service objects and an Internet Access WHITELIST in one validated configuration transaction, without directly editing internal files.
+
+## Step 1 — confirm Server role and baseline
+
+**Server shell:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system revisions
+sudo drlink system export configuration /tmp/drlink-before.yaml
+~~~
+
+Keep the baseline privately, as exported config may include sensitive operational material. Do not commit the export to a public repository.
+
+## Step 2 — write a complete desired-change bundle
+
+On the **Server shell**, create **/tmp/drlink-allow-github.yaml** with this content. Replace the example source IP with the real **proxy-visible** source:
+
+~~~yaml
+configurationBundle:
+  context: server
+  networkObjects:
+    - name: office-admin
+      type: ip
+      value: 203.0.113.10
+    - name: github
+      type: fqdn
+      value: github.com
+  serviceObjects:
+    - name: https
+      type: tcp
+      port: 443
+  internetAccess:
+    mode: whitelist
+    enforcement: enabled
+    rules:
+      - name: github-https
+        source: office-admin
+        destination: github
+        service: https
+        enabled: true
+~~~
+
+This is the v2.4 **Server** bundle schema. Do not add **apiVersion**/**kind** or Agent-only **remoteServices** here. Resources omitted from the bundle remain unchanged, but existing Internet Access rules also remain unless deliberately changed. Review them before applying.
+
+## Step 3 — validate and compare before mutation
+
+**Server shell:**
+
+~~~bash
+sudo drlink test configuration /tmp/drlink-allow-github.yaml
+sudo drlink system diff configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+~~~
+
+Expected: syntax/context valid, an understandable change diff and no unintended broadening. If the source revision has changed since the export, **re-export** and reconcile the new state. A valid test is not permission to apply a stale bundle.
+
+## Step 4 — apply the reviewed change
+
+After inspecting the security-impact confirmation and having the necessary operator authorization:
+
+~~~bash
+sudo drlink system apply configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+sudo drlink system revisions
+~~~
+
+Expected: the new objects/rule appear and are effective for new connections; the same bundle applied again should result in **NO CHANGE** when state and revision permit. A Server bundle is atomic within **Server** context, not a distributed Server+Agent transaction.
+
+## Step 5 — prove policy plus traffic
+
+**Server REPL:**
+
+~~~text
+test internet-access source office-admin destination github service https
+system audit
+~~~
+
+From the actually approved protected host, configure the standard HTTP(S) proxy and test a real HTTPS Git or curl request using the [GitHub egress playbook](/use-cases/github-egress). A policy ALLOW result alone is not traffic E2E.
+
+## Recovery and cleanup
+
+If validation or apply rejects the bundle, **no partial configuration change** is expected; inspect the reported error rather than bypassing transaction guards. Compare the recorded revisions with **system diff <REVISION_A> <REVISION_B>** and plan a reviewed **system rollback <REVISION>** only if required. Avoid treating a blind rollback as risk-free: it can change current access. Keep exported files in protected storage and remove temporary copies after the approved work.

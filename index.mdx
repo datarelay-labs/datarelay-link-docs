@@ -42,7 +42,7 @@ flowchart LR
     A[Managed Host / Agent] -->|outbound relay| S
     S -->|Remote Service| A
     A --> T[Local or LAN target]
-    A -->|Internet Access| S
+    H[Restricted application host] -->|HTTP(S) proxy - agentless| S
     S --> I[Approved Internet destination]
     AI[Authenticated AI Identity] -->|AI Access / MCP| S
 ```
@@ -58,6 +58,10 @@ For the complete object model, policy behavior, and role boundaries, read [Conce
 ## Choose your path
 
 <CardGroup cols={2}>
+  <Card title="Step-by-step use cases" icon="list-check" href="/use-cases/index">
+    Copy the role-specific commands and verify real traffic, denied requests, and recovery.
+  </Card>
+
   <Card title="Get started" icon="rocket" href="/getting-started/quickstart">
     Install a Server, enroll a Managed Host, and create a Remote Service.
   </Card>

@@ -1,0 +1,87 @@
+---
+title: "활용 사례: 제한망에서 Git과 API 사용"
+description: "허용한 GitHub Git·HTTPS API만 DRLink 프록시로 통과시키고 나머지는 차단합니다."
+---
+
+# Internet Access를 통해 GitHub Git·API만 사용하기
+
+**완성 결과:** 제한망의 개발/운영 호스트가 Git 메타데이터를 가져오고 필요한 HTTPS API를 호출하지만, DRLink 프록시를 통한 무관한 인터넷 사이트 접근은 거부됩니다.
+
+예제: 보호 호스트 **10.20.30.16** → 프록시 **10.20.30.5:6080** → **github.com:443**, **api.github.com:443**만.
+
+## 1단계 — 프록시 엔드포인트 점검
+
+**Server REPL:**
+
+~~~text
+show internet-access
+system diagnostics
+~~~
+
+설치 시 지정된 실제 프록시 리스너 IP/포트를 기록합니다. 외부 방화벽은 승인된 보호 호스트에서만 이 포트에 도달하도록 관리자가 설정합니다.
+
+## 2단계 — 출발지/목적지 Object 구성
+
+**Server REPL:**
+
+~~~text
+set network-object git-source type ip value 10.20.30.16
+set network-object github-site type fqdn value github.com
+set network-object github-api type fqdn value api.github.com
+set service-object https443 type tcp port 443
+~~~
+
+서버가 관측하는 NAT 변환 후 IP가 예제와 다르다면 그 실제 출발지로 대체합니다.
+
+## 3단계 — 인터넷 허용 정책 생성
+
+**Server REPL:**
+
+~~~text
+set internet-access git-https mode whitelist source git-source destination github-site service https443 enabled
+set internet-access api-https source git-source destination github-api service https443 enabled
+set internet-access enabled
+show internet-access
+test internet-access source git-source destination github-site service https443
+test internet-access source git-source destination github-api service https443
+~~~
+
+**확인:** 정확히 지정한 두 FQDN/포트에 대해서만 ALLOW, 다른 목적지는 DENY. 기존 Rule/Group이 광범위한 접근을 허용하지 않는지도 함께 확인합니다.
+
+## 4단계 — 보호 호스트에서 실제 Git·curl 전송
+
+영구 로그인 셸의 프록시 환경을 변경하지 않도록 **서브셸**로 실행합니다.
+
+~~~bash
+(
+  PROXY_URL="http://10.20.30.5:6080"
+  export http_proxy="$PROXY_URL" https_proxy="$PROXY_URL"
+  export HTTP_PROXY="$PROXY_URL" HTTPS_PROXY="$PROXY_URL"
+  bypass="${no_proxy:-}"
+  if [ -n "${NO_PROXY:-}" ]; then bypass="${bypass:+${bypass},}${NO_PROXY}"; fi
+  bypass="${bypass:+${bypass},}127.0.0.1,localhost"
+  export no_proxy="$bypass" NO_PROXY="$bypass"
+
+  git ls-remote https://github.com/git/git.git HEAD
+  curl --head --show-error https://api.github.com/
+  curl --head --show-error https://example.org/
+)
+~~~
+
+**성공 기준:** Git HEAD SHA가 출력되고 Git/API 요청이 실제 프록시를 통과해야 합니다. API 서버 자체의 Rate Limit 응답은 DRLink 정책 DENY와 구별하세요. example.org는 정책상 명시적 DENY여야 합니다. 상속된 **no_proxy/NO_PROXY**에 해당 공인 도메인이 있다면 테스트 범위에서만 제거하여 직접 인터넷 우회를 방지합니다.
+
+## 5단계 — 감사 로그 대조
+
+**Server REPL:**
+
+~~~text
+show internet-access
+system audit
+system diagnostics
+~~~
+
+보호 호스트 IP, 목적지 FQDN/포트, 매칭 Rule, 실제 허용/차단 결과를 확인합니다. **test internet-access의 ALLOW만으로 데이터 전송 성공이라고 판단하지 않습니다.**
+
+## 문제 해결 및 추가 도메인
+
+Git이 계속 DENY되면 실제 Git 원격 URL, NAT 출발지, DNS 호스트명 및 정책을 확인합니다. git clone이 추가로 **codeload.github.com** 등 다른 도메인에 접근한다면 실제 로그에 나타난 FQDN만 개별 허용합니다. TLS 오류는 목적지 인증서/신뢰 문제이고, 프록시 timeout은 정책 DENY와 다릅니다. Internet Access enforcement를 disabled로 변경하면 모든 신규 접근이 DENY됩니다.

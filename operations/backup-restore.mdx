@@ -11,6 +11,7 @@ Use the product backup/restore workflow rather than copying selected live files 
 
 ```text
 system backup
+system backup validate <FILE>
 system restore <FILE>
 ```
 
@@ -23,3 +24,5 @@ Back up a live WAL database with a consistent SQLite backup or snapshot method. 
 Restore is a configuration mutation. The product validates compatibility, integrity, and activation. If automatic rollback cannot fully recover a failure, diagnostics must report that truthfully rather than claiming success.
 
 After restore, verify Managed Hosts, Objects and Groups, Remote Services visible from Server state, policies, AI Identities, revisions, and runtime health.
+
+For a prerequisite checklist, validation and post-restore live-traffic tests, follow [Backup and recovery](/use-cases/backup-recovery).

@@ -1,0 +1,88 @@
+---
+title: "Use case: Git and HTTPS API from a restricted host"
+description: "Make proxy-aware Git and API traffic work with narrow Internet Access allowlists."
+---
+
+# Use GitHub Git and API through restricted Internet Access
+
+**Outcome:** A build or administration host can fetch Git metadata and call a required HTTPS API via DRLink, but cannot browse unrelated destinations through the proxy.
+
+**Example:** protected host 10.20.30.16 → proxy 10.20.30.5:6080 → **github.com:443** and **api.github.com:443** only. Adapt to your application and observed NAT source.
+
+## Step 1 — validate the actual proxy listener
+
+**Server REPL:**
+
+~~~text
+show internet-access
+system diagnostics
+~~~
+
+Take the listener address/port from current Server diagnostics, not a legacy config file. Configure the external firewall to accept only approved protected-host sources.
+
+## Step 2 — define source and HTTPS destinations
+
+**Server REPL:**
+
+~~~text
+set network-object git-source type ip value 10.20.30.16
+set network-object github-site type fqdn value github.com
+set network-object github-api type fqdn value api.github.com
+set service-object https443 type tcp port 443
+~~~
+
+## Step 3 — create the WHITELIST
+
+**Server REPL:**
+
+~~~text
+set internet-access git-https mode whitelist source git-source destination github-site service https443 enabled
+set internet-access api-https source git-source destination github-api service https443 enabled
+set internet-access enabled
+show internet-access
+test internet-access source git-source destination github-site service https443
+test internet-access source git-source destination github-api service https443
+~~~
+
+Expected: both exact hostname selectors **ALLOW**. There must be no blanket **ANY** or generic wildcard rule.
+
+## Step 4 — run real proxy-aware applications
+
+**Protected host shell**, in a subshell so proxy settings do not leak into the operator's login session:
+
+~~~bash
+(
+  PROXY_URL="http://10.20.30.5:6080"
+  export http_proxy="$PROXY_URL" https_proxy="$PROXY_URL"
+  export HTTP_PROXY="$PROXY_URL" HTTPS_PROXY="$PROXY_URL"
+  bypass="${no_proxy:-}"
+  if [ -n "${NO_PROXY:-}" ]; then bypass="${bypass:+${bypass},}${NO_PROXY}"; fi
+  bypass="${bypass:+${bypass},}127.0.0.1,localhost"
+  export no_proxy="$bypass" NO_PROXY="$bypass"
+
+  git ls-remote https://github.com/git/git.git HEAD
+  curl --head --show-error https://api.github.com/
+  curl --head --show-error https://example.org/
+)
+~~~
+
+Expected: Git returns a commit SHA for **HEAD**, the API request travels through the proxy (the API response may depend on upstream rate limits), and the third request receives an explicit DRLink policy **DENY**. If the inherited **no_proxy/NO_PROXY** includes those public hostnames, remove such bypasses **for this scoped test only**, rather than declaring that direct traffic was relayed.
+
+## Step 5 — confirm audit and real routing
+
+**Server REPL:**
+
+~~~text
+show internet-access
+system audit
+system diagnostics
+~~~
+
+Verify source IP, destination hostname/port and matched policy result. The test command is a policy simulation; the Git/curl commands provide application traffic. If clone operations later access **codeload.github.com** or other domains, approve them one by one according to actual evidence rather than widening the allowlist.
+
+## Recovery
+
+- **DENY for approved Git:** check proxy-visible source, actual URL authority and exact policy selectors.
+- **TLS trust error:** repair destination trust/certificates or a documented application proxy trust chain; DRLink does not decrypt the target TLS.
+- **Proxy timeout:** check the listener and external firewall separately from a policy denial.
+- **Unwanted broad access:** inspect all enabled Internet Access rules and Network/Service Group membership; disable the offending Rule or change it through reviewed policy mutation. Internet Access disabled enforcement is **DENY ALL**.

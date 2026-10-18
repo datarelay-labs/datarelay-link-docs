@@ -1,0 +1,70 @@
+---
+title: "활용 사례: Fixed TCP로 내부 DB 접속"
+description: "기존 DB의 TCP 포트를 별도 Fixed TCP Remote Service로 연결합니다."
+---
+
+# Fixed TCP로 내부 레거시 데이터베이스 접근하기
+
+**완성 결과:** 외부 DBA PC에서 승인된 출발지로만 내부 DB 리스너에 연결합니다. DB 서버와 사내 전체망을 공개하지 않습니다.
+
+예제: 승인 DBA 공인 IP **203.0.113.10** → DRLink → 지점 Agent → 내부 DB **10.50.1.20:1521**.
+
+<Note>
+  이 사례는 **인바운드 Fixed TCP Remote Service**입니다. 별개의 **아웃바운드 Internet Access Fixed TCP** 프록시 리스너를 설정하는 방법이 아닙니다.
+</Note>
+
+## 1단계 — DB와 게이트웨이 준비
+
+게이트웨이 Agent OS에서 **10.50.1.20:1521**에 접근 가능한지 확인합니다. DB 인증, TLS/암호화, 계정 및 운영 방화벽은 별도로 유지해야 합니다. DRLink는 DB 사용자를 생성하지 않습니다.
+
+## 2단계 — 목적지와 Fixed TCP Service Object 등록
+
+**Server REPL:**
+
+~~~text
+set network-object branch-db type ip value 10.50.1.20
+set network-object dba-public type ip value 203.0.113.10
+set service-object oracle-db type fixed-tcp port 1521
+show service-object oracle-db
+show managed-hosts
+~~~
+
+Agent 게이트웨이의 실제 Managed Host 이름(예: **branch-gateway**)을 확인합니다. Fixed TCP는 일반 TCP와 별도의 공인 엔드포인트 풀을 사용하므로 기존 Remote Service의 포트 풀 유형을 임의로 변경하지 마세요.
+
+## 3단계 — 서비스를 공개하기 전에 출발지 제한
+
+**Server REPL:**
+
+~~~text
+set remote-access dba-to-db mode whitelist source dba-public destination branch-gateway service oracle-db enabled
+set remote-access enabled
+test remote-access source dba-public destination branch-gateway service oracle-db
+show remote-access
+~~~
+
+**확인:** DBA 출발지 ALLOW, 기존 다른 Rule에서 원치 않는 출발지가 허용되지 않는지 검토.
+
+## 4단계 — 게이트웨이 Agent에서 실제 서비스 생성
+
+**Gateway Agent REPL:**
+
+~~~text
+set remote-service branch-oracle destination branch-db service oracle-db enabled
+show remote-service branch-oracle
+~~~
+
+**확인:** 할당된 공인 Fixed TCP 포트와 런타임 상태를 기록합니다. 연결이 임시로 불가능하면 DEGRADED일 수 있고, 임의로 성공 판정하지 않습니다.
+
+## 5단계 — DB 클라이언트 통신 확인
+
+허용된 외부 DBA PC에서 TCP 리스너 확인:
+
+~~~bash
+nc -vz <DRLink-공인-주소> <할당된-Fixed-TCP-공인-포트>
+~~~
+
+그다음 실제 **DB 벤더 클라이언트**에서 이 호스트/포트와 올바른 DB 계정으로 로그인·조회합니다. **nc 성공은 TCP 핸드셰이크만 검증**하므로 실제 DB 쿼리 성공까지 확인해야 합니다. 비허용 공인 IP에서는 접속 거부 및 DRLink 감사 기록을 확인하세요.
+
+## 장애/서비스 제거
+
+실패하면 Server 정책, Agent **system diagnostics**, DB 서비스 리스너, 외부 포트 개방을 각각 점검합니다. DB 자체 인증/TLS는 그대로 필요합니다. 서비스 철회 시 소유 Agent에서 **unset remote-service branch-oracle**로 해당 Remote Service만 제거합니다. 운영 DB 세션 중단 가능성을 검토한 뒤 실행하세요.

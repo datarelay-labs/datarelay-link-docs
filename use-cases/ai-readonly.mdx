@@ -1,0 +1,102 @@
+---
+title: "Use case: Read-only AI / MCP access"
+description: "Authenticate an AI Identity and allow only selected read-only operations on one Managed Host."
+---
+
+# Grant an AI assistant read-only access to one Managed Host
+
+**Outcome:** A verified AI client can request host/process information from **branch-a** but cannot execute commands or access unrelated hosts merely by supplying an AI display name.
+
+<Warning>
+  **v2.4 development scope, not a stable-release claim.** Public MCP requires a **single443** Server, a working HTTPS certificate and a compatible client whose current plan/application supports remote MCP and OAuth. Real end-user OAuth/UI acceptance must be verified on that client; policy simulation alone is insufficient.
+</Warning>
+
+## Step 1 — confirm topology and Agent
+
+**Server REPL:**
+
+~~~text
+show status
+show managed-hosts
+system diagnostics
+system certificate status
+~~~
+
+The target **branch-a** must already be enrolled with a functioning Agent management path. A Remote Service or exposed SSH is **not required** for MCP operations. Public MCP over **https://<host>/mcp** is supported on **single443**, not **direct** mode.
+
+If you must change from direct to single443, plan a Server installer mode migration using the **same exact immutable qualified source** and the [deployment modes guide](/deployment/modes). Do not infer MCP readiness just because a stale certificate exists.
+
+## Step 2 — create an identity and read-only Permission Object
+
+**Server REPL:**
+
+~~~text
+set ai-identity auditor-ai
+show ai-identity auditor-ai
+set permission-object observer permissions host-info,process-read
+set permission-object exec-check permissions command-exec
+show permission-objects
+~~~
+
+The **set ai-identity** wizard establishes the identity definition. For an interactive AI client, configure the supported OAuth Authorization Code authentication flow. Example CLI authentication-mode setting, subject to the actual client/Server contract:
+
+~~~text
+system credential configure ai-identity auditor-ai authentication oauth
+~~~
+
+A displayed identity name alone is never proof of authentication. Protect credentials; do not embed them in documentation or issue comments.
+
+## Step 3 — authorize only the necessary target and permission
+
+**Server REPL:**
+
+~~~text
+set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access enabled
+show ai-access
+test ai-access source auditor-ai destination branch-a permission observer
+test ai-access source auditor-ai destination branch-a permission exec-check
+~~~
+
+Expected: **ALLOW** for **observer** and **DENY** for **exec-check**, provided no other matching enabled Rule grants it. AI Access is **WHITELIST only**, default DENY; disabling enforcement is **DENY ALL**. Do not assign **command-exec** as part of a supposed read-only role.
+
+## Step 4 — prepare the public HTTPS MCP origin
+
+On an existing single443 Server, ensure a controlled DNS hostname, public HTTPS reachability and appropriate certificate authority validation. **Server REPL**, using your real hostname and contact email:
+
+~~~text
+set mcp-tls hostname mcp.example.net
+set mcp-tls mode auto-acme
+set mcp-tls contact-email admin@example.net
+system certificate preflight
+~~~
+
+Only after successful preflight, planned certificate issuance and appropriate owner authorization:
+
+~~~text
+system certificate issue
+system certificate status
+system diagnostics
+~~~
+
+Verify externally that **https://mcp.example.net/mcp**, **/.well-known/oauth-authorization-server**, and **/.well-known/oauth-protected-resource/mcp** resolve over trusted TLS and publish a consistent canonical issuer. An internal loopback test is not enough. For a user-provided certificate, choose the supported user-certificate mode instead.
+
+## Step 5 — connect and verify from a real AI client
+
+1. In a compatible remote-MCP client, add a **custom remote MCP server** using **https://mcp.example.net/mcp**. The exact client menu and plan capabilities are determined by that client; do not attempt an unsupported plan workaround.
+2. Complete its OAuth Authorization Code login/consent. Match the authenticated client principal to the intended **auditor-ai** identity according to the configured credential binding; approve a pending request only after verifying the principal.
+3. Discover the exposed tools. Request **host-info** on **branch-a**: expected authorized result.
+4. Request a command execution or another out-of-scope operation: expected policy **DENY**, not a successful command.
+5. In **Server REPL**, review:
+
+~~~text
+show ai-access
+show ai-access-log identity auditor-ai
+system diagnostics
+~~~
+
+The end-to-end result is only validated once the **actual external AI client** completed authentication, allowed invocation and denied invocation. Static configuration and CLI policy tests are preparation, not end-user qualification.
+
+## Recovery and least privilege
+
+A failure may be OAuth authentication, external TLS, client capability, Agent trust or policy. Diagnose each boundary individually. Avoid broad permissions, file access without rule-bound **paths**, and unnecessary command execution. Revoking a credential with **system credential revoke ai-identity auditor-ai** interrupts that identity; use only when the security owner intends it. To retire the rule, review effects before **unset ai-access auditor-host**; do not remove unrelated identities or MCP certificates.

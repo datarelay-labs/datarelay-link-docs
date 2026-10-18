@@ -1,0 +1,77 @@
+---
+title: "활용 사례: 사무실 공인 IP만 SSH 허용"
+description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를 실제로 검증합니다."
+---
+
+# 사무실 IP 한 곳에서만 원격 SSH 접속 허용하기
+
+**완성 결과:** 지정된 사무실 공인 IP만 내부 호스트의 Remote Service에 연결할 수 있습니다. 다른 출발지는 정책상 DENY입니다.
+
+예제: 사무실 공인 IP **203.0.113.10**, Managed Host **branch-a**, Service Object **ssh**. 모두 실제 값으로 교체합니다.
+
+<Warning>
+  v2.4 Remote Access는 **No Policy/No Rules = ALLOW**입니다. **set remote-access disabled = ALLOW ALL**이며 긴급 차단 명령이 아닙니다. WHITELIST를 무심코 삭제/초기화하면 원래 열려 있던 상태로 돌아갈 수 있습니다.
+</Warning>
+
+## 1단계 — 기존 접속 정책과 서버 백업 확인
+
+**Server REPL:**
+
+~~~text
+show managed-hosts
+show service-objects
+show remote-access
+system backup
+~~~
+
+**branch-a**가 등록되어 있고 **ssh** Service Object가 존재하는지 확인합니다. 정책 변경 전 현재 Rule 및 백업 경로를 기록합니다. NAT 뒤 사무실이라면 사설 PC IP가 아닌 **서버가 실제로 관찰하는 사무실 출발 공인 IP**를 확인하세요.
+
+## 2단계 — 허용/거부 테스트용 Network Object 등록
+
+**Server REPL:**
+
+~~~text
+set network-object office-public type ip value 203.0.113.10
+set network-object unapproved-test type ip value 198.51.100.21
+show network-object office-public
+~~~
+
+문서의 IP는 예제이며 실제 테스트에서는 **별도의 비허용 공인 IP**로 교체합니다.
+
+## 3단계 — 인바운드 WHITELIST 구성
+
+**Server REPL:**
+
+~~~text
+set remote-access office-ssh mode whitelist source office-public destination branch-a service ssh enabled
+set remote-access enabled
+show remote-access
+show remote-access office-ssh
+~~~
+
+**확인:** 정책 모드 WHITELIST와 Rule 활성 상태. 이미 다른 허용 Rule이 있다면 함께 평가되므로 전체 규칙을 검토해야 합니다. 접근 범위 변경에 대한 y/N 확인이 나타나면 영향을 검토한 뒤 승인합니다.
+
+## 4단계 — 변경 없는 정책 시뮬레이션
+
+**Server REPL:**
+
+~~~text
+test remote-access source office-public destination branch-a service ssh
+test remote-access source unapproved-test destination branch-a service ssh
+~~~
+
+**기대 결과:** 사무실 출발지는 ALLOW, 다른 출발지는 다른 매칭 Rule이 없을 때 DENY. **test**는 실제 터널이나 SSH 서비스 접속을 만들지 않습니다.
+
+## 5단계 — 실제 두 장소에서 SSH 테스트
+
+승인 사무실 **외부 PC**에서 Agent가 출력한 예약 포트로 접속합니다.
+
+~~~bash
+ssh -p <예약-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
+~~~
+
+그다음 **별도 비허용 네트워크**에서 동일 접속을 시도하고 **system audit**에서 정책 DENY를 확인합니다. 시간 초과나 외부 방화벽 차단만으로 DRLink 정책 차단이 증명되지는 않습니다.
+
+## 장애·롤백 주의
+
+접속 불가 시 실제 NAT 출발 IP, Service Object, Managed Host, Agent 연결, 모든 Rule을 확인합니다. **unset remote-access policy**는 초기 **ALLOW**로 돌아가며 **set remote-access disabled** 또한 **ALLOW ALL**입니다. 검토 없이 둘 중 하나를 응급 롤백으로 사용하지 말고 승인된 이전 정책/백업에 근거해 변경하세요.
