@@ -11,6 +11,11 @@ description: "Make proxy-aware Git and API traffic work with narrow Internet Acc
 
 ## Step 1 — validate the actual proxy listener
 
+![Real Data Relay Link CLI capture — Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result.](/images/cli-captures/server-egress-default.png)
+
+*Figure 1. Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -32,6 +37,11 @@ set service-object https443 type tcp port 443
 ~~~
 
 ## Step 3 — create the WHITELIST
+
+![Real Data Relay Link CLI capture — Real command help: test internet-access selects existing Objects/Groups and validates authorization only.](/images/cli-captures/internet-test-syntax.png)
+
+*Figure 2. Real command help: test internet-access selects existing Objects/Groups and validates authorization only. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 
@@ -69,6 +79,11 @@ Expected: both exact hostname selectors **ALLOW**. There must be no blanket **AN
 Expected: Git returns a commit SHA for **HEAD**, the API request travels through the proxy (the API response may depend on upstream rate limits), and the third request receives an explicit DRLink policy **DENY**. If the inherited **no_proxy/NO_PROXY** includes those public hostnames, remove such bypasses **for this scoped test only**, rather than declaring that direct traffic was relayed.
 
 ## Step 5 — confirm audit and real routing
+
+![Real Data Relay Link CLI capture — Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY.](/images/cli-captures/server-status.png)
+
+*Figure 3. Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 

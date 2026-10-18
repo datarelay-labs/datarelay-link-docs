@@ -9,6 +9,11 @@ description: "설정 YAML을 먼저 검증하고 변경점을 확인한 다음 �
 
 ## 1단계 — 서버 상태와 원본 저장
 
+![실제 DRLink Server 상태 캡처 — 정책 구성 이전의 서버 역할과 기본 ALLOW/DENY 정책 확인](/images/cli-captures/server-status.png)
+
+*그림 1. 실제 Server CLI 상태 화면에서 DRLink Server 역할과 Remote Access 초기 ALLOW, Internet/AI Access 기본 DENY를 구분합니다. 설정 변경 전 캡처이며 일부 정보를 가렸습니다.*
+
+
 **Server 셸:**
 
 ~~~bash
@@ -53,6 +58,11 @@ configurationBundle:
 
 ## 3단계 — 적용 전 검사
 
+![실제 Data Relay Link CLI 캡처 — 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다.](/images/cli-captures/config-revision-diff.png)
+
+*그림 2. 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server 셸:**
 
 ~~~bash
@@ -64,6 +74,11 @@ sudo drlink show internet-access
 **성공 기준:** 문법과 Selector 검사 통과, 예상한 Object/Rule만 Diff에 표시됩니다. Revision이 변경되어 STALE_CONFIGURATION_REVISION이 뜨면 최신 상태를 다시 Export해서 충돌을 해결합니다.
 
 ## 4단계 — 승인 후 실제 적용
+
+![실제 Data Relay Link CLI 캡처 — 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다.](/images/cli-captures/configuration-revisions.png)
+
+*그림 3. 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 보안 영향과 확인 안내를 검토한 다음:
 

@@ -17,6 +17,11 @@ description: "Enroll one Linux host and reach only its SSH service through the D
 
 ## Step 1 — verify the Server
 
+![Real Data Relay Link CLI capture — Captured product build identity: check development channel, Source HEAD and DRLink Server role.](/images/cli-captures/server-version.png)
+
+*Figure 1. Captured product build identity: check development channel, Source HEAD and DRLink Server role. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server shell:**
 
 ~~~bash
@@ -28,6 +33,11 @@ sudo drlink system diagnostics
 Confirm role **DRLink Server** and the correct v2.4 development/candidate Source HEAD. A v2.3.0 stable installation is not an equivalent v2.4 CLI target.
 
 ## Step 2 — define an SSH Service Object
+
+![Real Data Relay Link CLI capture — On the Server select 2 Create Service Object to register protocol and port.](/images/cli-captures/server-service-object-menu.png)
+
+*Figure 2. On the Server select 2 Create Service Object to register protocol and port. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL** (start with **sudo drlink**):
 
@@ -51,6 +61,16 @@ Copy the generated **one-time** installation command from the enrollment result;
 
 ## Step 4 — verify the Agent and create a Remote Service
 
+![Real Data Relay Link CLI capture — Captured Agent Host status: confirm local Agent role, Healthy runtime, and connected Server.](/images/cli-captures/agent-status.png)
+
+*Figure 3. Captured Agent Host status: confirm local Agent role, Healthy runtime, and connected Server. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server.](/images/cli-captures/agent-create-service-menu.png)
+
+*Figure 4. On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Agent shell:**
 
 ~~~bash
@@ -73,6 +93,11 @@ Expected: an allocated/reserved Server endpoint and a **HEALTHY** Remote Service
 
 ## Step 5 — prove real SSH
 
+![Real Data Relay Link CLI capture — Real E2E service detail with HEALTHY and reserved endpoint; public address is masked.](/images/cli-captures/ssh-service-healthy.png)
+
+*Figure 5. Real E2E service detail with HEALTHY and reserved endpoint; public address is masked. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 On the **outside workstation**, take the public host and reserved port from **show remote-service support-ssh**:
 
 ~~~bash
@@ -82,6 +107,11 @@ ssh -p <reserved-public-port> <existing-os-user>@<public-drlink-host>
 Expected: host-key verification and then the SSH service's normal authentication. Verify the target host's SSH host-key fingerprint out of band before accepting it. The public endpoint is not a substitute for SSH login credentials.
 
 ## Step 6 — verify server inventory and security
+
+![Real Data Relay Link CLI capture — Real Remote Access ALLOW result with No Policy. This illustrates the default, NOT whitelist verification.](/images/cli-captures/remote-test-allow.png)
+
+*Figure 6. Real Remote Access ALLOW result with No Policy. This illustrates the default, NOT whitelist verification. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 

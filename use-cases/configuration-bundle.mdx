@@ -9,6 +9,11 @@ description: "Validate, diff, apply and export a reviewed v2.4 Server configurat
 
 ## Step 1 — confirm Server role and baseline
 
+![Actual DRLink Server CLI status — verify Server role and plane-specific initial access behavior](/images/cli-captures/server-status.png)
+
+*Figure 1. Real Server CLI status: verify Server role and the different initial ALLOW/DENY policy modes before editing a bundle. Pre-configuration test capture; sensitive details masked.*
+
+
 **Server shell:**
 
 ~~~bash
@@ -53,6 +58,11 @@ This is the v2.4 **Server** bundle schema. Do not add **apiVersion**/**kind** or
 
 ## Step 3 — validate and compare before mutation
 
+![Real Data Relay Link CLI capture — Real configuration revision diff: compare the changes and sourceRevision before applying a bundle.](/images/cli-captures/config-revision-diff.png)
+
+*Figure 2. Real configuration revision diff: compare the changes and sourceRevision before applying a bundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server shell:**
 
 ~~~bash
@@ -64,6 +74,11 @@ sudo drlink show internet-access
 Expected: syntax/context valid, an understandable change diff and no unintended broadening. If the source revision has changed since the export, **re-export** and reconcile the new state. A valid test is not permission to apply a stale bundle.
 
 ## Step 4 — apply the reviewed change
+
+![Real Data Relay Link CLI capture — Real revision history: inspect previous set/unset operations and revision IDs before planned rollback.](/images/cli-captures/configuration-revisions.png)
+
+*Figure 3. Real revision history: inspect previous set/unset operations and revision IDs before planned rollback. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 After inspecting the security-impact confirmation and having the necessary operator authorization:
 

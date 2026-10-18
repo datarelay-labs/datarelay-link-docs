@@ -71,6 +71,46 @@ for p in pages:
     for m in re.findall(r'(?m)^(?:set )?(?:internet-access|ai-access) .+mode (\w+)',t):
         if m!='whitelist':errors.append('Non-WHITELIST policy '+str(p)+':'+m)
 
+
+# Real CLI capture image coverage: no fabricated Web UI and no broken media assets.
+import struct
+image_dir=root/'images/cli-captures'
+provenance=json.loads((image_dir/'provenance.json').read_text())
+evidence=provenance['items']
+image_ids={v['image'] for v in evidence}
+png_files={p.name for p in image_dir.glob('*.png')}
+if image_ids!=png_files:
+    errors.append('Provenance/PNG inventory mismatch: '+str(sorted(image_ids^png_files)))
+for item in evidence:
+    name=item['image']
+    if item.get('source_kind') not in ('pty','json','stdout'):
+        errors.append('Not an actual CLI evidence type: '+name)
+    if not item.get('source_head') or not item.get('input_sha256'):
+        errors.append('Missing source provenance: '+name)
+    raw=(image_dir/name).read_bytes()
+    if raw[:8]!=b'\x89PNG\r\n\x1a\n':
+        errors.append('Not PNG: '+name)
+    else:
+        w,h=struct.unpack('>II',raw[16:24])
+        if w<900 or h<380:errors.append('Screenshot too small: '+name)
+language_image_sets={}
+for english in sorted((root/'use-cases').glob('*.mdx')):
+    name=english.name
+    for page in [english,root/'ko/use-cases'/name]:
+        txt=page.read_text()
+        refs=re.findall(r'!\[[^\]]+\]\(/images/cli-captures/([a-z0-9-]+\.png)\)',txt)
+        language_image_sets[str(page.relative_to(root))]=refs
+        if len(refs)<2:
+            errors.append('Insufficient real CLI screenshots for '+str(page))
+        if len(refs)!=len(re.findall(r'(?m)^\*(?:그림|Figure) \d+\.',txt)):
+            errors.append('Missing per-image captions '+str(page))
+        for ref in refs:
+            if ref not in image_ids: errors.append('Image without provenance: '+ref)
+    en=language_image_sets['use-cases/'+name]
+    ko=language_image_sets['ko/use-cases/'+name]
+    if en!=ko:errors.append('Image parity mismatch: '+name)
+
+
 if errors:
     print('FAILED VALIDATION:',len(errors))
     print('\n'.join(errors[:80]));sys.exit(2)
@@ -78,3 +118,4 @@ print('PASS',len(all_nav),'navigation page targets')
 print('PASS',len(pages),'bilingual scenarios; 12 pages per language (11 workflows + landing)')
 print('PASS',linkcount,'internal markdown links from scenario + modified landing and policy pages')
 print('PASS','MDX frontmatter, code fences, >=4 stages, CLI version surface and fail-closed policy semantics')
+print('PASS',len(image_ids),'provenance-linked real CLI PNGs and',sum(len(v) for v in language_image_sets.values()),'captioned references with English/Korean parity')

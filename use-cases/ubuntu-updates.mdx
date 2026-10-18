@@ -21,6 +21,16 @@ Write down the **actual hostnames and schemes**. This example assumes HTTP reque
 
 ## Step 2 — confirm the listener and observed source
 
+![Real Data Relay Link CLI capture — Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result.](/images/cli-captures/server-egress-default.png)
+
+*Figure 1. Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Real Server diagnostics excerpt: verify role, source build and deployment/listener details.](/images/cli-captures/server-diagnostics.png)
+
+*Figure 2. Real Server diagnostics excerpt: verify role, source build and deployment/listener details. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server shell:**
 
 ~~~bash
@@ -47,6 +57,11 @@ show service-object apt-http
 For HTTPS repositories, additionally define **set service-object apt-https type tcp port 443** and create corresponding exact-destination rules for that service.
 
 ## Step 4 — enable only the required Internet Access
+
+![Real Data Relay Link CLI capture — Real command help: test internet-access selects existing Objects/Groups and validates authorization only.](/images/cli-captures/internet-test-syntax.png)
+
+*Figure 3. Real command help: test internet-access selects existing Objects/Groups and validates authorization only. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 

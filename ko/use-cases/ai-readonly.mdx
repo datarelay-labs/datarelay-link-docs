@@ -13,6 +13,11 @@ description: "검증된 AI Identity가 지정한 Managed Host에서 host/process
 
 ## 1단계 — 서버·Agent·배포 모드 확인
 
+![실제 Data Relay Link CLI 캡처 — 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다.](/images/cli-captures/server-status.png)
+
+*그림 1. 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -25,6 +30,11 @@ system certificate status
 **branch-a**가 정상 등록되어 있고 Agent 관리 연결이 가능해야 합니다. MCP 사용을 위한 별도의 SSH Remote Service는 필요하지 않습니다. 공용 **https://<호스트>/mcp**는 **single443**에서만 제공됩니다. **direct** 모드라면 검증된 동일 불변 소스로 Server 설치 프로그램의 모드 전환 절차를 수행해야 합니다. [배포 모드](/ko/deployment/modes)를 따르고, 오래된 인증서만 보고 준비 완료로 판단하지 마세요.
 
 ## 2단계 — AI Identity와 최소 권한 Object 생성
+
+![실제 Data Relay Link CLI 캡처 — Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다.](/images/cli-captures/server-guided-menu.png)
+
+*그림 2. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 
@@ -59,6 +69,11 @@ test ai-access source auditor-ai destination branch-a permission exec-check
 **기대:** observer는 ALLOW, 다른 매칭 허용 Rule이 없다면 exec-check는 DENY. AI Access는 **WHITELIST 전용·기본 DENY**이며 Enforcement 비활성화는 **DENY ALL**입니다. 읽기 전용 계정에는 command-exec를 부여하지 마세요.
 
 ## 4단계 — 공개 MCP TLS 주소 구성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Direct 모드의 MCP 경고: 인증서와 공개 주소가 설정되지 않았으며 single443 전환이 필요합니다. MCP 접속 성공 화면이 아닙니다.](/images/cli-captures/mcp-direct-not-ready.png)
+
+*그림 3. 실제 Direct 모드의 MCP 경고: 인증서와 공개 주소가 설정되지 않았으며 single443 전환이 필요합니다. MCP 접속 성공 화면이 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 이미 **single443**으로 구성된 Server에 DNS/HTTPS/인증서 발급 환경을 마련한 다음 **Server REPL**에서 실제 소유 도메인/이메일로 교체하여 실행합니다.
 

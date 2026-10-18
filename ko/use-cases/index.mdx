@@ -38,7 +38,22 @@ sidebarTitle: "활용 사례"
 | 여러 설정을 검증하고 한 번에 적용 | [ConfigurationBundle 적용](/ko/use-cases/configuration-bundle) |
 | 서버 백업, 복원 및 복구 검증 | [백업과 장애 복구](/ko/use-cases/backup-recovery) |
 
+<Note>
+  아래 이미지는 **실제 Data Relay Link v2.4 개발 후보 CLI의 PTY/명령 실행 기록**에서 해당 화면을 발췌해 이미지로 변환한 것입니다. 가상의 Web UI나 생성형 그림이 아닙니다. 주황색 번호는 선택할 메뉴 또는 확인할 원본 출력 줄을 가리킵니다. 캡처는 2026-10-13/17 테스트에서 수집되었고, 실제 IP/호스트는 가렸습니다. 설치된 빌드에 따라 메뉴나 값이 다를 수 있으니 항상 해당 장비의 **menu**, **help**, **system version**을 먼저 확인하세요.
+</Note>
+
 ## 모든 시나리오의 공통 준비
+
+
+![실제 Data Relay Link CLI 캡처 — Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다.](/images/cli-captures/server-guided-menu.png)
+
+*그림 1. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
+
+*그림 2. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 1. [서버 설치](/ko/getting-started/server-installation), [배포 모드](/ko/deployment/modes), [방화벽/NAT](/ko/deployment/firewall-nat)을 먼저 완료하세요. Remote Access와 AI Access에는 적절히 등록된 Agent가 필요하지만, HTTP(S) Internet Access의 보호 대상 호스트는 **Agent 없이 표준 프록시 설정만** 사용할 수 있습니다.
 2. **DRLink Server의 일반 셸**에서 현재 상태를 확인합니다.

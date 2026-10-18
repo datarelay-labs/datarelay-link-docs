@@ -13,6 +13,11 @@ description: "일회용 등록 정보를 안전하게 발급하고 Managed Host 
 
 ## 2단계 — 일괄 등록 발급
 
+![실제 Data Relay Link CLI 캡처 — 실제 Enrollment 목록: completed, expired, revoked 상태를 구분합니다. 일회용 등록 코드 원문은 표시하지 않습니다.](/images/cli-captures/enrollment-inventory.png)
+
+*그림 1. 실제 Enrollment 목록: completed, expired, revoked 상태를 구분합니다. 일회용 등록 코드 원문은 표시하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -46,6 +51,11 @@ sudo drlink system diagnostics
 
 ## 4단계 — Server에서 Managed Host 확인
 
+![실제 Data Relay Link CLI 캡처 — 실제 Server Managed Host 목록: 등록된 호스트와 connected 상태를 확인합니다.](/images/cli-captures/managed-hosts.png)
+
+*그림 2. 실제 Server Managed Host 목록: 등록된 호스트와 connected 상태를 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -58,6 +68,11 @@ show enrollments
 등록된 이름과 불변 ID를 확인하세요. 실제 Managed Host 이름이 다르면 다음 단계의 branch-a/branch-b를 실제 이름으로 바꿔 실행합니다.
 
 ## 5단계 — 지점 그룹으로 관리
+
+![실제 DRLink Server 메인 CLI 메뉴 — 1번 Managed Hosts를 선택하여 그룹과 등록 호스트 관리](/images/cli-captures/server-managed-host-menu.png)
+
+*그림 3. 실제 Server CLI menu 화면에서 1번 Managed Hosts를 선택합니다. 이 메뉴에서 호스트 등록·인벤토리 관련 작업을 시작합니다.*
+
 
 **Server REPL:**
 

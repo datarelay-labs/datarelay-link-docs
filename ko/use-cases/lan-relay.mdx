@@ -11,9 +11,24 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 
 ## 1단계 — 게이트웨이 준비
 
+![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
+
+*그림 1. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 [SSH 원격 접속](/ko/use-cases/remote-ssh)의 등록 단계를 따라 Agent를 **10.20.0.10 게이트웨이**에 설치합니다. 이후 게이트웨이 OS에서 두 대상 IP/포트로 TCP 연결이 가능한지 확인하세요. 내부 라우팅과 방화벽 변경은 DRLink 외부의 관리자 작업입니다.
 
 ## 2단계 — 목적지 및 Service Object 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
+
+*그림 2. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다.](/images/cli-captures/network-object-created.png)
+
+*그림 3. 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 
@@ -29,6 +44,11 @@ show service-objects
 **확인:** 두 목적지가 각각 단일 IP Object로, 두 서비스가 TCP 포트 22/443으로 등록됩니다. Remote Service 목적지로 CIDR이나 여러 대상 그룹을 직접 사용하지 마세요.
 
 ## 3단계 — 게이트웨이에서 Remote Service 두 개 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다.](/images/cli-captures/agent-services.png)
+
+*그림 4. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Gateway Agent REPL:**
 

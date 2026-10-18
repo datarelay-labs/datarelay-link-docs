@@ -19,6 +19,16 @@ From the gateway Agent OS, verify that **10.50.1.20:1521** is reachable. Keep da
 
 ## Step 2 — describe destination and Fixed TCP port
 
+![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
+
+*Figure 1. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Real CLI confirmation that a Fixed TCP Service Object was saved; endpoint/DB connectivity must be tested separately.](/images/cli-captures/fixed-object-created.png)
+
+*Figure 2. Real CLI confirmation that a Fixed TCP Service Object was saved; endpoint/DB connectivity must be tested separately. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -44,6 +54,11 @@ test remote-access source dba-public destination branch-gateway service oracle-d
 Expected: **ALLOW** for the approved source. Review all matching Rules and the **show remote-access** state for unintended sources.
 
 ## Step 4 — create the service on the gateway Agent
+
+![Real Data Relay Link CLI capture — Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic.](/images/cli-captures/agent-services.png)
+
+*Figure 3. Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Gateway Agent REPL:**
 

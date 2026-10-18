@@ -21,6 +21,16 @@ grep -R -hE '^(URIs:|deb |deb-src )' /etc/apt/sources.list /etc/apt/sources.list
 
 ## 2단계 — DRLink 프록시와 출발지 IP 확인
 
+![실제 Data Relay Link CLI 캡처 — Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다.](/images/cli-captures/server-egress-default.png)
+
+*그림 1. Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 실제 Server Diagnostics 발췌: 서버 역할, 빌드 버전 및 배포/리스너 구성을 확인합니다.](/images/cli-captures/server-diagnostics.png)
+
+*그림 2. 실제 Server Diagnostics 발췌: 서버 역할, 빌드 버전 및 배포/리스너 구성을 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **DRLink Server 셸:**
 
 ~~~bash
@@ -47,6 +57,11 @@ show service-object apt-http
 HTTPS 저장소를 사용한다면 **set service-object apt-https type tcp port 443**을 추가하고 해당 FQDN에 **별도 WHITELIST Rule**을 만듭니다.
 
 ## 4단계 — Internet Access WHITELIST 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다.](/images/cli-captures/internet-test-syntax.png)
+
+*그림 3. 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 

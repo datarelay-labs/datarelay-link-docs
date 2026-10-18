@@ -11,9 +11,24 @@ description: "Use one DRLink Agent as the relay for two independent internal ser
 
 ## Step 1 — check LAN and enrollment
 
+![Real Data Relay Link CLI capture — Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle.](/images/cli-captures/agent-guided-menu.png)
+
+*Figure 1. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 Complete [Remote SSH through NAT](/use-cases/remote-ssh) through its enrollment step, but put the Agent on the **gateway** (10.20.0.10), not on the two destination machines. Independently confirm from the gateway OS that both target IPs and ports are reachable. This local LAN firewall/routing setup is outside DRLink.
 
 ## Step 2 — describe both destinations and services
+
+![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
+
+*Figure 2. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Real Network Object creation confirmation; this alone does not publish a Remote Service.](/images/cli-captures/network-object-created.png)
+
+*Figure 3. Real Network Object creation confirmation; this alone does not publish a Remote Service. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 
@@ -29,6 +44,11 @@ show service-objects
 Each Network Object is **one destination**. A Network Group or CIDR range is not a valid Remote Service destination.
 
 ## Step 3 — create two Remote Services on the gateway
+
+![Real Data Relay Link CLI capture — Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic.](/images/cli-captures/agent-services.png)
+
+*Figure 4. Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Gateway Agent REPL:**
 

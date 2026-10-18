@@ -13,6 +13,11 @@ description: "Protect Server identities, policies and service reservations, then
 
 ## Step 1 — inspect the healthy state
 
+![Real Data Relay Link CLI capture — Captured product build identity: check development channel, Source HEAD and DRLink Server role.](/images/cli-captures/server-version.png)
+
+*Figure 1. Captured product build identity: check development channel, Source HEAD and DRLink Server role. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server shell:**
 
 ~~~bash
@@ -28,6 +33,11 @@ sudo drlink show ai-access
 Capture the qualified Source HEAD/version, active Managed Hosts, Remote Service endpoints and policy modes. A backup from an unrelated release is not automatically compatible.
 
 ## Step 2 — create and securely retain the backup
+
+![Real Data Relay Link CLI capture — Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information.](/images/cli-captures/server-system-menu.png)
+
+*Figure 2. Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 
@@ -58,6 +68,11 @@ sudo drlink system restore <validated-backup-archive-path>
 Review the product's confirmation and access-impact information; **do not automatically answer Yes**. The product should snapshot and validate its state transition and report any incomplete rollback honestly. Record all failure evidence before attempting another recovery.
 
 ## Step 5 — verify identity and real traffic after restoration
+
+![Real Data Relay Link CLI capture — Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery.](/images/cli-captures/agent-diagnostics.png)
+
+*Figure 3. Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 

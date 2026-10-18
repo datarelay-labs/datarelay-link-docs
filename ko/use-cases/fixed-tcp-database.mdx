@@ -19,6 +19,16 @@ description: "기존 DB의 TCP 포트를 별도 Fixed TCP Remote Service로 연�
 
 ## 2단계 — 목적지와 Fixed TCP Service Object 등록
 
+![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
+
+*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 실제 Fixed TCP Service Object 생성 확인 출력입니다. 공인 포트 할당과 DB 실제 접속은 별도로 검사해야 합니다.](/images/cli-captures/fixed-object-created.png)
+
+*그림 2. 실제 Fixed TCP Service Object 생성 확인 출력입니다. 공인 포트 할당과 DB 실제 접속은 별도로 검사해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -45,6 +55,11 @@ show remote-access
 **확인:** DBA 출발지 ALLOW, 기존 다른 Rule에서 원치 않는 출발지가 허용되지 않는지 검토.
 
 ## 4단계 — 게이트웨이 Agent에서 실제 서비스 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다.](/images/cli-captures/agent-services.png)
+
+*그림 3. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Gateway Agent REPL:**
 

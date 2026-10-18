@@ -15,6 +15,11 @@ description: "Set a narrow inbound WHITELIST and prove both approved and denied 
 
 ## Step 1 — identify the actual source and existing rules
 
+![Real Data Relay Link CLI capture — Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted.](/images/cli-captures/server-inbound-default.png)
+
+*Figure 1. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -40,6 +45,16 @@ Use a legitimate alternate public source for the negative test; the documentatio
 
 ## Step 3 — create the WHITELIST
 
+![Real Data Relay Link CLI capture — Remote Access guided menu: choose 2 Create rule, then 5 Test / Explain to validate.](/images/cli-captures/remote-access-menu.png)
+
+*Figure 2. Remote Access guided menu: choose 2 Create rule, then 5 Test / Explain to validate. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Policy Mode selection: use 2 whitelist to ALLOW matched sources; 1 blacklist has different behavior.](/images/cli-captures/remote-access-mode.png)
+
+*Figure 3. Policy Mode selection: use 2 whitelist to ALLOW matched sources; 1 blacklist has different behavior. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -52,6 +67,11 @@ show remote-access office-ssh
 Review all pre-existing enabled Rules. WHITELIST entries may jointly authorize more sources than this single Rule. Rule changes may request confirmation based on the calculated security impact.
 
 ## Step 4 — test policy without creating connectivity
+
+![Real Data Relay Link CLI capture — Real command help: test remote-access requires named source, destination and service selectors.](/images/cli-captures/remote-test-syntax.png)
+
+*Figure 4. Real command help: test remote-access requires named source, destination and service selectors. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
 
 **Server REPL:**
 

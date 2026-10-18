@@ -13,6 +13,11 @@ description: "PKI·Managed Host·예약 포트·접근 정책을 보존하고 �
 
 ## 1단계 — 백업 전 상태 기록
 
+![실제 Data Relay Link CLI 캡처 — 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다.](/images/cli-captures/server-version.png)
+
+*그림 1. 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server 셸:**
 
 ~~~bash
@@ -28,6 +33,11 @@ sudo drlink show ai-access
 설치 버전/Source HEAD, Managed Host ID, Remote Service 예약 포트, 접근 정책 모드를 기록합니다.
 
 ## 2단계 — 일관된 Server 백업 생성
+
+![실제 Data Relay Link CLI 캡처 — Server의 System 메뉴: 백업/복원 3번, 진단 5번, 버전 정보 8번을 선택합니다.](/images/cli-captures/server-system-menu.png)
+
+*그림 2. Server의 System 메뉴: 백업/복원 3번, 진단 5번, 버전 정보 8번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 
@@ -58,6 +68,11 @@ sudo drlink system restore <검증된-백업-파일-경로>
 화면의 변경·확인 내용을 검토하고 진행합니다. 무조건 Yes를 입력하지 마세요. 실패하면 복구/롤백 결과를 기록하고 성공으로 처리하지 않습니다.
 
 ## 5단계 — 복원 후 Server와 Agent 확인
+
+![실제 Data Relay Link CLI 캡처 — 실제 Agent Diagnostics 발췌: 복구 후 Agent 런타임과 Server 연결을 점검합니다.](/images/cli-captures/agent-diagnostics.png)
+
+*그림 3. 실제 Agent Diagnostics 발췌: 복구 후 Agent 런타임과 Server 연결을 점검합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 

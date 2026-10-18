@@ -15,6 +15,11 @@ description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를
 
 ## 1단계 — 기존 접속 정책과 서버 백업 확인
 
+![실제 Data Relay Link CLI 캡처 — Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다.](/images/cli-captures/server-inbound-default.png)
+
+*그림 1. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -40,6 +45,16 @@ show network-object office-public
 
 ## 3단계 — 인바운드 WHITELIST 구성
 
+![실제 Data Relay Link CLI 캡처 — Remote Access 실제 메뉴: 규칙 생성은 2번, 정책 검증은 5번 Test / Explain을 선택합니다.](/images/cli-captures/remote-access-menu.png)
+
+*그림 2. Remote Access 실제 메뉴: 규칙 생성은 2번, 정책 검증은 5번 Test / Explain을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 정책 모드 선택 화면: 매칭된 출발지만 허용하려면 2번 whitelist를 선택합니다. 1번 blacklist는 동작이 다릅니다.](/images/cli-captures/remote-access-mode.png)
+
+*그림 3. 정책 모드 선택 화면: 매칭된 출발지만 허용하려면 2번 whitelist를 선택합니다. 1번 blacklist는 동작이 다릅니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
 **Server REPL:**
 
 ~~~text
@@ -52,6 +67,11 @@ show remote-access office-ssh
 **확인:** 정책 모드 WHITELIST와 Rule 활성 상태. 이미 다른 허용 Rule이 있다면 함께 평가되므로 전체 규칙을 검토해야 합니다. 접근 범위 변경에 대한 y/N 확인이 나타나면 영향을 검토한 뒤 승인합니다.
 
 ## 4단계 — 변경 없는 정책 시뮬레이션
+
+![실제 Data Relay Link CLI 캡처 — 실제 도움말: test remote-access 명령은 정의된 Source·Destination·Service 이름으로 정책을 검사합니다.](/images/cli-captures/remote-test-syntax.png)
+
+*그림 4. 실제 도움말: test remote-access 명령은 정의된 Source·Destination·Service 이름으로 정책을 검사합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
 
 **Server REPL:**
 
