@@ -1,32 +1,59 @@
 ---
 title: "AI Access & MCP"
-description: "AI Identity를 인증하고 명시적인 target Permission을 부여합니다."
+description: "Identity, 정책, 파일 범위와 Server 자체 제어."
 ---
 
-# AI Access & MCP
+# AI Access와 MCP
 
-AI Access는 **인증**과 **권한 부여**를 분리합니다.
+**Claude와 ChatGPT 실제 MCP 테스트가 완료되었습니다.** 연결 방법은 [클라이언트 설정](/ko/guides/mcp-clients), 공개 도구·인자는 [20개 MCP 도구](/ko/reference/mcp-tools), 실제 확인 범위는 [검증 기록](/ko/reference/mcp-validation)을 보세요.
 
-~~~text
-지원 OAuth / credential
-→ 검증된 AI Identity
-→ AI Access policy
-→ Permission Object / Group
-→ 승인된 target
-~~~
+인증은 **AI Identity가 누구인지**, AI Access는 **어느 대상에서 무슨 작업을 할지** 결정합니다. 도구는 매 호출마다 현재 identity·정책을 확인하고 대상 OS 권한으로 동작합니다.
 
-표시 이름만으로는 인증이 되지 않습니다.
+## 최소 권한 설정
+
+Server REPL에서 실행합니다. branch-a는 등록된 Managed Host의 실제 이름입니다.
 
 ~~~text
-set ai-identity <NAME>
-show ai-identities
-show ai-identity <NAME>
-
-set permission-object read-only permissions host-info,process-read,file-read
-set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
-test ai-access source claude destination production-servers permission read-only
+set ai-identity auditor-ai
+set permission-object observer permissions host-info,process-read
+set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access enabled
+test ai-access source auditor-ai destination branch-a permission observer
+show ai-access-log identity auditor-ai
 ~~~
 
-AI Access Rule에는 순서가 없고 Rule별 action도 없습니다. Policy enforcement를 disabled로 해도 AI 인증은 계속 필수입니다.
+AI Access는 **WHITELIST 전용**입니다. 정책 없음·미일치·비활성 enforcement는 모두 **DENY ALL**입니다. Rule 순서나 Rule별 allow/deny는 없습니다.
 
-v2.4 MCP Bridge는 Server에서 인증되는 HTTPS 경로입니다. MCP를 사용해도 Agent identity, AI Access 정책, 대상 OS 권한 검사를 우회할 수 없습니다. 승인된 AI 작업에 Remote Service나 SSH가 반드시 필요한 것은 아닙니다.
+## 파일과 명령 권한
+
+~~~text
+set permission-object app-reader permissions file-read
+set ai-access app-read mode whitelist source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
+test ai-access source auditor-ai destination branch-a permission file-read path /var/log/myapp/health.log
+test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
+~~~
+
+첫 번째는 파일 존재/OS 권한을 별도로 충족할 때 정책 ALLOW, 두 번째는 다른 Rule이 허용하지 않는 한 DENY입니다. 파일 권한에는 paths가 필요합니다. command-exec를 주면 OS 계정의 셸 권한으로 동작하므로 파일 경로만 제한한 읽기 전용 역할로 볼 수 없습니다.
+
+## 두 가지 대상
+
+| 대상 | 경로 | 예시 |
+| --- | --- | --- |
+| Managed Host | Server → 신뢰된 Agent → 대상 OS | 내부 서버 정보·프로세스·로그 조회 |
+| server:self | 명시적으로 활성화한 Server 자체 executor | 파일·셸·Git·비동기 작업 |
+
+Server 자체 실행은 로컬 운영자의 profile/account opt-in과 별도 AI Access가 필요합니다. root는 추가 명시 설정이며 기본 전제가 아닙니다. 전체 관리 예제는 [Server 제어 실습](/ko/use-cases/ai-server-control)을 따르세요.
+
+## 최초 소유자와 OAuth 수명주기
+
+최초 승인 OAuth 소유자에게 생성되는 **mcp-owner-full-access**는 Managed Host에 전체 7개 기능을 줄 수 있습니다. observer Rule 하나만 추가했다고 기존 넓은 Rule이 사라지지 않습니다. 최소 권한 사용자는 별도 identity로 구성하고 전체 정책을 점검하세요.
+
+~~~text
+system credential configure ai-identity auditor-ai authentication oauth
+system credential approve-oauth <PENDING-ID> auditor-ai
+system credential deny-oauth <PENDING-ID>
+system credential rotate ai-identity auditor-ai
+system credential revoke ai-identity auditor-ai
+~~~
+
+rotate/revoke는 연결에 영향을 줍니다. **show ai-access-log**, identity/destination/permission 필터로 실제 ALLOW·DENY를 확인합니다. 토큰·개인키·등록 티켓은 문서·지원 번들·프롬프트에 포함하지 마세요.

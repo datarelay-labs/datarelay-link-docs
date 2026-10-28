@@ -1,0 +1,112 @@
+---
+title: "Use case: ConfigurationBundle safely"
+description: "Validate, diff, apply and export a reviewed v2.4 Server configuration change."
+---
+
+# Roll out reviewed policy with a ConfigurationBundle
+
+**Outcome:** A Server administrator creates narrowly scoped network/service objects and an Internet Access WHITELIST in one validated configuration transaction, without directly editing internal files.
+
+## Step 1 — confirm Server role and baseline
+
+![Actual DRLink Server CLI status — verify Server role and plane-specific initial access behavior](/images/cli-captures/server-status.png)
+
+*Figure 1. Real Server CLI status: verify Server role and the different initial ALLOW/DENY policy modes before editing a bundle. Pre-configuration test capture; sensitive details masked.*
+
+
+**Server shell:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system revisions
+sudo drlink system export configuration /tmp/drlink-before.yaml
+~~~
+
+Keep the baseline privately, as exported config may include sensitive operational material. Do not commit the export to a public repository.
+
+## Step 2 — write a complete desired-change bundle
+
+On the **Server shell**, create **/tmp/drlink-allow-github.yaml** with this content. Replace the example source IP with the real **proxy-visible** source:
+
+~~~yaml
+configurationBundle:
+  context: server
+  networkObjects:
+    - name: office-admin
+      type: ip
+      value: 203.0.113.10
+    - name: github
+      type: fqdn
+      value: github.com
+  serviceObjects:
+    - name: https
+      type: tcp
+      port: 443
+  internetAccess:
+    mode: whitelist
+    enforcement: enabled
+    rules:
+      - name: github-https
+        source: office-admin
+        destination: github
+        service: https
+        enabled: true
+~~~
+
+This is the v2.4 **Server** bundle schema. Do not add **apiVersion**/**kind** or Agent-only **remoteServices** here. Resources omitted from the bundle remain unchanged, but existing Internet Access rules also remain unless deliberately changed. Review them before applying.
+
+## Step 3 — validate and compare before mutation
+
+![Real Data Relay Link CLI capture — Real configuration revision diff: compare the changes and sourceRevision before applying a bundle.](/images/cli-captures/config-revision-diff.png)
+
+*Figure 2. Real configuration revision diff: compare the changes and sourceRevision before applying a bundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server shell:**
+
+~~~bash
+sudo drlink test configuration /tmp/drlink-allow-github.yaml
+sudo drlink system diff configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+~~~
+
+Expected: syntax/context valid, an understandable change diff and no unintended broadening. If the source revision has changed since the export, **re-export** and reconcile the new state. A valid test is not permission to apply a stale bundle.
+
+## Step 4 — apply the reviewed change
+
+![Real Data Relay Link CLI capture — Real revision history: inspect previous set/unset operations and revision IDs before planned rollback.](/images/cli-captures/configuration-revisions.png)
+
+*Figure 3. Real revision history: inspect previous set/unset operations and revision IDs before planned rollback. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+After inspecting the security-impact confirmation and having the necessary operator authorization:
+
+~~~bash
+sudo drlink system apply configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+sudo drlink system revisions
+~~~
+
+Expected: the new objects/rule appear and are effective for new connections; the same bundle applied again should result in **NO CHANGE** when state and revision permit. A Server bundle is atomic within **Server** context, not a distributed Server+Agent transaction.
+
+## Step 5 — prove policy plus traffic
+
+**Server REPL:**
+
+~~~text
+test internet-access source office-admin destination github service https
+system audit
+~~~
+
+From the actually approved protected host, configure the standard HTTP(S) proxy and test a real HTTPS Git or curl request using the [GitHub egress playbook](/use-cases/github-egress). A policy ALLOW result alone is not traffic E2E.
+
+## Recovery and cleanup
+
+If validation or apply rejects the bundle, **no partial configuration change** is expected; inspect the reported error rather than bypassing transaction guards. Compare the recorded revisions with **system diff &lt;REVISION_A&gt; &lt;REVISION_B&gt;** and plan a reviewed **system rollback &lt;REVISION&gt;** only if required. Avoid treating a blind rollback as risk-free: it can change current access. Keep exported files in protected storage and remove temporary copies after the approved work.
+
+## Current behavior check — 2026-10-28
+
+Carry sourceRevision from a fresh export into the reviewed change. A stale apply is rejected even if test/diff previously looked valid; re-export and reconcile before retrying. Same-state reapply can be NO CHANGE, but an old export is not a reusable force-overwrite mechanism.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

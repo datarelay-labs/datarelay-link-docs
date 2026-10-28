@@ -1,0 +1,113 @@
+---
+title: "Use case: Backup and restore"
+description: "Protect Server identities, policies and service reservations, then verify recovery."
+---
+
+# Back up and recover the DRLink Server safely
+
+**Outcome:** An operator captures a qualified Server backup, validates it, restores when necessary and verifies inventory, identity continuity, access policy and real application reachability.
+
+<Warning>
+  A restore replaces security-sensitive persistent state and can interrupt clients. Perform the restore step **only** during an explicitly approved recovery window on the intended Server, after reviewing the archive and target version. Do not use this procedure to test casually on a production instance.
+</Warning>
+
+## Step 1 — inspect the healthy state
+
+![Real Data Relay Link CLI capture — Captured product build identity: check development channel, Source HEAD and DRLink Server role.](/images/cli-captures/server-version.png)
+
+*Figure 1. Captured product build identity: check development channel, Source HEAD and DRLink Server role. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server shell:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+sudo drlink show managed-hosts
+sudo drlink show remote-access
+sudo drlink show internet-access
+sudo drlink show ai-access
+~~~
+
+Capture the qualified Source HEAD/version, active Managed Hosts, Remote Service endpoints and policy modes. A backup from an unrelated release is not automatically compatible.
+
+## Step 2 — create and securely retain the backup
+
+![Real Data Relay Link CLI capture — Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information.](/images/cli-captures/server-system-menu.png)
+
+*Figure 2. Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+system backup
+~~~
+
+Record the **exact archive path printed by the product**. Use the built-in workflow: **/var/lib/drlink/drlink.db** and the PKI, secrets, policies, registry and reservations must form a consistent snapshot. Copy the archive to secure off-host storage using your approved encrypted transfer/backup mechanism, never to a public docs repository. Do not copy only the live SQLite file (WAL consistency risk).
+
+## Step 3 — validate the archive before recovery
+
+**Server shell**, using the output path from Step 2:
+
+~~~bash
+sudo drlink system backup validate <exact-backup-archive-path>
+~~~
+
+Expected: successful integrity/format/version validation. This is read-only and must complete **before** a restore. A corrupt or incompatible archive is not a recovery candidate.
+
+## Step 4 — restore only when authorized
+
+Under the approved recovery plan:
+
+~~~bash
+sudo drlink system restore <validated-backup-archive-path>
+~~~
+
+Review the product's confirmation and access-impact information; **do not automatically answer Yes**. The product should snapshot and validate its state transition and report any incomplete rollback honestly. Record all failure evidence before attempting another recovery.
+
+## Step 5 — verify identity and real traffic after restoration
+
+![Real Data Relay Link CLI capture — Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery.](/images/cli-captures/agent-diagnostics.png)
+
+*Figure 3. Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+show status
+show managed-hosts
+show remote-access
+show internet-access
+show ai-access
+system diagnostics
+system revisions
+~~~
+
+On **each affected Agent Host**:
+
+~~~text
+show agent
+show remote-services
+system diagnostics
+system synchronize
+~~~
+
+Check that immutable Managed Host identities, Remote Service IDs and public endpoint reservations were preserved wherever compatible, and that Agents reconnected/reconciled the active generation. Then run an **actual approved SSH or Internet Access application request** plus one intentionally denied policy request as in the corresponding playbooks.
+
+## Failure response
+
+- **Backup validation FAIL:** do not restore. Keep evidence and obtain a healthy compatible archive.
+- **Agent missing after restore:** check original identity/trust, management connectivity and Agent sync; do not immediately re-enroll and lose the identity history.
+- **Policy changed unexpectedly:** compare current revision and backup baseline before authorizing another mutation. Never reset Remote Access policy merely to restore connectivity, because initial Remote Access is ALLOW.
+- **Service appears HEALTHY without real traffic:** verify the application's endpoint separately. Runtime/heartbeat status alone does not prove the destination is reachable.
+
+See [backup/restore reference](/operations/backup-restore) and [troubleshooting](/troubleshooting/overview) for further recovery boundaries.
+
+## Current behavior check — 2026-10-28
+
+After restore, backup-time host presence and proxy health require fresh Agent verification. Connected Agents reconcile when the Server lacks current Remote Service verification; run diagnostics/synchronize and test real traffic. Keep both the archive and error evidence if restore or rollback fails.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

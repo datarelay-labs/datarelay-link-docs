@@ -1,0 +1,576 @@
+{
+  "purpose": "Rasterized captures of real retained DRLink PTY/stdout E2E evidence; source text is not simulated or generated.",
+  "generated_at_utc": "2026-10-18T16:44:53.119653+00:00",
+  "items": [
+    {
+      "image": "server-guided-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/chat-resume-bdc-20261014/o001-server.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "e43534ccd458ea28795636eb8183c099e666998a3c1b93afb006f08c5d2d16bf",
+      "excerpt_sha256": "8814f7671f6b3ba9118d2fd2f1be55449da35a5941bdf90d7d63cba7914f0f21",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Remote Access",
+        "Internet Access",
+        "AI Access",
+        "System"
+      ]
+    },
+    {
+      "image": "server-managed-host-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/chat-resume-bdc-20261014/o001-server.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "e43534ccd458ea28795636eb8183c099e666998a3c1b93afb006f08c5d2d16bf",
+      "excerpt_sha256": "8814f7671f6b3ba9118d2fd2f1be55449da35a5941bdf90d7d63cba7914f0f21",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Manage enrolled hosts",
+        "Policy source objects"
+      ]
+    },
+    {
+      "image": "agent-guided-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/agent-guided.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "f4c3461c63b31fca69ae606cb1ce684a0fd29600bc17fa13ceac6c06c4e4a125",
+      "excerpt_sha256": "6237a46e365ab2eda19b7ce37fd6a8216cd9fce2d2ddce09774d1f38543c47ea",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Agent-owned service",
+        "Bundle operations",
+        "System / diagnostics"
+      ]
+    },
+    {
+      "image": "agent-create-service-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/agent-guided.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "f4c3461c63b31fca69ae606cb1ce684a0fd29600bc17fa13ceac6c06c4e4a125",
+      "excerpt_sha256": "bf79966f2a91df66731de9af8d875a41353147406e2d93e8ba5d9cf72e0e344f",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Inspect existing",
+        "Create mapping",
+        "Edit existing"
+      ]
+    },
+    {
+      "image": "server-service-object-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/U-010/candidate-bdc-parity/guided.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "b9cbf1d3154faa534828e3bcafce90d2bfc59b2149a7f6c1f04e16b1ef368db6",
+      "excerpt_sha256": "3646824b8c11d588d0e4a7ef2a09387855a8074c06eae248858b577fd2733644",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "View service objects",
+        "Create protocol/port",
+        "Manage groups"
+      ]
+    },
+    {
+      "image": "service-object-type.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/U-010/candidate-bdc-parity/guided.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "b9cbf1d3154faa534828e3bcafce90d2bfc59b2149a7f6c1f04e16b1ef368db6",
+      "excerpt_sha256": "ec431fae7566b6fac50bbf35799eafb4f53822c1637fbc7ab0866bf8b618ed73",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "SSH choice",
+        "HTTPS choice",
+        "Fixed TCP choice"
+      ]
+    },
+    {
+      "image": "remote-access-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/O-015/guided-cli.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "77b0556a522fef4c01ac246f5240994ca1eff49f56f96f012c86b22ee1f3c7da",
+      "excerpt_sha256": "e88f0e1bb88c7ce04cc5dd028907ee916d1be04eee1e999d97af0d2e05dfa9ac",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Review rules",
+        "Create policy rule",
+        "Simulate auth"
+      ]
+    },
+    {
+      "image": "remote-access-mode.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/O-015/candidate-bdc-rule-inline-cancel/guided-rule.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "3b23d511c1ce574f87cf690d321f90e663a1adabd079e0872bad25795cc5e7b6",
+      "excerpt_sha256": "4104ddad541e08e7e4bc6dca10013dbc6b1cf92dd091991f2bff9abef89c7658",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "BLACKLIST: match denies",
+        "WHITELIST: match allows"
+      ]
+    },
+    {
+      "image": "server-system-menu.png",
+      "source_kind": "pty",
+      "source_evidence": "<retained-cli-e2e-20261013>/chat-resume-bdc-20261014/o001-server.typescript",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13",
+      "input_sha256": "e43534ccd458ea28795636eb8183c099e666998a3c1b93afb006f08c5d2d16bf",
+      "excerpt_sha256": "33301d7fd053575a69399e1e0194ad10407bc3f2426c73d2e804a507f183cb6f",
+      "command": "Recorded interactive drlink> session",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Backup / restore",
+        "Read-only checks",
+        "Verify version"
+      ]
+    },
+    {
+      "image": "server-version.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-system-version.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "6a4e8b51bb71b82e72ebfea00aa3849db0cd028c9702bf2ea022240d2b348243",
+      "excerpt_sha256": "43cafca79b3dba0f997210ee0294fd087899c99bf84ccbb47883433217f5840a",
+      "command": "$ drlink system version",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Product version",
+        "Exact candidate",
+        "Server role"
+      ]
+    },
+    {
+      "image": "server-status.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-status.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "371669209805088154f628ee6d57f3196d3b20dacba5dfc5bb170e4fdf2ca63e",
+      "excerpt_sha256": "a36baca5813f44edb4969d2ef76d5f9d30800624f20eb84245b425aefcc67923",
+      "command": "$ drlink show status",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Check Server role",
+        "Inbound default ALLOW",
+        "Outbound default DENY",
+        "AI default DENY"
+      ]
+    },
+    {
+      "image": "agent-status.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/agent-status.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "1bd79774ff855f8868338c00acc776fbb06eac208aea13abaf909be362603e3f",
+      "excerpt_sha256": "114fc9be1c039f8db81c7535713886f6b123bf8a84507e2dbb44f073388be5da",
+      "command": "$ drlink show status",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Check Agent role",
+        "Server connected",
+        "Runtime health"
+      ]
+    },
+    {
+      "image": "agent-services.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/agent-remote-services.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "c098d3950917edc1bda814a3aa50f6de925e127ea098a4c9efc05e8cc583ac2d",
+      "excerpt_sha256": "6dc97143f6b49a0f668875376aaef4941798123a99d02cad7aa31635ae7f712b",
+      "command": "$ drlink show remote-services",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Service inventory",
+        "Not healthy",
+        "Explicitly disabled"
+      ]
+    },
+    {
+      "image": "server-inbound-default.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-remote-policy.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "c912bcc1bb97f830675aea24296159b425abf6f370daf45ce4ccb278770ca064",
+      "excerpt_sha256": "3570cefcee148db4b7d25ae1d848eb8fda4fb7c7c467c7ab5db5fc53513650a5",
+      "command": "$ drlink show remote-access",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "No Policy",
+        "Initial ALLOW",
+        "No rules present"
+      ]
+    },
+    {
+      "image": "server-egress-default.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-internet-policy.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "d784377d9e347cb4079403ed8b05dbc8331081c8389d0a88af7ad32a55d2049c",
+      "excerpt_sha256": "9505ed86becaac7e0b12b96d5ae356745f4cac476ccc024160933326d5782beb",
+      "command": "$ drlink show internet-access",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Initial DENY",
+        "Fail closed",
+        "No rules present"
+      ]
+    },
+    {
+      "image": "remote-test-syntax.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-remote-help.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "f2fd01075aea36fc604761cd10195095f82943632d2ec600369304f22c8608cd",
+      "excerpt_sha256": "5a051ecb116a941358240232c8f2db569c11436e1191acc8f2c0a3c21f49502f",
+      "command": "$ drlink help test remote-access",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Test command form",
+        "Named source object",
+        "Not traffic proof"
+      ]
+    },
+    {
+      "image": "internet-test-syntax.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-internet-help.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "306624acf7aa4f8283f0bcbe6327e3b8391a7955b72dd7563dc0e6fd08049606",
+      "excerpt_sha256": "fb4acfefdc7d69510788b7c77c4f05108dcc63f2fe2d649085a29ef080bdfb83",
+      "command": "$ drlink help test internet-access",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Test command form",
+        "WHITELIST only"
+      ]
+    },
+    {
+      "image": "mcp-direct-not-ready.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-certificate.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "c22c79b086da06eda354b3507fe7d3c99280bbf53a387f6d970967c08d451e78",
+      "excerpt_sha256": "d412edca7a8212a5909ed79b0737ad7f3cc2057cfa44d14a714e969f1d427fcc",
+      "command": "$ drlink system certificate status",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "TLS is not configured",
+        "Certificate absent",
+        "single443 required"
+      ]
+    },
+    {
+      "image": "managed-hosts.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-managed.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "d226204b351db168b3fe72658a578c73b2ee11bf91b3dbc43a9fdf23593c20dc",
+      "excerpt_sha256": "bb28640e7dfcc48e61b9ae6893acb20d6e3dedf274ff6d197b524bc14282f2a0",
+      "command": "$ drlink show managed-hosts",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Registered/connected",
+        "Host inventory"
+      ]
+    },
+    {
+      "image": "agent-command-reference.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/agent-help.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "37f7606bc07d471b499f10c7f365745089cd6fa7790a3496fc61364a49d32d95",
+      "excerpt_sha256": "1f4e1db04c43396be978521feccf7c8ec9ad43f66613eac71ff59996aa2533e7",
+      "command": "$ drlink help commands",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Inspect service list",
+        "Create/change service",
+        "Troubleshoot Agent"
+      ]
+    },
+    {
+      "image": "server-diagnostics.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/server-diagnostics.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "450bf84abbd1f11020674fa73c1f1a92ceccf71892674b81b7a87ad18c039e52",
+      "excerpt_sha256": "f2f23e17ffa0c44dce5ead5e09cddb0462d7fab5e1c62a6d6e74172ca17cb984",
+      "command": "$ drlink system diagnostics",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Server identity",
+        "Build/version",
+        "DB health"
+      ]
+    },
+    {
+      "image": "agent-diagnostics.png",
+      "source_kind": "json",
+      "source_evidence": "<retained-cli-e2e-20261017>/agent-diagnostics.json",
+      "source_head": "4d07644cdf248d9eebe36bcef341beb2028f1000",
+      "date": "2026-10-17",
+      "input_sha256": "97c3fd208ab023986c39be1bacca112589ccdc7781fe8893c0d45a9dc192d977",
+      "excerpt_sha256": "14d742fb78b376816bd08c7b5cb0c842e888aaad7b24f3416be01274e87736da",
+      "command": "$ drlink system diagnostics",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Agent identity",
+        "Connectivity check"
+      ]
+    },
+    {
+      "image": "ssh-service-healthy.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/u008-agent-ssh-service.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "b061e758b83de14187ca2dfad75409103cc5ec35513f1f869cade561b06758b1",
+      "excerpt_sha256": "3d86216eafb841094e1417089a2aa880a458407d9a23bb9370facc87c616fc4b",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Actual verified status",
+        "Reserved public endpoint",
+        "Service enabled"
+      ]
+    },
+    {
+      "image": "remote-test-allow.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/u008-server-policy.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "e5ed7a058cc812cbedc9379685f655095a1dfb26b1b13c0d05f6fc9e67c8b2bf",
+      "excerpt_sha256": "1afd14c9a6bc9d234c770b245eb9369751397782ed7a0b01058eafa7de17f0e6",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "No policy yet",
+        "Actual ALLOW result"
+      ]
+    },
+    {
+      "image": "config-revision-diff.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/server-diff.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "a3fb90ecf620087d65f8a07410964fc03508a39f14d6f249d0a86d24628d3497",
+      "excerpt_sha256": "be59e3ee9e24f1983d17a30ee5edb4489a36f3b8ff9d34e2fde1039e19765369",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Changed revision",
+        "Server bundle diff"
+      ]
+    },
+    {
+      "image": "configuration-revisions.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/guided-and-server-reads-bdc-20261013/server-revisions-after-guided.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "e33f0bae66c4de0f27383a5c46cd8ab70dbe3b1a786bfe8257caf1d65b57c668",
+      "excerpt_sha256": "fc8106ce3a94af609832508ed6e08ac80ad9d672197f0100ac2a6ad4e2a0c402",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Revision history",
+        "Change tracking"
+      ]
+    },
+    {
+      "image": "enrollment-inventory.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/O-002/enrollments.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "d5d5c5061cff331b3d7bba7129a8c866df37068d6089296edb4d3780cd3f3c46",
+      "excerpt_sha256": "5ed6c34657861ebf44aea10d30b08ac6ae298e117dd56b1fb556cf10788174b9",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": true,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Enrollment type",
+        "Completed enrollment",
+        "Expired ticket"
+      ]
+    },
+    {
+      "image": "fixed-object-created.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/frozen-bdc-sweep-20261014/a003-owned/create-fixed.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "b9b02145d544c8a5990b03da6f6b1c09f66ec6acc269aa45e6c7813304304b6b",
+      "excerpt_sha256": "c1954b09adbb37dab648824f354f11ab9c35035f4a0d4e01af591809aa71ad4e",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Fixed TCP object saved"
+      ]
+    },
+    {
+      "image": "network-object-created.png",
+      "source_kind": "stdout",
+      "source_evidence": "<retained-cli-e2e-20261013>/frozen-bdc-sweep-20261014/a007-network/create-object.stdout",
+      "source_head": "bdc47ab0c9b681f06744026eb519b83056f7f28d",
+      "date": "2026-10-13 / 14",
+      "input_sha256": "e34745b8e63d0e5a4e24004101d8a5d96cc6e55f9101ed09fea41a29ac4042bb",
+      "excerpt_sha256": "f66360548a999cddc9193e7840c89b4d28340f1328d6901ae8703ad5498ef89d",
+      "command": "Recorded E2E CLI stdout (exact command not in this file)",
+      "cropped": false,
+      "redacted": [
+        "public/private IP",
+        "user hostnames"
+      ],
+      "annotations": [
+        "Network object saved"
+      ]
+    }
+  ]
+}

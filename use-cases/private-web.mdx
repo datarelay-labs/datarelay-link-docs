@@ -1,0 +1,94 @@
+---
+title: "Use case: Private HTTPS console"
+description: "Access an internal HTTPS management application through a controlled Remote Service."
+---
+
+# Reach a private HTTPS administration console
+
+**Outcome:** A support workstation securely reaches one appliance's HTTPS admin UI; you do not expose the entire appliance LAN.
+
+**Example:** Agent on a reachable LAN host → firewall console 10.40.10.8:8443 → externally reserved DRLink TCP port.
+
+## Step 1 — confirm the existing application
+
+On the Agent/gateway OS, establish that **10.40.10.8:8443** is reachable and the admin application has a trusted certificate for the name end users will use. DRLink Remote Access uses **TLS passthrough**, not TLS termination. A certificate-name mismatch is a deployment problem, not a reason to disable verification.
+
+## Step 2 — register the destination and service
+
+![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
+
+*Figure 1. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+set network-object firewall-console type ip value 10.40.10.8
+set service-object console-https type tcp port 8443
+show network-object firewall-console
+show service-object console-https
+~~~
+
+Prefer setting the required Remote Access WHITELIST **before** publishing this sensitive UI. See [office-only allowlist](/use-cases/office-allowlist).
+
+## Step 3 — publish only this port
+
+![Real Data Relay Link CLI capture — On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server.](/images/cli-captures/agent-create-service-menu.png)
+
+*Figure 2. On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+After [enrolling an Agent](/guides/enrollment) that can reach the target LAN IP, use the **Agent REPL**:
+
+~~~text
+set remote-service firewall-ui destination firewall-console service console-https enabled
+show remote-service firewall-ui
+~~~
+
+Record the reserved public endpoint shown by the CLI.
+
+## Step 4 — test from an authorized workstation
+
+Configure a DNS name such as **console.example.net** to reach the DRLink public address. The backend HTTPS certificate must match **console.example.net** (or a separately verified name that the application actually presents). Access:
+
+~~~text
+https://console.example.net:<reserved-public-port>/
+~~~
+
+For a DNS test that preserves both the URL hostname and TLS verification, replace placeholders and use:
+
+~~~bash
+curl --resolve console.example.net:<reserved-public-port>:<drlink-public-ip> https://console.example.net:<reserved-public-port>/
+~~~
+
+Expected: the appliance login page over validated TLS, not a DRLink management login. Authenticate using the application's own identity mechanism.
+
+## Step 5 — verify restricted access
+
+![Real Data Relay Link CLI capture — Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted.](/images/cli-captures/server-inbound-default.png)
+
+*Figure 3. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+show remote-access
+show managed-host <relay-host> remote-services
+system audit
+~~~
+
+From a second, unapproved source, test access and confirm the **policy denial**, not merely a network timeout. If Remote Access has **no policy**, it defaults to **ALLOW**: publishing alone is not sufficient access restriction.
+
+## Recovery
+
+- **Certificate error:** correct DNS/certificate/SNI on the application, not a proxy rewrite; never turn off TLS verification to pass a test.
+- **Browser timeout:** check external firewall, reserved port, Agent connectivity and target 10.40.10.8:8443.
+- **Unexpected ALLOW:** inspect all matching Remote Access rules and their effective mode; **set remote-access disabled** is **ALLOW ALL**, not a safe emergency deny.
+- **Retire console:** remove **firewall-ui** on the owning Agent after impact review, leaving unrelated LAN services untouched.
+
+## Current behavior check — 2026-10-28
+
+The application keeps its own TLS and login. Verify its certificate hostname at the allocated public endpoint without skipping certificate checks. After a reconnect, synchronize on the owning Agent and check the current Remote Service generation before declaring recovery.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

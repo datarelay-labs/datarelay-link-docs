@@ -1,0 +1,115 @@
+---
+title: "활용 사례: 차단망 Ubuntu 업데이트"
+description: "표준 프록시만으로 승인된 Ubuntu 저장소에 APT 업데이트를 수행합니다."
+---
+
+# 인터넷이 차단된 Ubuntu에서 APT 업데이트하기
+
+**완성 결과:** 보호된 Ubuntu 서버가 DRLink Internet Access 프록시를 통해 **승인된 Ubuntu 패키지 저장소에만** 접속합니다. 다른 도메인은 DENY이며 보호 서버에 DRLink Agent를 설치할 필요가 없습니다.
+
+예제: Ubuntu **10.20.30.15** → DRLink 프록시 **10.20.30.5:6080** → **archive.ubuntu.com / security.ubuntu.com**. 실제 프록시 포트는 설치 환경의 **system diagnostics**에서 확인하세요. 6080은 고정 기본값이 아닌 예시입니다.
+
+## 1단계 — 현재 Ubuntu 저장소 확인
+
+**보호 Ubuntu 호스트 셸:**
+
+~~~bash
+grep -R -hE '^(URIs:|deb |deb-src )' /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null
+~~~
+
+표시되는 실제 URL의 **FQDN과 HTTP/HTTPS 포트**를 기록합니다. 이 예시는 두 기본 호스트에 대한 **HTTP 80**을 가정합니다. 다른 미러·PPA·CDN 또는 HTTPS 주소가 있다면 각각 실제 호스트명과 필요한 포트만 추가해야 합니다. APT 성공을 위해 무제한 와일드카드를 허용하지 마세요.
+
+## 2단계 — DRLink 프록시와 출발지 IP 확인
+
+![실제 Data Relay Link CLI 캡처 — Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다.](/images/cli-captures/server-egress-default.png)
+
+*그림 1. Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 실제 Server Diagnostics 발췌: 서버 역할, 빌드 버전 및 배포/리스너 구성을 확인합니다.](/images/cli-captures/server-diagnostics.png)
+
+*그림 2. 실제 Server Diagnostics 발췌: 서버 역할, 빌드 버전 및 배포/리스너 구성을 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**DRLink Server 셸:**
+
+~~~bash
+sudo drlink system version
+sudo drlink system diagnostics
+sudo drlink show internet-access
+~~~
+
+**확인:** 프록시의 실제 리스너 주소/포트가 보호 호스트에서 접근 가능하고, Server에 보이는 출발지가 **10.20.30.15**인지 확인합니다. NAT를 지난다면 변환 후 IP/CIDR을 정책 출발지로 사용해야 합니다. 외부 방화벽은 관리자가 별도 구성합니다.
+
+## 3단계 — FQDN 및 포트 Object 정의
+
+**Server REPL:**
+
+~~~text
+set network-object apt-source type ip value 10.20.30.15
+set network-object ubuntu-archive type fqdn value archive.ubuntu.com
+set network-object ubuntu-security type fqdn value security.ubuntu.com
+set service-object apt-http type tcp port 80
+show network-objects
+show service-object apt-http
+~~~
+
+HTTPS 저장소를 사용한다면 **set service-object apt-https type tcp port 443**을 추가하고 해당 FQDN에 **별도 WHITELIST Rule**을 만듭니다.
+
+## 4단계 — Internet Access WHITELIST 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다.](/images/cli-captures/internet-test-syntax.png)
+
+*그림 3. 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Server REPL:**
+
+~~~text
+set internet-access apt-archive mode whitelist source apt-source destination ubuntu-archive service apt-http enabled
+set internet-access apt-security source apt-source destination ubuntu-security service apt-http enabled
+set internet-access enabled
+show internet-access
+test internet-access source apt-source destination ubuntu-archive service apt-http
+test internet-access source apt-source destination ubuntu-security service apt-http
+~~~
+
+**확인:** 두 규칙이 ALLOW이고, 다른 목적지는 기본 DENY입니다. Internet Access는 **BLACKLIST를 지원하지 않으며**, enforcement 비활성화는 **DENY ALL**입니다.
+
+## 5단계 — 실제 APT 업데이트 수행
+
+**보호 Ubuntu 호스트 셸:** 시스템의 영구 프록시 파일을 덮어쓰지 않도록 임시 **APT_CONFIG**만 사용합니다. 주소/포트를 실제 값으로 변경하세요.
+
+~~~bash
+(
+  PROXY_URL="http://10.20.30.5:6080"
+  APT_PROXY_CONFIG="$(mktemp)"
+  trap 'rm -f "$APT_PROXY_CONFIG"' EXIT
+  printf 'Acquire::http::Proxy "%s";\nAcquire::https::Proxy "%s";\n' \
+    "$PROXY_URL" "$PROXY_URL" > "$APT_PROXY_CONFIG"
+  sudo env APT_CONFIG="$APT_PROXY_CONFIG" \
+    apt-get -o APT::Update::Error-Mode=any update
+)
+~~~
+
+**성공 기준:** 필요한 모든 저장소 인덱스를 실제 DRLink 프록시를 통해 가져옵니다. 이 명령은 패키지를 설치하거나 업그레이드하지 않습니다. 일부 인덱스 실패를 허용하는 APT 환경에서는 exit 0만으로 성공으로 판단하지 않고 실패 로그를 확인하세요.
+
+## 6단계 — 차단되는 목적지 테스트
+
+**동일 Ubuntu 보호 호스트:**
+
+~~~bash
+curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" --head https://example.org/
+~~~
+
+**기대:** 허용하지 않은 도메인은 프록시 정책에 의해 **DENY**. Server에서 **system audit**로 실제 출발지/목적지/차단 사유를 확인합니다. 단순 DNS/TCP timeout은 정책 DENY 증거가 아닙니다.
+
+## 장애 처리와 정리
+
+임시 APT 설정 파일은 셸 종료 시 trap으로 삭제됩니다. APT 실패 시 실제 미러 호스트명, HTTP/HTTPS 포트, NAT 출발지, 프록시 포트/방화벽, Rule을 순서대로 확인합니다. 미러가 추가로 필요하면 해당 FQDN만 정밀하게 허용하고 재시험하세요. 기존 시스템의 영구 프록시 설정은 이 검증 때문에 덮어쓰지 마세요.
+
+## 최신 동작 확인 — 2026-10-28
+
+Internet Access listener가 잘못됐다면 같은 불변 버전의 Server installer에서 FRP_EGRESS_LISTEN_ADDR와 필요한 경우 FRP_EGRESS_LISTEN_PORT로 복구합니다. set server 필드가 아닌 설치 소유 설정입니다. 모드/identity를 보존하고 백업 검증 후 실제 APT 프록시 경유를 재확인하세요.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

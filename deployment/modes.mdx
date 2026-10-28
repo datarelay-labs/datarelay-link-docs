@@ -30,3 +30,7 @@ Changing deployment mode must preserve the v2.4 control-plane database, Managed 
 The installer does not change cloud security groups, customer firewall/NAT rules, or DNS-provider records.
 
 Use single-443 when restrictive enterprise networks permit standard HTTPS/WSS on 443 but interfere with TLS on non-standard ports.
+
+## MCP deployment
+
+Public remote MCP requires **single443**. Direct Relay control on TCP/443 is not HTTPS MCP. Follow [Claude / ChatGPT setup](/guides/mcp-clients). A planned mode migration uses the same immutable source installer and validated backup because connections can be interrupted.

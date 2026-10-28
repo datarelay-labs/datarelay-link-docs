@@ -10,7 +10,7 @@ icon: "sitemap"
 ## Roles
 
 ```mermaid
-flowchart LR
+flowchart TD
     S[DRLink Server]
     A[Managed Host / Agent]
     T[Local or LAN target]
@@ -20,7 +20,7 @@ flowchart LR
     A -->|management + relay control| S
     S -->|Remote Service traffic| A
     A --> T
-    A -->|Internet Access request path| S
+    P[Protected host, no Agent required] -->|Internet Access proxy| S
     S --> I
     AI -->|MCP / AI Access| S
     S --> A
@@ -36,7 +36,13 @@ The Agent manages its local state and Remote Services. A Remote Service binds on
 
 ## Policy planes
 
-Remote Access, Internet Access, and AI Access are separate policy families with the same BLACKLIST/WHITELIST plus Enforcement model. Rules are unordered and carry no per-rule ALLOW/DENY action.
+| Plane | Supported modes | No policy | Enforcement disabled |
+| --- | --- | --- | --- |
+| Remote Access | BLACKLIST / WHITELIST | ALLOW | ALLOW ALL |
+| Internet Access | WHITELIST only | DENY | DENY ALL |
+| AI Access | WHITELIST only | DENY | DENY ALL |
+
+WHITELIST denies unmatched requests. BLACKLIST is supported only by Remote Access: matching enabled Rules deny, unmatched requests allow. Rules have no ordering or per-rule action. Policy reset removes Mode/Rules and returns each plane to its own initial state. AI authentication remains required independently.
 
 ## Authoritative state
 
@@ -53,3 +59,5 @@ Runtime configuration is generated from the control-plane state. JSON compatibil
 Enrollment bootstrap credentials, persistent Agent management identity, Relay Engine transport credentials, and AI OAuth credentials are distinct. One credential must not be treated as another.
 
 MCP is a server-side authenticated bridge. It does not bypass AI Access policy, Agent identity, or target OS permissions.
+
+Server-self MCP is a separately authorized server:self target, independent of enrolled Agents. See [MCP setup](/guides/mcp-clients).

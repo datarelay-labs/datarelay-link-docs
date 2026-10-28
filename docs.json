@@ -71,6 +71,25 @@
             "icon": "rocket"
           },
           {
+            "group": "Practical Use Cases",
+            "pages": [
+              "use-cases/index",
+              "use-cases/remote-ssh",
+              "use-cases/lan-relay",
+              "use-cases/private-web",
+              "use-cases/office-allowlist",
+              "use-cases/fixed-tcp-database",
+              "use-cases/ubuntu-updates",
+              "use-cases/github-egress",
+              "use-cases/ai-readonly",
+              "use-cases/ai-server-control",
+              "use-cases/bulk-onboarding",
+              "use-cases/configuration-bundle",
+              "use-cases/backup-recovery"
+            ],
+            "icon": "list-check"
+          },
+          {
             "group": "Managed Hosts & Objects",
             "pages": [
               "guides/enrollment",
@@ -101,7 +120,10 @@
             "group": "AI Access",
             "icon": "robot",
             "pages": [
-              "guides/ai-access"
+              "guides/ai-access",
+              "guides/mcp-clients",
+              "reference/mcp-tools",
+              "reference/mcp-validation"
             ]
           },
           {
@@ -172,6 +194,25 @@
             "icon": "rocket"
           },
           {
+            "group": "실습: 활용 사례",
+            "pages": [
+              "ko/use-cases/index",
+              "ko/use-cases/remote-ssh",
+              "ko/use-cases/lan-relay",
+              "ko/use-cases/private-web",
+              "ko/use-cases/office-allowlist",
+              "ko/use-cases/fixed-tcp-database",
+              "ko/use-cases/ubuntu-updates",
+              "ko/use-cases/github-egress",
+              "ko/use-cases/ai-readonly",
+              "ko/use-cases/ai-server-control",
+              "ko/use-cases/bulk-onboarding",
+              "ko/use-cases/configuration-bundle",
+              "ko/use-cases/backup-recovery"
+            ],
+            "icon": "list-check"
+          },
+          {
             "group": "Managed Host & Object",
             "pages": [
               "ko/guides/enrollment",
@@ -202,7 +243,10 @@
             "group": "AI Access",
             "icon": "robot",
             "pages": [
-              "ko/guides/ai-access"
+              "ko/guides/ai-access",
+              "ko/guides/mcp-clients",
+              "ko/reference/mcp-tools",
+              "ko/reference/mcp-validation"
             ]
           },
           {

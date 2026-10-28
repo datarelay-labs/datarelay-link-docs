@@ -1,0 +1,101 @@
+---
+title: "활용 사례: LAN 게이트웨이로 두 서비스 연결"
+description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개를 발행합니다."
+---
+
+# Agent 한 대로 내부 LAN 서비스 여러 개 연결하기
+
+**완성 결과:** 내부 시스템마다 Agent를 설치하지 않고, 연결 가능한 LAN에 있는 **하나의 Agent Host**로 내부 SSH 서버와 HTTPS 서버를 각각 독립적으로 공개합니다.
+
+예제: 게이트웨이 Agent 10.20.0.10 → 내부 SSH 10.20.0.21:22 / HTTPS 10.20.0.22:443.
+
+## 1단계 — 게이트웨이 준비
+
+![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
+
+*그림 1. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+[SSH 원격 접속](/ko/use-cases/remote-ssh)의 등록 단계를 따라 Agent를 **10.20.0.10 게이트웨이**에 설치합니다. 이후 게이트웨이 OS에서 두 대상 IP/포트로 TCP 연결이 가능한지 확인하세요. 내부 라우팅과 방화벽 변경은 DRLink 외부의 관리자 작업입니다.
+
+## 2단계 — 목적지 및 Service Object 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
+
+*그림 2. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다.](/images/cli-captures/network-object-created.png)
+
+*그림 3. 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Server REPL:**
+
+~~~text
+set network-object lan-ssh-host type ip value 10.20.0.21
+set network-object lan-web-host type ip value 10.20.0.22
+set service-object ssh type tcp port 22
+set service-object web-https type tcp port 443
+show network-objects
+show service-objects
+~~~
+
+**확인:** 두 목적지가 각각 단일 IP Object로, 두 서비스가 TCP 포트 22/443으로 등록됩니다. Remote Service 목적지로 CIDR이나 여러 대상 그룹을 직접 사용하지 마세요.
+
+## 3단계 — 게이트웨이에서 Remote Service 두 개 생성
+
+![실제 Data Relay Link CLI 캡처 — 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다.](/images/cli-captures/agent-services.png)
+
+*그림 4. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Gateway Agent REPL:**
+
+~~~text
+show status
+set remote-service lan-ssh destination lan-ssh-host service ssh enabled
+set remote-service lan-web destination lan-web-host service web-https enabled
+show remote-service lan-ssh
+show remote-service lan-web
+~~~
+
+**확인:** 각각 별도 공인 엔드포인트가 예약되며, 대상 연결과 현재 Agent 런타임이 검증되면 HEALTHY입니다. 관리자는 생성된 **서로 다른 외부 포트**를 기록합니다.
+
+## 4단계 — 두 실제 서비스 접속
+
+**외부 지원 PC:**
+
+~~~bash
+ssh -p <SSH-공인-포트> <실제-SSH-계정>@<DRLink-공인-주소>
+~~~
+
+HTTPS는 외부 접근용 DNS와 **애플리케이션 인증서가 일치하도록** 설정한 다음 브라우저에서 확인합니다.
+
+~~~text
+https://<인증서에-일치하는-공인-DNS>:<웹-공인-포트>/
+~~~
+
+**성공 기준:** SSH는 10.20.0.21:22, 웹은 10.20.0.22:443에 도달합니다. DRLink는 웹 애플리케이션 TLS를 종료하지 않으므로 인증서 불일치를 무시하여 성공 처리하면 안 됩니다.
+
+## 5단계 — 다른 서비스가 노출되지 않았는지 확인
+
+**Server REPL:**
+
+~~~text
+show managed-host <게이트웨이-Managed-Host-이름> remote-services
+show remote-access
+system audit
+~~~
+
+Remote Service 목록에 의도한 두 엔드포인트만 있는지 확인하고, 필요한 경우 서비스/출발지별 WHITELIST를 적용하세요. **Policy Rule만으로 새 서비스가 생성되지는 않습니다.**
+
+## 장애 대응/정리
+
+한 대상의 LAN 경로만 실패했다면 다른 서비스는 영향을 받지 않을 수 있습니다. Gateway Agent의 **system diagnostics**, **system synchronize** 및 각 대상 서비스 상태를 확인합니다. 개별 접속을 철회하려면 소유 Agent에서 **unset remote-service lan-ssh** 또는 **unset remote-service lan-web**을 검토·실행하세요. 게이트웨이 Managed Host 전체 삭제는 별개 작업입니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+LAN 대상의 현재 런타임을 검증하기 전까지 DEGRADED 저장은 가능합니다. 소유 Agent가 Relay Host이며 Remote Service를 Server에서 만들지 않습니다. 같은 Agent의 Destination + Service 중복은 거부됩니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

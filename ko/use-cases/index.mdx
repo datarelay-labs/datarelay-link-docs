@@ -1,0 +1,82 @@
+---
+title: "시나리오별 실습 가이드"
+description: "Data Relay Link 설치 후 각 사용 목적을 처음부터 끝까지 구현하는 단계별 매뉴얼."
+sidebarTitle: "활용 사례"
+---
+
+# 원하는 활용 사례를 선택하세요
+
+이 문서는 기능 소개가 아니라 **따라 하기 매뉴얼**입니다. 각 시나리오에는 네트워크 구성, 준비 사항, **서버와 Agent별 입력 명령어**, 실제 통신 확인, 차단 테스트, 장애 복구가 포함됩니다.
+
+<Warning>
+  다음 명령어는 **v2.4.0 개발 대상 CLI** 기준입니다. 현재 GitHub의 공개 안정 릴리스는 **v2.3.0**이므로, v2.3.0 설치에 v2.4 명령이 그대로 동작한다고 가정하지 마세요. 반드시 **sudo drlink system version**으로 실제 버전·채널·Source HEAD를 확인하고, 검증된 불변 SHA/후보 아티팩트로 작업하세요.
+</Warning>
+
+## 외부에서 내부 서비스 접속 — Remote Access
+
+| 원하는 결과 | 실습 가이드 |
+| --- | --- |
+| NAT 뒤 Linux 서버로 SSH 접속 | [NAT 환경 원격 SSH 접속](/ko/use-cases/remote-ssh) |
+| Agent 1개로 내부 서버 2대의 서비스 연결 | [LAN 게이트웨이와 다중 서비스](/ko/use-cases/lan-relay) |
+| 사설망 HTTPS 장비 관리 화면 접속 | [내부 HTTPS 관리 화면](/ko/use-cases/private-web) |
+| 사무실 공인 IP에서만 접속 허용 | [Remote Access 사무실 IP 제한](/ko/use-cases/office-allowlist) |
+| 기존 DB에 고정 TCP 엔드포인트로 접속 | [Fixed TCP 원격 DB 접속](/ko/use-cases/fixed-tcp-database) |
+
+## 내부 서버의 제한된 외부 접속 — Internet Access
+
+| 원하는 결과 | 실습 가이드 |
+| --- | --- |
+| 인터넷 차단 Ubuntu에서 APT 업데이트 | [Ubuntu 패키지 업데이트](/ko/use-cases/ubuntu-updates) |
+| 허용된 GitHub 저장소/API에만 HTTPS 접속 | [Git 및 API 프록시 접속](/ko/use-cases/github-egress) |
+
+## AI 접속과 관리 업무
+
+| 원하는 결과 | 실습 가이드 |
+| --- | --- |
+| 인증된 AI에 읽기 전용 권한 부여 | [AI / MCP 최소 권한 접근](/ko/use-cases/ai-readonly) |
+| 지점 PC/서버 여러 대를 안전하게 등록 | [일괄 등록과 Managed Host Group](/ko/use-cases/bulk-onboarding) |
+| 여러 설정을 검증하고 한 번에 적용 | [ConfigurationBundle 적용](/ko/use-cases/configuration-bundle) |
+| 서버 백업, 복원 및 복구 검증 | [백업과 장애 복구](/ko/use-cases/backup-recovery) |
+
+<Note>
+  아래 이미지는 **실제 Data Relay Link v2.4 개발 후보 CLI의 PTY/명령 실행 기록**에서 해당 화면을 발췌해 이미지로 변환한 것입니다. 가상의 Web UI나 생성형 그림이 아닙니다. 주황색 번호는 선택할 메뉴 또는 확인할 원본 출력 줄을 가리킵니다. 캡처는 2026-10-13/17 테스트에서 수집되었고, 실제 IP/호스트는 가렸습니다. 설치된 빌드에 따라 메뉴나 값이 다를 수 있으니 항상 해당 장비의 **menu**, **help**, **system version**을 먼저 확인하세요.
+</Note>
+
+## 모든 시나리오의 공통 준비
+
+
+![실제 Data Relay Link CLI 캡처 — Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다.](/images/cli-captures/server-guided-menu.png)
+
+*그림 1. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
+
+*그림 2. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+1. [서버 설치](/ko/getting-started/server-installation), [배포 모드](/ko/deployment/modes), [방화벽/NAT](/ko/deployment/firewall-nat)을 먼저 완료하세요. Remote Access와 Managed Host 대상 AI Access에는 신뢰된 Agent가 필요하지만, HTTP(S) Internet Access의 보호 대상 호스트는 **Agent 없이 표준 프록시 설정만** 사용할 수 있습니다.
+2. **DRLink Server의 일반 셸**에서 현재 상태를 확인합니다.
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+3. **Server REPL**은 서버에서 **sudo drlink** 실행 후 나오는 **drlink>** 프롬프트입니다. **Agent REPL**은 해당 Agent Host에서 여는 프롬프트입니다. **보호 호스트/외부 PC** 명령은 해당 시스템의 일반 셸에서 실행합니다. 서로 다른 호스트의 명령을 섞지 마세요.
+4. 샘플 IP, DNS, 사용자명, 호스트 이름, 예약 포트는 **반드시 본인 환경의 값으로 바꾸세요**. 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24는 인터넷 라우팅용이 아닌 문서 예제 주소입니다.
+5. **정책 테스트의 ALLOW는 실제 접속 성공이 아닙니다.** 반드시 실제 SSH/웹/Git/APT/AI 호출과 DENY 로그를 확인합니다. 단순 시간 초과는 정책 DENY를 입증하지 않습니다.
+6. 운영 정책 변경 전에는 기존 허용 범위, 백업 및 서비스 중단 가능성을 검토하세요. DRLink는 외부 방화벽·DNS·SSH 사용자·애플리케이션 TLS 인증서를 자동 변경하지 않습니다.
+
+CLI 동작이 예제와 다르면 **help commands**, **system diagnostics**, [CLI 참조](/ko/drlink/cli-reference), [문제 해결](/ko/operations/troubleshooting)을 확인하고 임의의 구버전 명령어를 사용하지 마세요.
+
+## AI 실습 추가 — 2026-10-28
+
+| 원하는 결과 | 따라 하기 |
+| --- | --- |
+| Claude와 ChatGPT에 원격 MCP 연결 | [HTTPS·OAuth·도구 검색](/ko/guides/mcp-clients) |
+| Server 자체 파일·Git·비동기 작업 실행 | [Server 제어 실습](/ko/use-cases/ai-server-control) |
+| 검증된 클라이언트·기능·후보 구분 | [MCP 검증 현황](/ko/reference/mcp-validation) |
+
+Server-self AI 작업은 Agent 등록 없이 별도 권한으로 가능합니다. Managed Host 대상 AI 작업에는 신뢰된 Agent가 필요합니다. 기존 이미지는 명시된 10월 캡처를 유지하고 최신 MCP 작업은 도구 인자·원본 결과로 설명합니다.

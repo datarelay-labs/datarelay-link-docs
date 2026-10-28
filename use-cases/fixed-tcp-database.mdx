@@ -1,0 +1,90 @@
+---
+title: "Use case: Fixed TCP remote database"
+description: "Reach a legacy TCP database through an Agent-owned Fixed TCP Remote Service."
+---
+
+# Publish a legacy database via Fixed TCP Remote Service
+
+**Outcome:** An external database support client reaches one internal TCP database listener, through a stable DRLink Remote Access endpoint and a restricted source policy.
+
+**Example:** approved DBA public IP 203.0.113.10 → Server → branch gateway Agent → Oracle-like listener at 10.50.1.20:1521. Use your actual protocol and database client.
+
+<Note>
+  This is a **Fixed TCP Remote Service** (inbound Remote Access), not the separate outbound Internet Access fixed-listener feature. It does not configure HTTP CONNECT, a transparent proxy or a full VPN.
+</Note>
+
+## Step 1 — verify target network and credentials
+
+From the gateway Agent OS, verify that **10.50.1.20:1521** is reachable. Keep database TLS, DB accounts, encryption and authentication configured on the destination. DRLink does not supply database credentials.
+
+## Step 2 — describe destination and Fixed TCP port
+
+![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
+
+*Figure 1. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Real CLI confirmation that a Fixed TCP Service Object was saved; endpoint/DB connectivity must be tested separately.](/images/cli-captures/fixed-object-created.png)
+
+*Figure 2. Real CLI confirmation that a Fixed TCP Service Object was saved; endpoint/DB connectivity must be tested separately. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+set network-object branch-db type ip value 10.50.1.20
+set network-object dba-public type ip value 203.0.113.10
+set service-object oracle-db type fixed-tcp port 1521
+show service-object oracle-db
+show managed-hosts
+~~~
+
+Verify the enrolled gateway's Managed Host name (example **branch-gateway**). A Fixed TCP Service Object uses a different endpoint pool from regular TCP; do not change a running Remote Service across those pool classes in place.
+
+## Step 3 — restrict access before publishing
+
+**Server REPL:**
+
+~~~text
+set remote-access dba-to-db mode whitelist source dba-public destination branch-gateway service oracle-db enabled
+set remote-access enabled
+test remote-access source dba-public destination branch-gateway service oracle-db
+~~~
+
+Expected: **ALLOW** for the approved source. Review all matching Rules and the **show remote-access** state for unintended sources.
+
+## Step 4 — create the service on the gateway Agent
+
+![Real Data Relay Link CLI capture — Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic.](/images/cli-captures/agent-services.png)
+
+*Figure 3. Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Gateway Agent REPL:**
+
+~~~text
+set remote-service branch-oracle destination branch-db service oracle-db enabled
+show remote-service branch-oracle
+~~~
+
+Record the public endpoint. Expect **HEALTHY** only when the currently connected relay/runtime and destination can be verified.
+
+## Step 5 — verify the database workflow
+
+From the approved external DBA workstation:
+
+~~~bash
+nc -vz <drlink-public-host> <allocated-fixed-tcp-public-port>
+~~~
+
+A successful TCP probe only proves a socket handshake. Complete the actual protocol-specific database login/query using your vendor's database client pointed at the public endpoint. Confirm a rejected connection from a different public source and correlate the policy audit.
+
+## Recovery and teardown
+
+If connection fails, check Server policy and the gateway's **system diagnostics**, the target listener and external port mapping. The host's database encryption and account controls remain mandatory. Retire only this service with **unset remote-service branch-oracle** on the owning gateway Agent after reviewing DB-client interruptions; do not retire the whole Managed Host.
+
+## Current behavior check — 2026-10-28
+
+Fixed TCP remains a Service Object subtype using its separate Server endpoint pool. An existing Remote Service cannot switch across standard TCP/Fixed TCP pools in place. Read the allocated endpoint from show remote-service branch-oracle, rather than assuming the public port equals the database target port.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

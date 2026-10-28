@@ -1,0 +1,83 @@
+---
+title: "Claude · ChatGPT MCP 연결"
+description: "인증서부터 OAuth 승인·실제 도구 호출까지."
+---
+
+# Claude와 ChatGPT를 DataRelay Link에 연결하기
+
+**Claude와 ChatGPT의 실제 원격 MCP 연결·도구 호출 테스트를 완료했습니다.** Claude는 20개 도구 검색과 명령·파일 생성/읽기/삭제 6개 작업, ChatGPT는 명령·파일·Git 및 비동기 작업을 확인했습니다. [검증 범위와 빌드](/ko/reference/mcp-validation)를 확인하세요. 이 문서는 v2.4 개발 Native MCP 기준입니다.
+
+## 1단계 — 공개 HTTPS와 Server 확인
+
+MCP URL은 **https://mcp.example.net/mcp** 형태입니다. example.net을 본인의 DNS 이름으로 바꾸세요. **single443** Server와 공개 신뢰 인증서가 필요합니다. Direct 모드의 Relay 제어 TCP/443은 MCP HTTPS가 아닙니다. Agent를 통한 내부 호스트 작업과 **server:self**의 Server 자체 작업은 별도 대상입니다. Server 자체 작업에는 Agent나 SSH 공개가 필요하지 않습니다.
+
+Server 셸:
+
+~~~bash
+sudo drlink system version
+sudo drlink system certificate status
+sudo drlink system diagnostics mcp
+sudo drlink show ai-identities
+sudo drlink show ai-access
+~~~
+
+인증서 설정을 이미 마쳤다면 재발급하지 않습니다. 처음 설정할 때만 Server REPL에서 실제 DNS/이메일로 아래를 실행하세요. AUTO_ACME HTTP-01은 발급 시 공개 TCP/80 접근이 필요합니다. 사용자 인증서는 user-certificate 모드와 certificate import를 사용합니다.
+
+~~~text
+set mcp-tls hostname mcp.example.net
+set mcp-tls mode auto-acme
+set mcp-tls contact-email admin@example.net
+system certificate preflight
+system certificate issue
+system certificate status
+~~~
+
+외부 셸에서 공개 origin을 확인합니다. 인증 없는 MCP POST의 **401**은 인증이 필요하다는 정상 응답이며 OAuth metadata의 issuer/resource/endpoint가 같은 공개 호스트를 가리켜야 합니다. TLS 오류나 HTML 로그인 페이지는 정상 MCP 응답이 아닙니다.
+
+~~~bash
+curl --fail --show-error https://mcp.example.net/.well-known/oauth-authorization-server
+curl --fail --show-error https://mcp.example.net/.well-known/oauth-protected-resource/mcp
+curl -i -X POST https://mcp.example.net/mcp   -H 'Content-Type: application/json'   --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+~~~
+
+## 2단계 — AI Identity와 권한을 구분하기
+
+Server의 **set ai-identity chatgpt-lab** 또는 **set ai-identity claude-lab** 마법사로 사용할 identity를 준비합니다. 이름만 입력하거나 OAuth 로그인만 완료했다고 권한이 생기는 것은 아닙니다. 각 클라이언트는 별도의 identity로 연결하는 것이 좋습니다.
+
+최초 승인한 소유자는 **mcp-owner-full-access**를 통해 등록된 Managed Host에 전체 MCP 기능을 받을 수 있습니다. 읽기 전용 계정이라면 기존 Rule을 모두 확인하고 [읽기 전용 시나리오](/ko/use-cases/ai-readonly)를 따르세요. **server:self** 관리 권한은 별도이며 [Server 제어 실습](/ko/use-cases/ai-server-control)에 설명합니다.
+
+## 3단계 — Claude에 추가
+
+Claude의 **Customize → Connectors → + Add → Add custom connector**에서 이름과 공개 MCP URL을 입력하고 감지된 OAuth 설정을 확인한 뒤 연결합니다. 조직 계정은 소유자/관리자가 먼저 커넥터를 추가해야 할 수 있습니다. 대화의 Connectors 선택에서 활성화합니다. 메뉴·계정 지원 범위는 [Claude 공식 안내](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)를 확인하세요.
+
+## 4단계 — ChatGPT에 추가
+
+현재 Plugins 화면은 **+ → Add custom MCP server**에서 이름·공개 HTTPS URL·OAuth를 설정하고 **Create as a plugin**으로 도구를 검색합니다. 설치 후 새 대화에서 @로 선택합니다. 이전 Apps 화면은 Create/Scan Tools 경로를 사용할 수 있습니다. 기능과 조직 권한은 [OpenAI 공식 안내](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt)를 확인하세요.
+
+## 5단계 — OAuth 요청을 정확한 Server에서 승인
+
+브라우저가 표시하는 **새 pending ID**와 클라이언트를 확인하세요. 그 OAuth origin을 운영하는 Server 셸에서 페이지에 표시된 명령을 실행합니다. 아래 값은 예시이며 실제 pending ID와 identity로 바꾸세요.
+
+~~~bash
+sudo drlink system credential approve-oauth <PENDING-ID> claude-lab
+~~~
+
+ChatGPT 연결에는 해당 요청을 chatgpt-lab에 바인딩합니다. 이미 바인딩된 클라이언트라면 페이지 명령에 identity 인자가 없을 수 있습니다. 승인 후 브라우저로 돌아와 연결을 완료하세요. 거부할 요청은 **system credential deny-oauth &lt;PENDING-ID&gt;**로 처리합니다. **OAuth request not found**는 다른 Server 또는 만료된 ID를 먼저 확인합니다. 토큰을 대화창에 붙여넣지 마세요.
+
+## 6단계 — 실제 도구와 허용·거부 확인
+
+다음 프롬프트를 Claude와 ChatGPT에 각각 입력하고 도구명·대상·결과를 확인합니다.
+
+~~~text
+DataRelay Link MCP만 사용해 내가 접근할 수 있는 Managed Host를 list_hosts로 조회해줘.
+목록에서 내가 지정한 호스트 하나의 get_system_info 결과를 보여줘.
+명령 실행이나 파일 변경은 하지 마.
+~~~
+
+Server 자체 접근을 별도로 허용했다면 **get_server**가 server:self를 반환합니다. list_hosts가 빈 배열이어도 Server-self 권한과는 별개입니다. 읽기 전용 계정의 **command-exec** 거부는 [최소 권한 실습](/ko/use-cases/ai-readonly)으로 확인하고, 감사는 **show ai-access-log identity &lt;IDENTITY&gt;**로 조회합니다.
+
+## 도구가 16개만 보이거나 호출이 거부될 때
+
+해당 Native MCP 후보는 **20개**를 광고합니다. server_exec / server_job_poll / server_job_input / server_job_stop이 없으면 기존 클라이언트의 도구 스냅샷을 확인하세요. ChatGPT workspace 관리자의 지원되는 Actions Refresh 기능이 있으면 새 도구를 검토·활성화합니다. 개인 앱에는 이 메뉴가 없을 수 있으므로 제공되지 않는 Refresh를 반복해서 찾거나 OAuth를 재승인하지 마세요. 계정이 지원하는 새 테스트 연결로 스캔할 경우 기존 연결은 새 연결 검증까지 유지합니다.
+
+**401**은 인증, **AI Access DENY**는 identity/대상/permission/paths, **executor disabled**는 Server의 실행 프로필, OS permission 오류는 실행 계정 문제입니다. 각 경계를 따로 확인하세요. MCP 권한이 AI 클라이언트의 승인·보안 제한까지 해제하지는 않습니다.

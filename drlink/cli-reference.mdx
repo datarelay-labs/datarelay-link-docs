@@ -1,129 +1,292 @@
 ---
 title: "CLI Reference"
-description: "Canonical v2.4 DataRelay Link direct command reference."
+description: "Current Server and Agent command inventory, including policy, OAuth, certificates and lifecycle."
 ---
 
 # CLI Reference
 
-<Note>
-  This page describes the **v2.4 development target**. If an abbreviated example here is unclear, use the CLI/AI Master in the product repository for the exact command contract.
-</Note>
+Checked on **2026-10-28** against the installed Server **help commands** and product CLI Reference at **0feab808aaaa51102d8a7988d09433da916bfcec**. These are v2.4 development commands. Native MCP extensions are versioned separately in the [MCP tools reference](/reference/mcp-tools).
 
-## Common discovery
+Enter **sudo drlink** for the role-aware REPL. Inside it, omit the sudo drlink prefix. From a Linux shell, prefix each command with **sudo drlink**. Angle-bracket values are placeholders; replace them before running. Bare named **set** opens Guided Create/Edit; complete forms apply directly after any required impact confirmation.
 
-```text
+## Command model
+
+~~~text
+drlink> show status
+drlink> set network-object github
+~~~
+
+~~~text
+drlink show status
+drlink set network-object github
+~~~
+
+~~~text
+show
+set
+unset
+test
+system
+menu
+help
+exit
+~~~
+
+~~~text
 ?
 help
+help managed-hosts
+help network-objects
 help commands
 <verb> ?
-Tab
-```
+Tab completion
+~~~
 
-## Server — read
 
-```text
+## Server: inspect
+
+~~~text
 show status
+
 show managed-hosts
 show managed-host <HOST>
+show managed-host <HOST> agent
+show managed-host <HOST> addresses
 show managed-host <HOST> remote-services
+
+show managed-host-groups
+show managed-host-group <GROUP>
+
 show enrollments
+show enrollment <ENROLLMENT>
+
 show network-objects
+show network-object <OBJECT>
+show network-object <OBJECT> references
 show network-groups
+show network-group <GROUP>
+show network-group <GROUP> references
+
 show service-objects
+show service-object <SERVICE>
+show service-object <SERVICE> references
 show service-groups
+show service-group <GROUP>
+show service-group <GROUP> references
+
 show remote-access
+show remote-access <RULE>
+
 show internet-access
+show internet-access <RULE>
+
 show ai-identities
+show ai-identity <IDENTITY>
+
 show permission-objects
+show permission-object <PERMISSION>
 show permission-groups
+show permission-group <GROUP>
+
 show ai-access
+show ai-access <RULE>
+
 show ai-access-log
-```
+show ai-access-log identity <IDENTITY>
+show ai-access-log destination <DESTINATION>
+show ai-access-log permission <PERMISSION>
+~~~
 
-## Server — create/edit
 
-```text
+## Server: create and edit
+
+~~~text
 set enrollment zero-touch
 set enrollment manual
 set enrollment bulk
 
-set network-object <NAME>
-set network-group <NAME>
-set service-object <NAME>
-set service-group <NAME>
-set ai-identity <NAME>
-set permission-object <NAME>
-set permission-group <NAME>
+set server public-hostname <FQDN>
+set server bootstrap-hostname <FQDN>
+set server installer-url <URL>
+set server windows-installer-url <URL>
+
+set managed-host-group <GROUP>
+set managed-host <HOST> group <GROUP>
+
+set network-object <OBJECT>
+set network-group <GROUP>
+
+set service-object <SERVICE>
+set service-group <GROUP>
 
 set remote-access <RULE>
-set internet-access <RULE>
-set ai-access <RULE>
-```
-
-Bare named set enters Guided Create/Edit. A complete one-shot form skips the Wizard.
-
-```text
-set network-object github type fqdn value github.com
-set service-object ssh type tcp port 22
-set permission-object read-only permissions host-info,process-read,file-read
-set remote-access block-partner mode blacklist source partner destination prod service ssh enabled
-```
-
-## Policy lifecycle
-
-```text
 set remote-access enabled
 set remote-access disabled
+
+set internet-access <RULE>
+set internet-access enabled
+set internet-access disabled
+
+set ai-identity <IDENTITY>
+
+set permission-object <PERMISSION>
+set permission-group <GROUP>
+
+set ai-access <RULE>
+set ai-access enabled
+set ai-access disabled
+
+set mcp-tls hostname <FQDN>
+set mcp-tls mode <auto-acme|user-certificate>
+set mcp-tls contact-email <EMAIL>
+set mcp-tls acme-environment <production|staging>
+set mcp-tls acme-directory <URL>
+~~~
+
+~~~text
+set network-object github type fqdn value github.com
+set network-object office-admin type ip value 203.0.113.10
+
+set network-group approved-admins members office-admin,vpn-admin
+
+set service-object ssh type tcp port 22
+set service-object dns-udp type udp port 53
+set service-object legacy-db type fixed-tcp port 1521
+
+set service-group web-services members http,https
+
+set permission-object read-only permissions host-info,process-read,file-read
+set permission-group operators members read-only,operator
+
+set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
+~~~
+
+Bulk enrollment accepts count/CSV, header label,ssh_user,note; up to 10 unused codes, 1 hour default TTL and 24 hour maximum. A blank SSH user is valid. Zero-Touch generates a compact one-time launcher using a trusted public hostname or verified numeric-IP/private-CA path; DNS is optional. An unmet prerequisite fails before ticket issuance.
+
+## Access policies and path scopes
+
+~~~text
+set remote-access block-partner mode blacklist source partner-office destination ubuntu-prod service ssh enabled
+~~~
+
+~~~text
+set internet-access github-https mode whitelist source ubuntu-prod destination github service https enabled
+~~~
+
+~~~text
+set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
+set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**',/opt/app/** enabled
+~~~
+
+~~~text
+set remote-access enabled
+set remote-access disabled
+set internet-access enabled
+set internet-access disabled
+set ai-access enabled
+set ai-access disabled
+~~~
+
+File permissions need rule-bound paths. Omitted paths on edit preserve scopes; paths none clears them. Command execution has the OS account's authority and is stronger than scoped file access. Review the initial OAuth owner's generated mcp-owner-full-access rule: the first approved owner can receive all seven Managed Host capabilities; use a separately scoped identity for read-only users.
+
+## Server: remove resources
+
+~~~text
+unset managed-host <HOST>
+unset managed-host <HOST> group <GROUP>
+unset managed-host-group <GROUP>
+unset enrollment <ENROLLMENT>
+
+unset server public-hostname
+unset server bootstrap-hostname
+unset server installer-url
+unset server windows-installer-url
+
+unset network-object <OBJECT>
+unset network-group <GROUP>
+
+unset service-object <SERVICE>
+unset service-group <GROUP>
+
 unset remote-access <RULE>
 unset remote-access policy
 
-set internet-access enabled
-set internet-access disabled
 unset internet-access <RULE>
 unset internet-access policy
 
-set ai-access enabled
-set ai-access disabled
+unset ai-identity <IDENTITY>
+
+unset permission-object <PERMISSION>
+unset permission-group <GROUP>
+
 unset ai-access <RULE>
 unset ai-access policy
-```
 
-Rules are not ordered and have no per-rule ALLOW/DENY action.
+unset mcp-tls
+unset mcp-tls purge
+~~~
 
-## Policy test
+Inspect references before deletion. Group membership removal is metadata; bare unset managed-host retires trust and endpoint reservations. Resource deletion and policy reset may require y/N confirmation. unset mcp-tls removes the public route but retains certificate material; purge additionally removes retained secrets after interactive confirmation.
 
-```text
+## Policy tests
+
+~~~text
 test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
 test internet-access source <SOURCE> destination <DESTINATION> service <SERVICE>
-test ai-access source <AI_IDENTITY> destination <DESTINATION> permission <PERMISSION>
-```
+test ai-access source <AI_IDENTITY> destination <DESTINATION> permission <PERMISSION> [path <PATH>]
+~~~
 
-## Server — system/configuration
+Use path for file tests. Groups expand into atomic combinations; aggregate ALLOW requires every member to allow. Policy simulation does not prove real traffic or tool execution.
 
-```text
+## Server: system, OAuth and certificates
+
+~~~text
 system status
 system version
 system diagnostics
 system audit
+
 system revisions
+system revision <REVISION>
+system diff <REVISION_A> <REVISION_B>
+system rollback <REVISION>
+
 system backup
+system backup validate <FILE>
 system restore <FILE>
 
 test configuration <FILE|->
+system export configuration <FILE>
 system diff configuration <FILE|->
 system apply configuration <FILE|->
-system export configuration <FILE>
 
-system update
+system certificate issue
+system certificate import <CERT> <KEY> [CHAIN]
+system certificate renew
+system certificate status
+system certificate preflight
+
+system credential rotate ai-identity <IDENTITY>
+system credential revoke ai-identity <IDENTITY>
+system credential configure ai-identity <IDENTITY> authentication <static-bearer|oauth>
+system credential approve-oauth <PENDING-ID> [AI-IDENTITY]
+system credential deny-oauth <PENDING-ID>
+
+system update product
+system update engine
+system update check-engine
 system support-bundle
 system uninstall
-```
+~~~
 
-## Agent Host
+system backup validate is read-only; restore replaces live state after validation/confirmation. Inspect the same Server's OAuth page and client identity before approving its fresh pending ID. Certificate issue/import/renew can restart the frontend; use system certificate status as the public TLS status view. Product and engine updates are separate operations.
 
-```text
+## Agent Host commands
+
+~~~text
 show status
 show agent
+
 show remote-services
 show remote-service <NAME>
 
@@ -134,15 +297,76 @@ system info
 system pause
 system resume
 system restart
+system autostart enable
+system autostart disable
 system update product
 system update engine
+system synchronize
+
+test configuration <FILE|->
+system export configuration <FILE>
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+
 system diagnostics
 system support-bundle
+system version
+system uninstall
+~~~
 
+~~~text
+set remote-service ssh-access destination this-host service ssh enabled
+~~~
+
+~~~text
+set remote-service internal-db-postgres destination internal-db service postgres enabled
+~~~
+
+Remote Services belong to the owning Agent, use exactly one TCP or Fixed TCP Service Object, and receive a Server-allocated endpoint. UDP, Service Groups, CIDR/multiple targets and duplicate destination+service are rejected. Use diagnostics → synchronize → show remote-service when runtime verification is unavailable. Autostart disable affects next boot; resume starts and enables the Agent.
+
+## ConfigurationBundle
+
+~~~yaml
+configurationBundle:
+  context: server
+~~~
+
+~~~text
 test configuration <FILE|->
 system diff configuration <FILE|->
 system apply configuration <FILE|->
 system export configuration <FILE>
-```
+~~~
 
-Remote Service supports TCP and Fixed TCP Service Objects. UDP and Service Groups are rejected for Remote Service use.
+~~~text
+:end
+~~~
+
+~~~text
+sudo env DRLINK_EXPECTED_REVISION=42 drlink set network-object branch-dns value 198.51.100.20
+~~~
+
+Start from a fresh role-specific export. There are no apiVersion/kind fields. Omitted resources remain; state: absent deletes explicitly. A stale sourceRevision is rejected on apply. Atomicity is per Server or Agent context, not distributed. Same-state reapply reports NO CHANGE when revision permits.
+
+## Policy defaults
+
+| Plane | Modes | No policy / unmatched | Enforcement disabled |
+| --- | --- | --- | --- |
+| Remote Access | BLACKLIST / WHITELIST | Initial ALLOW; WHITELIST unmatched DENY | ALLOW ALL |
+| Internet Access | WHITELIST | DENY | DENY ALL |
+| AI Access | WHITELIST | DENY | DENY ALL |
+
+Rules have no ordering or per-rule allow/deny field. An existing conflicting mode is rejected. Specify mode on the first Rule.
+
+[Scenario playbooks](/use-cases/index) · [Claude / ChatGPT connection](/guides/mcp-clients)
+
+## REPL utilities
+
+~~~text
+system history
+system clear
+menu
+help
+help commands
+exit
+~~~

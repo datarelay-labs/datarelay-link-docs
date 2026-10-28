@@ -22,6 +22,10 @@ set internet-access github-https mode whitelist source ubuntu-prod destination g
 test internet-access source ubuntu-prod destination github service https
 ~~~
 
-Internet Access는 Remote Access와 동일한 BLACKLIST / WHITELIST + Enforcement 모델을 사용합니다.
+**Internet Access는 WHITELIST 전용이며 기본 DENY입니다.** No Policy, 허용 Rule 불일치, Enforcement 비활성화 상태 모두 **DENY ALL**입니다. BLACKLIST는 지원하지 않습니다. Remote Access의 초기 상태/비활성화 의미와 혼동하지 마세요.
+
+HTTP/HTTPS 보호 호스트에는 DRLink Agent를 설치할 필요가 없고, 표준 애플리케이션 프록시 설정만 사용합니다. NAT 뒤의 Managed Host 출발지 정책은 프록시가 실제 관찰하는 IP와 일치하지 않으면 DENY되므로, NAT가 있다면 관측된 IP/CIDR Network Object를 사용합니다. 정책 ALLOW만으로 실제 연결이 성공했다고 판단할 수 없습니다.
+
+[Ubuntu APT 업데이트 따라 하기](/ko/use-cases/ubuntu-updates)와 [Git/API 프록시 따라 하기](/ko/use-cases/github-egress)에서 실통신, 정책 허용·차단 및 감사 로그를 검증할 수 있습니다.
 
 목적지와 프로토콜/포트를 검증하고 DNS rebinding과 SSRF를 방어하며 private/local/metadata 주소 접근을 차단합니다. 이 검증을 통과하지 못하면 연결을 허용하지 않아 open proxy가 되지 않도록 합니다.

@@ -1,0 +1,94 @@
+---
+title: "활용 사례: 내부 HTTPS 관리 화면 접속"
+description: "내부 장비의 HTTPS 관리 포트 하나를 TLS passthrough로 연결합니다."
+---
+
+# 내부 HTTPS 관리자 화면을 외부에서 안전하게 열기
+
+**완성 결과:** 사설망 내부 방화벽/장비의 HTTPS 관리 포트만 외부의 승인된 지원 PC에서 접근하고, 다른 LAN 자원은 연결하지 않습니다.
+
+예제: Agent가 접근 가능한 내부 관리 화면 **10.40.10.8:8443**.
+
+## 1단계 — 내부 서비스와 TLS 확인
+
+Agent/Gateway OS에서 내부 **10.40.10.8:8443** 연결이 실제로 되는지 확인하세요. 서비스는 사용자에게 보일 DNS 이름과 일치하는 정상 TLS 인증서를 제공해야 합니다. DRLink Remote Access는 **HTTPS TLS passthrough**이며 인증서를 대신 발급하거나 TLS를 종료하지 않습니다.
+
+## 2단계 — 목적지와 포트 정의
+
+![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
+
+*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Server REPL:**
+
+~~~text
+set network-object firewall-console type ip value 10.40.10.8
+set service-object console-https type tcp port 8443
+show network-object firewall-console
+show service-object console-https
+~~~
+
+관리 화면은 민감하므로 가능하면 [사무실 IP 허용 정책](/ko/use-cases/office-allowlist)을 **먼저** 구성합니다.
+
+## 3단계 — 필요한 Remote Service 하나만 생성
+
+![실제 Data Relay Link CLI 캡처 — 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다.](/images/cli-captures/agent-create-service-menu.png)
+
+*그림 2. 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+목적지 LAN에 도달 가능한 Agent를 [등록](/ko/guides/enrollment)한 뒤 **Agent REPL:**
+
+~~~text
+set remote-service firewall-ui destination firewall-console service console-https enabled
+show remote-service firewall-ui
+~~~
+
+**확인:** 출력된 실제 공인 포트와 엔드포인트를 기록합니다.
+
+## 4단계 — 브라우저/HTTPS로 접속 확인
+
+외부 DNS 예제 **console.example.net**이 DRLink의 공인 주소를 가리키도록 관리자 측에서 설정합니다. 내부 애플리케이션 TLS 인증서에도 이 이름이 포함되어야 합니다.
+
+~~~text
+https://console.example.net:<예약된-공인-포트>/
+~~~
+
+DNS 테스트 시 URL 호스트명과 TLS 검증을 유지하려면 값 교체 후:
+
+~~~bash
+curl --resolve console.example.net:<예약된-공인-포트>:<DRLink-공인-IP> https://console.example.net:<예약된-공인-포트>/
+~~~
+
+**성공 기준:** 인증서 오류 없이 원래 장비의 로그인 화면이 열리고, 기존 장비 계정으로 로그인합니다. DRLink가 장비 관리 계정을 생성하지는 않습니다.
+
+## 5단계 — 허용되지 않은 접속 차단 검증
+
+![실제 Data Relay Link CLI 캡처 — Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다.](/images/cli-captures/server-inbound-default.png)
+
+*그림 3. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Server REPL:**
+
+~~~text
+show remote-access
+show managed-host <Relay-Managed-Host> remote-services
+system audit
+~~~
+
+별도 비허용 출발지에서 실제 접속을 시도하고 정책 **DENY** 기록을 확인합니다. **No Policy 상태는 ALLOW**이므로 포트만 공개하고 정책 제한 없이 운용하지 마세요.
+
+## 문제 해결/철회
+
+- **인증서 오류:** 앱/DNS/SNI/발급 대상 확인. TLS 검증을 끄는 것은 해결책이 아닙니다.
+- **Timeout:** 외부 방화벽/NAT, Agent 연결, 내부 8443 리스너 검사
+- **예상치 못한 ALLOW:** 모든 Remote Access Rule 확인. **set remote-access disabled**는 DENY가 아닌 **ALLOW ALL**입니다.
+- **서비스 종료:** 소유 Agent에서 **unset remote-service firewall-ui** 실행 전 연결 중단을 검토합니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+애플리케이션의 TLS와 로그인은 유지됩니다. 할당된 공개 엔드포인트에서 인증서 호스트명을 검증하고 인증서 검사를 끄지 마세요. 재연결 뒤 소유 Agent에서 synchronize하고 현재 Remote Service 세대까지 확인한 후 복구로 판단합니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

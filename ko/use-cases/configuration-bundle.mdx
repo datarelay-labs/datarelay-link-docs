@@ -1,0 +1,112 @@
+---
+title: "활용 사례: ConfigurationBundle 안전 적용"
+description: "설정 YAML을 먼저 검증하고 변경점을 확인한 다음 적용합니다."
+---
+
+# ConfigurationBundle 검증·Diff·적용하기
+
+**완성 결과:** Object와 Internet Access 정책을 하나의 YAML로 정의하여 사전 검사와 변경점 검토 후 Server에 적용합니다.
+
+## 1단계 — 서버 상태와 원본 저장
+
+![실제 DRLink Server 상태 캡처 — 정책 구성 이전의 서버 역할과 기본 ALLOW/DENY 정책 확인](/images/cli-captures/server-status.png)
+
+*그림 1. 실제 Server CLI 상태 화면에서 DRLink Server 역할과 Remote Access 초기 ALLOW, Internet/AI Access 기본 DENY를 구분합니다. 설정 변경 전 캡처이며 일부 정보를 가렸습니다.*
+
+
+**Server 셸:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system revisions
+sudo drlink system export configuration /tmp/drlink-before.yaml
+~~~
+
+현재 Revision과 버전을 기록합니다. Export 파일에는 민감한 운영 정보가 포함될 수 있으므로 공개 저장소에 업로드하지 않습니다.
+
+## 2단계 — 서버에 적용할 YAML 준비
+
+**Server 셸**에서 **/tmp/drlink-allow-github.yaml**을 생성하고 다음 내용을 넣습니다. 문서용 203.0.113.10은 프록시가 실제 관찰하는 출발지 IP로 바꿉니다.
+
+~~~yaml
+configurationBundle:
+  context: server
+  networkObjects:
+    - name: office-admin
+      type: ip
+      value: 203.0.113.10
+    - name: github
+      type: fqdn
+      value: github.com
+  serviceObjects:
+    - name: https
+      type: tcp
+      port: 443
+  internetAccess:
+    mode: whitelist
+    enforcement: enabled
+    rules:
+      - name: github-https
+        source: office-admin
+        destination: github
+        service: https
+        enabled: true
+~~~
+
+서버용 스키마는 **configurationBundle / context: server**입니다. apiVersion, kind, Agent용 remoteServices를 추가하지 마세요. 생략한 기존 Rule은 유지되므로 전체 허용 범위를 확인해야 합니다.
+
+## 3단계 — 적용 전 검사
+
+![실제 Data Relay Link CLI 캡처 — 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다.](/images/cli-captures/config-revision-diff.png)
+
+*그림 2. 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+**Server 셸:**
+
+~~~bash
+sudo drlink test configuration /tmp/drlink-allow-github.yaml
+sudo drlink system diff configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+~~~
+
+**성공 기준:** 문법과 Selector 검사 통과, 예상한 Object/Rule만 Diff에 표시됩니다. Revision이 변경되어 STALE_CONFIGURATION_REVISION이 뜨면 최신 상태를 다시 Export해서 충돌을 해결합니다.
+
+## 4단계 — 승인 후 실제 적용
+
+![실제 Data Relay Link CLI 캡처 — 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다.](/images/cli-captures/configuration-revisions.png)
+
+*그림 3. 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+
+
+보안 영향과 확인 안내를 검토한 다음:
+
+~~~bash
+sudo drlink system apply configuration /tmp/drlink-allow-github.yaml
+sudo drlink show internet-access
+sudo drlink system revisions
+~~~
+
+**확인:** 새 정책이 신규 연결에 반영되며 동일 변경 재적용 시 상태와 Revision이 일치하면 **NO CHANGE**가 예상됩니다. 서버 번들은 서버 내부에서만 원자적이며 Server+Agent 분산 트랜잭션은 아닙니다.
+
+## 5단계 — 정책·실제 애플리케이션 테스트
+
+**Server REPL:**
+
+~~~text
+test internet-access source office-admin destination github service https
+system audit
+~~~
+
+실제 허용된 출발지에서 [GitHub 접속 실습](/ko/use-cases/github-egress)을 사용해 Git 또는 curl 요청이 프록시를 통과하는지 확인하고 다른 FQDN은 DENY인지 검증합니다. **정책 ALLOW만으로 E2E 성공을 선언하지 않습니다.**
+
+## 문제 해결·롤백
+
+검증 실패는 변경 적용이 아니므로 오류 원인을 확인하고 다시 Diff합니다. **system diff &lt;REVISION_A&gt; &lt;REVISION_B&gt;**로 이력을 비교할 수 있습니다. **system rollback &lt;REVISION&gt;**는 현재 운영 접근 정책까지 바꿀 수 있으므로 승인받은 복구 상황에서만 실행하세요. 안전한 보관 기준에 따라 임시 YAML과 Export 파일을 정리합니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+새 export의 sourceRevision을 검토할 변경에 포함하세요. 이전 test/diff가 유효해도 apply 시 오래된 revision은 거부됩니다. 다시 export하고 변경을 조정하세요. 동일 상태 재적용 NO CHANGE는 오래된 export로 강제 덮어쓰기를 허용한다는 의미가 아닙니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

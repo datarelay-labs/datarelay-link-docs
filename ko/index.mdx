@@ -50,7 +50,9 @@ Remote Access
 Internet Access
 AI Access
 
-BLACKLIST / WHITELIST
+Remote Access: BLACKLIST / WHITELIST
+Internet Access: WHITELIST only (default DENY)
+AI Access: WHITELIST only (default DENY)
 ConfigurationBundle
 ```
 
@@ -58,17 +60,20 @@ ConfigurationBundle
 
 ## 정책 모델
 
-초기 상태는 정책과 Rule이 없으며, 결과적으로 모든 연결이 허용됩니다.
+정책의 초기 상태와 비활성화 의미는 연결 방향에 따라 **다릅니다.**
 
-- BLACKLIST: 활성 Rule과 일치하면 거부하고, 일치하지 않으면 허용합니다.
-- WHITELIST: 활성 Rule과 일치하면 허용하고, 일치하지 않으면 거부합니다.
-- Rule은 순서로 평가하지 않으며 각 Rule에 ALLOW/DENY 동작을 따로 지정하지 않습니다.
-- Enforcement를 비활성화하면 Mode와 Rule은 그대로 유지되지만 실제 적용 결과는 모두 허용입니다.
-- Policy Reset은 Mode와 Rule을 모두 제거합니다.
+- **Remote Access:** No Policy/No Rules = **ALLOW**. BLACKLIST 매칭 Rule은 DENY이고 비매칭은 ALLOW입니다. WHITELIST 매칭은 ALLOW, 비매칭은 DENY입니다. Enforcement를 비활성화하면 **ALLOW ALL**입니다.
+- **Internet Access:** **WHITELIST 전용, 기본 DENY**. 허용 Rule이 없거나 Enforcement가 비활성화되면 **DENY ALL**입니다. BLACKLIST는 불가능합니다.
+- **AI Access:** **WHITELIST 전용, 기본 DENY**. Rule이 없거나 Enforcement가 비활성화되면 **DENY ALL**입니다. 실제 AI Identity 인증은 별도로 필요합니다.
+- 세 정책 모두 Rule에 순서/개별 ALLOW·DENY action을 지정하지 않습니다. Policy Reset은 Mode와 Rule을 제거하며 각 연결 방향의 초기 정책 상태로 돌아갑니다.
 
-AI Access enforcement가 disabled여도 AI 인증은 필수입니다.
+사례별 명령과 실제 연결 확인은 [단계별 활용 사례](/ko/use-cases/index)를 이용하세요.
 
 <CardGroup cols={2}>
+  <Card title="단계별 활용 사례" icon="list-check" href="/ko/use-cases/index">
+    SSH, 내부 웹, APT, Git, AI 접근부터 백업·복구까지 순서대로 따라 합니다.
+  </Card>
+
   <Card title="빠른 시작" icon="rocket" href="/ko/getting-started/quickstart">
     Server 설치, Managed Host 등록, Remote Service 생성까지 진행합니다.
   </Card>
@@ -88,3 +93,7 @@ AI Access enforcement가 disabled여도 AI 인증은 필수입니다.
     서로 의존하는 여러 설정을 한 번에 검증하고 변경 내용을 비교한 뒤 원자적으로 적용합니다.
   </Card>
 </CardGroup>
+
+## Claude · ChatGPT MCP 테스트 완료
+
+실제 OAuth 연결, 명령·파일 작업을 두 클라이언트에서 확인했습니다. [연결 가이드](/ko/guides/mcp-clients), [20개 MCP 도구](/ko/reference/mcp-tools), [파일·Git·비동기 실습](/ko/use-cases/ai-server-control)에서 따라 해보세요. [검증 범위](/ko/reference/mcp-validation)는 개발 후보 결과이며 stable 발표와 구분됩니다.

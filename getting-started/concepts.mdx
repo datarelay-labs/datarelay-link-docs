@@ -63,6 +63,10 @@ Fixed TCP is a Service Object subtype. Its Service Object port is the destinatio
 
 ## Policy modes
 
-Initial policy state is No Policy / No Rules / effective ALLOW.
+| Plane | Supported modes | No policy | Enforcement disabled |
+| --- | --- | --- | --- |
+| Remote Access | BLACKLIST / WHITELIST | ALLOW | ALLOW ALL |
+| Internet Access | WHITELIST only | DENY | DENY ALL |
+| AI Access | WHITELIST only | DENY | DENY ALL |
 
-BLACKLIST denies matching enabled Rules. WHITELIST allows matching enabled Rules. There is no rule ordering and no per-rule action field.
+WHITELIST denies unmatched requests. BLACKLIST is supported only by Remote Access: matching enabled Rules deny, unmatched requests allow. Rules have no ordering or per-rule action. Policy reset removes Mode/Rules and returns each plane to its own initial state. AI authentication remains required independently.

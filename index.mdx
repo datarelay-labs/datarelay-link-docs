@@ -42,7 +42,7 @@ flowchart LR
     A[Managed Host / Agent] -->|outbound relay| S
     S -->|Remote Service| A
     A --> T[Local or LAN target]
-    A -->|Internet Access| S
+    H[Restricted application host] -->|HTTP(S) proxy - agentless| S
     S --> I[Approved Internet destination]
     AI[Authenticated AI Identity] -->|AI Access / MCP| S
 ```
@@ -58,6 +58,10 @@ For the complete object model, policy behavior, and role boundaries, read [Conce
 ## Choose your path
 
 <CardGroup cols={2}>
+  <Card title="Step-by-step use cases" icon="list-check" href="/use-cases/index">
+    Copy the role-specific commands and verify real traffic, denied requests, and recovery.
+  </Card>
+
   <Card title="Get started" icon="rocket" href="/getting-started/quickstart">
     Install a Server, enroll a Managed Host, and create a Remote Service.
   </Card>
@@ -92,3 +96,7 @@ External firewall/NAT rules, cloud security groups, DNS-provider records, OS acc
 <Note>
   DataRelay Link is **Source Available**, not Open Source. See [License](/reference/license).
 </Note>
+
+## Claude and ChatGPT MCP tests complete
+
+Real OAuth connection and core command/file workflows were verified with both clients. Start with [client setup](/guides/mcp-clients), [20 MCP tools](/reference/mcp-tools), and the [file/Git/job lab](/use-cases/ai-server-control). [Validation scope](/reference/mcp-validation) identifies development-candidate evidence separately from stable publication.

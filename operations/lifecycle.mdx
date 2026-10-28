@@ -9,17 +9,27 @@ DataRelay Link uses explicit lifecycle operations; do not treat unrelated action
 
 ## Access Policy
 
-```text
-set <policy-family> disabled
-```
+Disabling preserves Mode/Rules, but the effective result differs by plane. Select the intended plane explicitly.
 
-preserves Mode and Rules but makes policy enforcement effectively ALLOW ALL.
+~~~text
+set remote-access disabled
+set internet-access disabled
+set ai-access disabled
+~~~
 
-```text
-unset <policy-family> policy
-```
+| Plane | Supported modes | No policy | Enforcement disabled |
+| --- | --- | --- | --- |
+| Remote Access | BLACKLIST / WHITELIST | ALLOW | ALLOW ALL |
+| Internet Access | WHITELIST only | DENY | DENY ALL |
+| AI Access | WHITELIST only | DENY | DENY ALL |
 
-removes Mode and Rules and returns to the initial No Policy / No Rules state.
+WHITELIST denies unmatched requests. BLACKLIST is supported only by Remote Access: matching enabled Rules deny, unmatched requests allow. Rules have no ordering or per-rule action. Policy reset removes Mode/Rules and returns each plane to its own initial state. AI authentication remains required independently.
+
+~~~text
+unset remote-access policy
+unset internet-access policy
+unset ai-access policy
+~~~
 
 ## Remote Service
 
@@ -31,6 +41,9 @@ Disabling a Remote Service stops that connectivity while retaining the object fo
 system pause
 system resume
 system restart
+system synchronize
+system autostart enable
+system autostart disable
 system update product
 system update engine
 system uninstall

@@ -1,0 +1,84 @@
+---
+title: "Scenario Playbooks"
+description: "Follow complete Data Relay Link workflows, from prerequisites to working traffic and denied-access verification."
+sidebarTitle: "Use Cases"
+---
+
+# Choose your use case
+
+These are **operator playbooks**, not feature lists. Each page states which machine runs each command, what the result should be, what to test, and how to recover.
+
+<Warning>
+  The playbooks target the **v2.4.0 development CLI** on a qualified immutable candidate, not the currently published **v2.3.0 stable** release. Do not execute v2.4 commands against v2.3.0 and assume identical grammar or features. Run **sudo drlink system version** first. Use a qualified exact-SHA build or wait for a formally released v2.4 version.
+</Warning>
+
+## Remote Access — outside to inside
+
+| Your task | Follow this playbook |
+| --- | --- |
+| Support an SSH server behind NAT | [Remote SSH through NAT](/use-cases/remote-ssh) |
+| Publish two different services through one LAN relay | [LAN gateway and multiple services](/use-cases/lan-relay) |
+| Access a private HTTPS administration console | [Private HTTPS console](/use-cases/private-web) |
+| Allow only your office to connect | [Office-only Remote Access](/use-cases/office-allowlist) |
+| Access a legacy database via a fixed TCP endpoint | [Fixed TCP remote database](/use-cases/fixed-tcp-database) |
+
+## Internet Access — restricted hosts to approved Internet services
+
+| Your task | Follow this playbook |
+| --- | --- |
+| Run Ubuntu APT updates without open Internet | [Restricted Ubuntu updates](/use-cases/ubuntu-updates) |
+| Allow only approved HTTPS GitHub and API traffic | [Git and API through Internet Access](/use-cases/github-egress) |
+
+## AI and operations
+
+| Your task | Follow this playbook |
+| --- | --- |
+| Give verified AI a tightly scoped read-only toolset | [Read-only AI / MCP access](/use-cases/ai-readonly) |
+| Enroll a small group of branch/partner hosts | [Batch enrollment and inventory groups](/use-cases/bulk-onboarding) |
+| Apply repeatable configuration safely | [ConfigurationBundle preview and apply](/use-cases/configuration-bundle) |
+| Safeguard identity and restore after a failure | [Backup, restore and recovery](/use-cases/backup-recovery) |
+
+<Note>
+  Images below are visual captures of **genuine Data Relay Link v2.4 development CLI PTY/stdout E2E records**—not an invented Web UI or synthetic command results. Numbered orange markers point to authentic menu options or result lines. Sources were captured on 2026-10-13/17; sensitive addresses/hosts were masked. Menu choices may change by build: verify the installed **menu**, **help**, and **system version**.
+</Note>
+
+## Shared preparation
+
+
+![Real Data Relay Link CLI capture — Server menu: enter menu, then choose Remote Access 4, Internet Access 5, AI Access 6 or System 7.](/images/cli-captures/server-guided-menu.png)
+
+*Figure 1. Server menu: enter menu, then choose Remote Access 4, Internet Access 5, AI Access 6 or System 7. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+![Real Data Relay Link CLI capture — Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle.](/images/cli-captures/agent-guided-menu.png)
+
+*Figure 2. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+1. Complete [Server installation](/getting-started/server-installation), [deployment mode](/deployment/modes), and [firewall/NAT](/deployment/firewall-nat) using a supported product artifact. Enroll an Agent for Remote Access or Managed Host AI Access; Server-self MCP needs no Agent; agentless HTTP(S) Internet Access does not require one on the protected application host.
+2. Open a Server terminal and verify role, channel, exact Source HEAD and health:
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+3. Commands under **Server REPL** run after entering **sudo drlink** on the Linux DRLink Server. **Agent REPL** commands run in **sudo drlink** on the owning Agent Host. **Protected host / outside workstation** commands run in a normal OS shell on that machine.
+4. Replace all example addresses, hostnames, client names, account names and ports with values from your deployment. Documentation IP ranges (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24) are illustrative and do not route on the public Internet.
+5. **A policy ALLOW is not a working connection.** Each playbook includes both a policy test and a real application traffic test. **A timeout is not proof of DENY**: look for the actual policy decision/audit.
+6. Before changing production-facing policies, assess existing access, preserve a validated backup and use a maintenance window if interruptions are possible. Data Relay Link does not configure external firewalls, DNS, SSH users or TLS certificates on your behalf.
+
+## When something differs
+
+Run **help commands**, **system diagnostics** and the corresponding **show** / **test** command on the actual installed v2.4 exact HEAD. Review [CLI reference](/drlink/cli-reference), [troubleshooting](/troubleshooting/overview) and [release status](/reference/release-status). Stop if your CLI rejects the documented command; do not invent hidden or legacy syntax.
+
+## New AI workflows — 2026-10-28
+
+| Goal | Follow |
+| --- | --- |
+| Connect Claude and ChatGPT over remote MCP | [HTTPS, OAuth and discovery](/guides/mcp-clients) |
+| Operate Server-local files, Git and jobs | [Server control lab](/use-cases/ai-server-control) |
+| Check verified scope and candidate | [MCP validation status](/reference/mcp-validation) |
+
+Server-self operations need separate authorization but no Agent. AI operations on Managed Hosts need a trusted Agent. Existing images retain their stated October capture provenance; new MCP examples use tool arguments and actual result receipts.

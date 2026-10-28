@@ -1,0 +1,97 @@
+---
+title: "Use case: Enroll multiple branch hosts"
+description: "Issue multiple one-time Agent enrollments and manage inventory without broad fleet automation."
+---
+
+# Enroll and organize several remote hosts
+
+**Outcome:** A small operator team enrolls two branch PCs/servers securely and collects them in one Managed Host Group without changing their service permissions or network identity.
+
+## Step 1 — prepare each site
+
+Each destination must have outbound connectivity to the Server's enrollment/control endpoints and permission to install the platform-specific Agent. Follow [Linux](/getting-started/linux-client), [Windows](/getting-started/windows-client) or [macOS](/getting-started/macos-client) requirements before running the generated installer. The Server must already be installed from a qualified immutable product artifact.
+
+## Step 2 — issue a bounded enrollment batch
+
+![Real Data Relay Link CLI capture — Real enrollment list excerpt: completed, expired and revoked states; no raw enrollment tickets displayed.](/images/cli-captures/enrollment-inventory.png)
+
+*Figure 1. Real enrollment list excerpt: completed, expired and revoked states; no raw enrollment tickets displayed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+show enrollments
+set enrollment bulk
+~~~
+
+The interactive enrollment wizard supports a **count** or **UTF-8 CSV** workflow; at most **10 codes per batch** and **10 active unused codes**. The CSV header is exactly:
+
+~~~csv
+label,ssh_user,note
+branch-a,operator,Branch A Linux
+branch-b,,Branch B management-only
+~~~
+
+Set TTL according to the wizard (default **1 hour**, maximum **24 hours**). **ssh_user** is optional: an empty value selects management-only enrollment. Never assume the OS account exists merely because its hint was entered.
+
+## Step 3 — install each Agent once
+
+Send the individual generated enrollment/installation command to the corresponding authorized site administrator by a secure channel. Each ticket/code is **single-use**, short-lived and credential-sensitive. Execute the matching generated command on the correct host; do not reuse a consumed ticket or paste an illustrative made-up URL.
+
+On **each Agent Host shell** after installation:
+
+~~~bash
+sudo drlink show status
+sudo drlink show agent
+sudo drlink system diagnostics
+~~~
+
+Expect **Agent Host** role, real enrollment identity and healthy control connectivity. For Windows/macOS use the supported platform's documented CLI invocation rather than assuming the Linux sudo syntax.
+
+## Step 4 — verify both identities on the Server
+
+![Real Data Relay Link CLI capture — Actual Server Managed Host inventory: confirm registered host rows and connected status.](/images/cli-captures/managed-hosts.png)
+
+*Figure 2. Actual Server Managed Host inventory: confirm registered host rows and connected status. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+
+
+**Server REPL:**
+
+~~~text
+show managed-hosts
+show managed-host branch-a
+show managed-host branch-b
+show enrollments
+~~~
+
+Resolve any actual assigned Managed Host names/immutable IDs before proceeding; enrollment labels need not be accepted as privileged identity selectors automatically. Reissuance requires a **new** enrollment credential; reinstalling from an already consumed code is not a recovery mechanism.
+
+## Step 5 — organize inventory
+
+![Actual DRLink Server main CLI menu — choose 1 Managed Hosts for inventory and enrollment](/images/cli-captures/server-managed-host-menu.png)
+
+*Figure 3. Real Server CLI menu: choose 1 Managed Hosts for registered hosts and inventory operations. Captured from an actual development CLI PTY session.*
+
+
+**Server REPL:**
+
+~~~text
+set managed-host-group branches
+set managed-host branch-a group branches
+set managed-host branch-b group branches
+show managed-host-groups
+show managed-host-group branches
+~~~
+
+A **Managed Host Group** organizes registered host inventory. It is **not** a Network Group used as an access-policy selector. Membership alone never creates Remote Services, broadens Remote Access, or rewrites clients.
+
+## Verify / recover
+
+Check that both actual hosts appear in the group, their immutable Managed Host identities are preserved and no unintended Remote Service was automatically published. If enrollment fails, inspect **show enrollments**, expiration/revocation state and Agent **system diagnostics**; do not log or disclose secret ticket material. To adjust only metadata, use **unset managed-host branch-b group branches**. Deleting a Managed Host is a separate irreversible trust/endpoint retirement and requires explicit review.
+
+## Current behavior check — 2026-10-28
+
+The UTF-8 CSV header is label,ssh_user,note. A blank ssh_user means management-only enrollment. Zero-Touch can use a verified numeric-IP/private-CA compact launcher without DNS; failed prerequisites must not issue a ticket. Managed Host Group membership is inventory metadata, separate from Network Group policy membership.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
