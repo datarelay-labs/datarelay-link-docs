@@ -60,6 +60,15 @@ for page in root.rglob('*.mdx'):
             except ValueError as exc:
                 errors.append('Invalid MCP JSON example '+str(page)+': '+str(exc))
 
+# Published product instructions must not depend on engineering rollout details.
+for page in root.rglob('*.mdx'):
+    text = page.read_text()
+    for forbidden in ('operator-native-mcp-', '/path/to/verified-source', '--exec-user', '--allowed-root', 'PR #224', '개발 대상', 'development target'):
+        if forbidden in text:
+            errors.append('Engineering rollout detail in product manual '+str(page)+': '+forbidden)
+    if re.search(r'\b[0-9a-f]{40}\b', text):
+        errors.append('Commit SHA in product manual '+str(page))
+
 # Policy regression: the three planes have different no-policy/disable semantics.
 for lang in ['guides/internet-access.mdx','ko/guides/internet-access.mdx']:
     s=(root/lang).read_text()

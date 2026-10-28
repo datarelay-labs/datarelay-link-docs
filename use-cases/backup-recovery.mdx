@@ -5,7 +5,7 @@ description: "Protect Server identities, policies and service reservations, then
 
 # Back up and recover the DRLink Server safely
 
-**Outcome:** An operator captures a qualified Server backup, validates it, restores when necessary and verifies inventory, identity continuity, access policy and real application reachability.
+**Outcome:** An operator creates a Server backup, validates it, restores when necessary and verifies inventory, identity continuity, access policy and real application reachability.
 
 <Warning>
   A restore replaces security-sensitive persistent state and can interrupt clients. Perform the restore step **only** during an explicitly approved recovery window on the intended Server, after reviewing the archive and target version. Do not use this procedure to test casually on a production instance.
@@ -13,9 +13,9 @@ description: "Protect Server identities, policies and service reservations, then
 
 ## Step 1 — inspect the healthy state
 
-![Real Data Relay Link CLI capture — Captured product build identity: check development channel, Source HEAD and DRLink Server role.](/images/cli-captures/server-version.png)
+![Real Data Relay Link CLI capture — Captured product build identity: check product version and DRLink Server role.](/images/cli-captures/server-version.png)
 
-*Figure 1. Captured product build identity: check development channel, Source HEAD and DRLink Server role. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Captured product build identity: check product version and DRLink Server role. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server shell:**
@@ -30,13 +30,13 @@ sudo drlink show internet-access
 sudo drlink show ai-access
 ~~~
 
-Capture the qualified Source HEAD/version, active Managed Hosts, Remote Service endpoints and policy modes. A backup from an unrelated release is not automatically compatible.
+Record the installed version, active Managed Hosts, Remote Service endpoints and policy modes. A backup from an unrelated release is not automatically compatible.
 
 ## Step 2 — create and securely retain the backup
 
 ![Real Data Relay Link CLI capture — Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information.](/images/cli-captures/server-system-menu.png)
 
-*Figure 2. Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Server System menu: 3 Backup & Restore, 5 Diagnostics, 8 Version Information. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -71,7 +71,7 @@ Review the product's confirmation and access-impact information; **do not automa
 
 ![Real Data Relay Link CLI capture — Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery.](/images/cli-captures/agent-diagnostics.png)
 
-*Figure 3. Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Real Agent diagnostics excerpt: inspect runtime/Server connectivity after recovery. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -110,4 +110,4 @@ See [backup/restore reference](/operations/backup-restore) and [troubleshooting]
 
 After restore, backup-time host presence and proxy health require fresh Agent verification. Connected Agents reconcile when the Server lacks current Remote Service verification; run diagnostics/synchronize and test real traffic. Keep both the archive and error evidence if restore or rollback fails.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

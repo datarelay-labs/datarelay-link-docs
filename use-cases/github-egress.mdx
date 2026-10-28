@@ -13,7 +13,7 @@ description: "Make proxy-aware Git and API traffic work with narrow Internet Acc
 
 ![Real Data Relay Link CLI capture — Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result.](/images/cli-captures/server-egress-default.png)
 
-*Figure 1. Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Internet Access before policy creation: No Policy, Unmatched DENY, FAIL CLOSED. This is NOT an approved-traffic result. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -40,7 +40,7 @@ set service-object https443 type tcp port 443
 
 ![Real Data Relay Link CLI capture — Real command help: test internet-access selects existing Objects/Groups and validates authorization only.](/images/cli-captures/internet-test-syntax.png)
 
-*Figure 2. Real command help: test internet-access selects existing Objects/Groups and validates authorization only. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Real command help: test internet-access selects existing Objects/Groups and validates authorization only. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -82,7 +82,7 @@ Expected: Git returns a commit SHA for **HEAD**, the API request travels through
 
 ![Real Data Relay Link CLI capture — Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY.](/images/cli-captures/server-status.png)
 
-*Figure 3. Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -106,4 +106,4 @@ Verify source IP, destination hostname/port and matched policy result. The test 
 
 Use explicit proxy routing in the application test and clear public-host no_proxy bypasses only for that invocation. A Managed Host source selector matches only a provable active proxy-visible peer IP; behind NAT use the observed IP/CIDR. No UDP or private/metadata destination bypass is implied by an FQDN allowlist.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

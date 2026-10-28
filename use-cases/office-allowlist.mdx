@@ -17,7 +17,7 @@ description: "Set a narrow inbound WHITELIST and prove both approved and denied 
 
 ![Real Data Relay Link CLI capture — Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted.](/images/cli-captures/server-inbound-default.png)
 
-*Figure 1. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -47,12 +47,12 @@ Use a legitimate alternate public source for the negative test; the documentatio
 
 ![Real Data Relay Link CLI capture — Remote Access guided menu: choose 2 Create rule, then 5 Test / Explain to validate.](/images/cli-captures/remote-access-menu.png)
 
-*Figure 2. Remote Access guided menu: choose 2 Create rule, then 5 Test / Explain to validate. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Remote Access guided menu: choose 2 Create rule, then 5 Test / Explain to validate. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 ![Real Data Relay Link CLI capture — Policy Mode selection: use 2 whitelist to ALLOW matched sources; 1 blacklist has different behavior.](/images/cli-captures/remote-access-mode.png)
 
-*Figure 3. Policy Mode selection: use 2 whitelist to ALLOW matched sources; 1 blacklist has different behavior. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Policy Mode selection: use 2 whitelist to ALLOW matched sources; 1 blacklist has different behavior. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -70,7 +70,7 @@ Review all pre-existing enabled Rules. WHITELIST entries may jointly authorize m
 
 ![Real Data Relay Link CLI capture — Real command help: test remote-access requires named source, destination and service selectors.](/images/cli-captures/remote-test-syntax.png)
 
-*Figure 4. Real command help: test remote-access requires named source, destination and service selectors. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 4. Real command help: test remote-access requires named source, destination and service selectors. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -100,4 +100,4 @@ If the office cannot reach the service, verify the NAT-visible office IP, Servic
 
 Inspect every enabled Rule and referenced Group before the negative test. Remote Access disabled enforcement and full policy reset open access (ALLOW ALL/initial ALLOW); they are not safe ways to prove denial. Group policy tests require every expanded combination to allow before reporting aggregate ALLOW.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

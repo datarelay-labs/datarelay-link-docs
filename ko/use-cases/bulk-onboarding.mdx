@@ -9,13 +9,13 @@ description: "일회용 등록 정보를 안전하게 발급하고 Managed Host 
 
 ## 1단계 — 지점별 준비
 
-각 호스트에서 DRLink Server의 등록·관리 엔드포인트로 아웃바운드 연결할 수 있는지 확인합니다. Agent 설치 권한과 [Linux](/ko/getting-started/linux-client), [Windows](/ko/getting-started/windows-client), [macOS](/ko/getting-started/macos-client) 별 요구사항을 확인하세요. 서버 설치 버전은 `sudo drlink system version`으로 확인하며 검증된 v2.4 후보를 사용합니다.
+각 호스트에서 DRLink Server의 등록·관리 엔드포인트로 아웃바운드 연결할 수 있는지 확인합니다. Agent 설치 권한과 [Linux](/ko/getting-started/linux-client), [Windows](/ko/getting-started/windows-client), [macOS](/ko/getting-started/macos-client) 별 요구사항을 확인하세요. Server 설치와 서비스 상태를 먼저 확인합니다.
 
 ## 2단계 — 일괄 등록 발급
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Enrollment 목록: completed, expired, revoked 상태를 구분합니다. 일회용 등록 코드 원문은 표시하지 않습니다.](/images/cli-captures/enrollment-inventory.png)
 
-*그림 1. 실제 Enrollment 목록: completed, expired, revoked 상태를 구분합니다. 일회용 등록 코드 원문은 표시하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 실제 Enrollment 목록: completed, expired, revoked 상태를 구분합니다. 일회용 등록 코드 원문은 표시하지 않습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -53,7 +53,7 @@ sudo drlink system diagnostics
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Server Managed Host 목록: 등록된 호스트와 connected 상태를 확인합니다.](/images/cli-captures/managed-hosts.png)
 
-*그림 2. 실제 Server Managed Host 목록: 등록된 호스트와 connected 상태를 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 실제 Server Managed Host 목록: 등록된 호스트와 connected 상태를 확인합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -94,4 +94,4 @@ show managed-host-group branches
 
 UTF-8 CSV 헤더는 label,ssh_user,note이며 빈 ssh_user는 관리 전용 등록입니다. Zero-Touch는 DNS 없이 검증된 숫자 IP/Private CA 짧은 명령을 사용할 수 있고 준비 조건 실패 시 티켓을 발급하면 안 됩니다. Managed Host Group은 인벤토리 메타데이터이며 Network Group 정책 멤버십과 별개입니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

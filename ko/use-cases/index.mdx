@@ -8,9 +8,9 @@ sidebarTitle: "활용 사례"
 
 이 문서는 기능 소개가 아니라 **따라 하기 매뉴얼**입니다. 각 시나리오에는 네트워크 구성, 준비 사항, **서버와 Agent별 입력 명령어**, 실제 통신 확인, 차단 테스트, 장애 복구가 포함됩니다.
 
-<Warning>
-  다음 명령어는 **v2.4.0 개발 대상 CLI** 기준입니다. 현재 GitHub의 공개 안정 릴리스는 **v2.3.0**이므로, v2.3.0 설치에 v2.4 명령이 그대로 동작한다고 가정하지 마세요. 반드시 `sudo drlink system version`으로 실제 버전·채널·Source HEAD를 확인하고, 검증된 불변 SHA/후보 아티팩트로 작업하세요.
-</Warning>
+<Note>
+  각 실습은 설치된 제품의 표준 명령을 사용합니다. [Server 설치](/ko/getting-started/server-installation)를 완료하고 Server/Agent 역할을 구분하여 진행하세요. 필요한 환경 값과 예상 결과는 각 실습에 설명합니다.
+</Note>
 
 ## 외부에서 내부 서비스 접속 — Remote Access
 
@@ -39,7 +39,7 @@ sidebarTitle: "활용 사례"
 | 서버 백업, 복원 및 복구 검증 | [백업과 장애 복구](/ko/use-cases/backup-recovery) |
 
 <Note>
-  아래 이미지는 **실제 Data Relay Link v2.4 개발 후보 CLI의 PTY/명령 실행 기록**에서 해당 화면을 발췌해 이미지로 변환한 것입니다. 가상의 Web UI나 생성형 그림이 아닙니다. 주황색 번호는 선택할 메뉴 또는 확인할 원본 출력 줄을 가리킵니다. 캡처는 2026-10-13/17 테스트에서 수집되었고, 실제 IP/호스트는 가렸습니다. 설치된 빌드에 따라 메뉴나 값이 다를 수 있으니 항상 해당 장비의 **menu**, **help**, `system version`을 먼저 확인하세요.
+  아래 이미지는 **실제 DataRelay Link CLI의 터미널 출력**에서 해당 화면을 발췌해 이미지로 변환한 것입니다. 가상의 Web UI나 생성형 그림이 아닙니다. 주황색 번호는 선택할 메뉴 또는 확인할 원본 출력 줄을 가리킵니다. 캡처는 2026-10-13/17 테스트에서 수집되었고, 실제 IP/호스트는 가렸습니다. 설치된 빌드에 따라 메뉴나 값이 다를 수 있으니 항상 해당 장비의 **menu**, **help**, `system version`을 먼저 확인하세요.
 </Note>
 
 ## 모든 시나리오의 공통 준비
@@ -47,12 +47,12 @@ sidebarTitle: "활용 사례"
 
 ![실제 Data Relay Link CLI 캡처 — Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다.](/images/cli-captures/server-guided-menu.png)
 
-*그림 1. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 ![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
 
-*그림 2. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 1. [서버 설치](/ko/getting-started/server-installation), [배포 모드](/ko/deployment/modes), [방화벽/NAT](/ko/deployment/firewall-nat)을 먼저 완료하세요. Remote Access와 Managed Host 대상 AI Access에는 신뢰된 Agent가 필요하지만, HTTP(S) Internet Access의 보호 대상 호스트는 **Agent 없이 표준 프록시 설정만** 사용할 수 있습니다.
@@ -77,6 +77,6 @@ CLI 동작이 예제와 다르면 **help commands**, `system diagnostics`, [CLI 
 | --- | --- |
 | Claude와 ChatGPT에 원격 MCP 연결 | [HTTPS·OAuth·도구 검색](/ko/guides/mcp-clients) |
 | Server 자체 파일·Git·비동기 작업 실행 | [Server 제어 실습](/ko/use-cases/ai-server-control) |
-| 검증된 클라이언트·기능·후보 구분 | [MCP 검증 현황](/ko/reference/mcp-validation) |
+| 클라이언트 호환성과 권한 확인 | [MCP 호환성](/ko/reference/mcp-validation) |
 
-Server-self AI 작업은 Agent 등록 없이 별도 권한으로 가능합니다. Managed Host 대상 AI 작업에는 신뢰된 Agent가 필요합니다. 기존 이미지는 명시된 10월 캡처를 유지하고 최신 MCP 작업은 도구 인자·원본 결과로 설명합니다.
+Server-self AI 작업은 Agent 등록 없이 별도 권한으로 가능합니다. Managed Host 대상 AI 작업에는 신뢰된 Agent가 필요합니다. CLI 화면과 MCP 도구 인자는 해당 단계에서 확인할 항목을 보여줍니다.

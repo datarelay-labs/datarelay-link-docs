@@ -8,7 +8,7 @@ icon: "server"
 # Part II — DataRelay Link 설치와 운영
 
 <Note>
-  현재 공개 안정 릴리스는 **v2.3.0**이며 이 사이트는 개발 중인 **v2.4.0**을 설명합니다. 운영 설치에는 변경되지 않는 안정 릴리스를 사용하고, v2.4 검증에는 정확한 검증 SHA 또는 candidate artifact를 사용합니다.
+  OCI 네트워크와 VM 준비를 마친 뒤 제품의 Server 설치 프로그램을 실행합니다. [Server 설치](/ko/getting-started/server-installation)의 절차를 따르세요.
 </Note>
 
 ## 6. Ubuntu Host 준비
@@ -22,7 +22,7 @@ OCI Security List/NSG와 Ubuntu 호스트 방화벽은 각각 필요한 규칙�
 
 ## 7. Server 설치
 
-[서버 설치](/ko/getting-started/server-installation)의 현재 절차를 따릅니다. v2.4 candidate는 검증 절차에서 지정한 정확한 소스 또는 artifact를 사용합니다.
+[서버 설치](/ko/getting-started/server-installation)의 현재 절차를 따릅니다. Server 설치 프로그램과 설치 후 확인 절차를 따르세요.
 
 ```text
 TCP/22          선택적 OCI 관리용; 관리자 source로 제한
@@ -42,7 +42,7 @@ show status
 system diagnostics
 ```
 
-역할이 DRLink Server인지 확인하고 제품 버전, 릴리스 채널, 정확한 소스 HEAD, Relay Engine 버전이 실제 상태와 일치하는지 확인합니다.
+역할이 DRLink Server인지 확인하고 제품 버전, 릴리스 채널, 설치 버전, Relay Engine 버전이 실제 상태와 일치하는지 확인합니다.
 
 ## 9. Reboot persistence 확인
 
@@ -106,7 +106,7 @@ endpoint 사용을 제한해야 하면 Server에서 Remote Access policy를 별�
   </Card>
 
   <Card title="빠른 시작" icon="rocket" href="/ko/getting-started/quickstart">
-    현재 v2.4 Managed Host 절차를 따라갑니다.
+    현재 제품 Managed Host 절차를 따라갑니다.
   </Card>
 </CardGroup>
 

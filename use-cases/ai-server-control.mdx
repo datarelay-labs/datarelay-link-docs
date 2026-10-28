@@ -5,19 +5,26 @@ description: "Reproduce file, Git, stdin, output and stop workflows from either 
 
 # Control Server files, Git and jobs from Claude or ChatGPT
 
-**Outcome:** create/read/delete a file, commit locally, exchange stdin/EOF, read output and stop a disposable job. First complete [MCP setup](/guides/mcp-clients). This targets **server:self** under Native MCP full-control, separately from Agent operations.
+**Outcome:** create/read/delete a file, commit locally, exchange stdin/EOF, read output and stop a disposable job. First complete [MCP setup](/guides/mcp-clients). This uses **server:self** Server management permission, separately from Agent operations.
 
-## Step 1 — operator prepares account and workspace
+## Step 1 — verify the product and MCP connection
 
-Assume an existing nonroot **drlink-operator** account owns **/srv/drlink-mcp-lab**. Replace these with actual operator-approved values. Root is unnecessary. **command-exec grants the account's OS authority; cwd is not a filesystem sandbox.**
-
-Keep an already working installation. First-time setup uses the reviewed candidate operator helper. This Server-shell command is **read-only**; point source/HEAD at the actual verified candidate:
+Start after [Server installation](/getting-started/server-installation) and [Claude/ChatGPT connection](/guides/mcp-clients). On the Server shell:
 
 ~~~bash
-python3 tools/operator-native-mcp-full-control.py --check   --source /path/to/verified-source   --head e4f66183fae6bd13a1611e809182838612b4fdc1   --exec-user drlink-operator --allowed-root /srv/drlink-mcp-lab
+sudo drlink system status
+sudo drlink system diagnostics mcp
+sudo drlink show ai-identities
 ~~~
 
-After reviewing the plan/account/backup, the operator uses the helper's `--apply` on an authorized Server console. It restarts only the MCP bridge and records a rollback receipt. This is a **development-candidate MCP rollout helper**, not a product release installer. Selecting root additionally needs `--allow-root`. Review the [pinned helper source](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py).
+Select DataRelay Link in Claude or ChatGPT and ask:
+
+~~~text
+Use DataRelay Link get_server to identify the connected Server.
+Do not change files or settings. Show only the Server name and availability.
+~~~
+
+File, Git and process operations use the OS account configured for the product. This tutorial uses /tmp/drlink-mcp-tutorial; substitute your approved workspace if different. command-exec grants that account's command authority; an initial working directory is not a filesystem sandbox.
 
 ## Step 2 — verify the dedicated identity and rule
 
@@ -25,10 +32,10 @@ Assume **mcp-lab** is already OAuth-connected; substitute your actual dedicated 
 
 ~~~text
 set permission-object mcp-lab-ops permissions host-info,process-read,file-read,file-write,command-exec
-set ai-access mcp-lab-server mode whitelist source mcp-lab destination server:self permission mcp-lab-ops paths '/srv/drlink-mcp-lab/**' enabled
+set ai-access mcp-lab-server mode whitelist source mcp-lab destination server:self permission mcp-lab-ops paths '/tmp/drlink-mcp-tutorial/**',/tmp enabled
 set ai-access enabled
-test ai-access source mcp-lab destination server:self permission command-exec path /srv/drlink-mcp-lab
-test ai-access source mcp-lab destination server:self permission file-read path /srv/drlink-mcp-lab/note.txt
+test ai-access source mcp-lab destination server:self permission command-exec path /tmp
+test ai-access source mcp-lab destination server:self permission file-read path /tmp/drlink-mcp-tutorial/note.txt
 test ai-access source mcp-lab destination server:self permission file-read path /etc/shadow
 show ai-access
 ~~~
@@ -37,17 +44,23 @@ Expect first two policy tests ALLOW, final DENY unless another Rule broadens acc
 
 ## Step 3 — file round trip
 
+First confirm the tutorial directory is not used by another task. Create it with the normal product MCP tool. If it already belongs to another workflow, choose a unique name and update the Rule's path as well.
+
+~~~json
+{"tool":"server_exec","arguments":{"cwd":"/tmp","command":"mkdir -p /tmp/drlink-mcp-tutorial"}}
+~~~
+
 JSON below describes **MCP tool calls**, not shell commands. Ask either client to use these tools. Pick a unique file if note.txt already exists.
 
 ~~~text
 Use DRLink MCP get_server to confirm the target first.
-Check that /srv/drlink-mcp-lab/note.txt does not exist, then create it
+Check that /tmp/drlink-mcp-tutorial/note.txt does not exist, then create it
 with DRLink MCP tutorial and read it back exactly. Change no other files.
 ~~~
 
 ~~~json
-{"tool":"server_write_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt","content":"DRLink MCP tutorial"}}
-{"tool":"server_read_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt"}}
+{"tool":"server_write_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt","content":"DRLink MCP tutorial"}}
+{"tool":"server_read_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt"}}
 ~~~
 
 Decode base64 where indicated by the response schema and compare the original content. Do not report a failed call as a successful file operation.
@@ -57,18 +70,18 @@ Decode base64 where indicated by the response schema and compare the original co
 Use an operator-owned workspace that was empty and is **not an existing repository**. Initialize only there; add only the new note. Do not edit global Git configuration.
 
 ~~~json
-{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","init"]}}
-{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","add","note.txt"]}}
-{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","-c","user.name=DRLink Lab","-c","user.email=lab@example.net","commit","-m","Add MCP tutorial note"]}}
-{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","log","-1","--oneline"]}}
+{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","init"]}}
+{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","add","note.txt"]}}
+{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","-c","user.name=DRLink Lab","-c","user.email=lab@example.net","commit","-m","Add MCP tutorial note"]}}
+{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","log","-1","--oneline"]}}
 ~~~
 
-Require completed state, exit_status=0 and the resulting commit. Remote push additionally needs an approved remote, network access, that OS account's Git credentials and user authorization. MCP OAuth is not GitHub authentication. Earlier verified push used a disposable local bare remote, not GitHub.
+Require completed state, exit_status=0 and the resulting commit. Remote push additionally needs an approved remote, network access, that OS account's Git credentials and user authorization. MCP OAuth is not GitHub authentication. Choose the intended remote and verify its permissions before pushing.
 
 ## Step 5 — asynchronous stdin, EOF and output cursors
 
 ~~~json
-{"tool":"server_run","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["python3","-u","-c","import sys; print('READY', flush=True); line=sys.stdin.readline(); print('ECHO:'+line.strip(), flush=True)"],"timeout_seconds":60,"wait_ms":1000}}
+{"tool":"server_run","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["python3","-u","-c","import sys; print('READY', flush=True); line=sys.stdin.readline(); print('ECHO:'+line.strip(), flush=True)"],"timeout_seconds":60,"wait_ms":1000}}
 ~~~
 
 Inspect **running**, READY and the **job_id**; send input within 60 seconds. Substitute the actual job ID and stdout.next_cursor (6 after READY in this example). Use the actual Python path if needed.
@@ -83,9 +96,9 @@ Expect accepted_bytes=28, input_closed=true, ECHO:DRLink documentation sample an
 ## Step 6 — stop only your own job and clean up
 
 ~~~json
-{"tool":"server_exec","arguments":{"cwd":"/srv/drlink-mcp-lab","command":"sleep 30","timeout_seconds":45,"wait_ms":0}}
+{"tool":"server_exec","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","command":"sleep 30","timeout_seconds":45,"wait_ms":0}}
 {"tool":"server_job_stop","arguments":{"job_id":"<sleep-job-id>"}}
-{"tool":"server_delete_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt"}}
+{"tool":"server_delete_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt"}}
 ~~~
 
 A stopped job can report completed with a negative signal exit status, distinct from normal exit 0. Stop **only the returned tutorial job**. Let the owning operator review/remove the disposable .git directory; never remove an unrelated repository.

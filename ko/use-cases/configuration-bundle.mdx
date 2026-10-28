@@ -60,7 +60,7 @@ configurationBundle:
 
 ![실제 Data Relay Link CLI 캡처 — 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다.](/images/cli-captures/config-revision-diff.png)
 
-*그림 2. 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 실제 설정 Revision Diff: Apply 전에 달라진 Object와 sourceRevision을 검토합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server 셸:**
@@ -77,7 +77,7 @@ sudo drlink show internet-access
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다.](/images/cli-captures/configuration-revisions.png)
 
-*그림 3. 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Revision 기록: 이전 set/unset 이력과 Revision 번호를 확인한 뒤 롤백 여부를 판단합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 보안 영향과 확인 안내를 검토한 다음:
@@ -109,4 +109,4 @@ system audit
 
 새 export의 sourceRevision을 검토할 변경에 포함하세요. 이전 test/diff가 유효해도 apply 시 오래된 revision은 거부됩니다. 다시 export하고 변경을 조정하세요. 동일 상태 재적용 NO CHANGE는 오래된 export로 강제 덮어쓰기를 허용한다는 의미가 아닙니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

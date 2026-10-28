@@ -38,7 +38,7 @@ Agent는 로컬 실행 상태와 Remote Service를 관리합니다. Remote Servi
 
 WHITELIST는 매칭 허용 Rule이 없으면 DENY입니다. BLACKLIST는 Remote Access에서만 지원하며 매칭하면 DENY, 미일치면 ALLOW입니다. Rule 순서와 Rule별 action은 없습니다. 정책 초기화는 Mode/Rule을 삭제하고 각 정책의 초기 상태로 돌아갑니다. AI 인증은 정책 상태와 별도로 항상 필요합니다.
 
-v2.4 authoritative Server state는 다음 SQLite DB입니다.
+Authoritative Server state는 다음 SQLite DB입니다.
 
 ```text
 /var/lib/drlink/drlink.db

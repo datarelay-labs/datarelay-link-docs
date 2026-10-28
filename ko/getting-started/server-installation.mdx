@@ -1,36 +1,44 @@
 ---
 title: "서버 설치"
-description: "DataRelay Link 서버를 설치하기 전에 필요한 네트워크와 설치 절차"
+description: "Server 설치와 설치 후 확인, 다음 연결 설정."
 ---
 
-# 서버 설치
+# Server 설치
 
-<Note>
-  현재 공개 안정 릴리스는 **v2.3.0**이며, 이 사이트는 개발 중인 **v2.4.0**을 설명합니다. 운영 설치에는 변경되지 않는 릴리스/tag를 사용하고, v2.4 검증에는 정확한 검증 SHA 또는 artifact를 사용합니다.
-</Note>
+## 준비 사항
 
-## Server 역할
+- 지원되는 Linux Server와 관리자 권한
+- Agent가 접속할 공인 IP 또는 DNS 이름
+- [방화벽·NAT](/ko/deployment/firewall-nat)에 설명된 통신 경로
+- MCP를 사용한다면 공개 DNS 이름과 HTTPS 인증서, single443 배포 모드
 
-Server는 Enrollment, Managed Host inventory, Object/Group, Access Policy, AI Identity, Audit, Backup/Restore, Server ConfigurationBundle을 관리합니다.
+## 1. Server 설치 프로그램 실행
 
-설치 후:
+공식 Server 설치 프로그램을 다운로드하고 실행합니다.
 
-```bash
-sudo drlink
-```
+~~~bash
+curl -fsSL https://raw.githubusercontent.com/datarelay-labs/datarelay-link/main/dist/bootstrap-server.sh -o bootstrap-server.sh
+sudo bash ./bootstrap-server.sh
+~~~
 
-```text
-system version
-show status
-system diagnostics
-```
+설치 안내에 따라 외부 주소와 배포 모드를 선택합니다. Claude·ChatGPT 원격 MCP를 사용할 경우 **single443**를 선택하고 [MCP 연결 가이드](/ko/guides/mcp-clients)에서 공개 HTTPS와 OAuth를 설정합니다.
 
-역할이 DRLink Server인지 확인하고 제품 버전, 릴리스 채널, 정확한 소스 HEAD, Relay Engine 버전이 실제 상태와 일치하는지 확인합니다.
+## 2. 설치 결과 확인
 
-## Public identity
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
 
-설치 시 공인 IP 또는 도메인을 제품의 외부 주소로 선택할 수 있습니다. 도메인을 선택했다면 생성되는 Zero-Touch 링크와 사용자에게 표시되는 URL에도 같은 도메인이 사용되어야 합니다.
+역할이 **DRLink Server**이고 서비스 상태에 오류가 없는지 확인합니다. 문제가 있으면 진단 결과와 [문제 해결](/ko/operations/troubleshooting)을 확인하세요.
 
-Remote Service용 friendly alias와 bootstrap hostname은 별도 개념입니다.
+## 3. 필요한 연결 설정
 
-DataRelay Link는 클라우드 보안 그룹, 외부 NAT/DNAT, DNS 레코드, OS 사용자, SSH 설정, 애플리케이션 TLS 인증서를 자동으로 변경하지 않습니다.
+| 목적 | 다음 단계 |
+| --- | --- |
+| 내부 서버 원격 접속 | [Agent 등록](/ko/guides/enrollment) → [SSH 실습](/ko/use-cases/remote-ssh) |
+| 제한망의 승인된 인터넷 접속 | [Internet Access](/ko/guides/internet-access) |
+| Claude·ChatGPT에서 서버 작업 | [MCP 연결](/ko/guides/mcp-clients) → [AI Access](/ko/guides/ai-access) |
+
+Server는 등록·인벤토리·정책·AI Identity·감사·백업을 관리합니다. Remote Service는 등록된 해당 Agent Host에서 생성합니다. 외부 방화벽·DNS·SSH 계정·애플리케이션 인증서는 각 환경에서 준비하세요.

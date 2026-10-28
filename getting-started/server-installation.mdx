@@ -1,42 +1,44 @@
 ---
 title: "Server Installation"
-description: "Install and verify the DataRelay Link server using the current stable release."
+description: "Install the Server, verify health and configure the next connection."
 ---
 
-# Server Installation
+# Server installation
 
-<Note>
-  The latest published stable release is **v2.3.0**. This site documents the current **v2.4.0 development target**. Use an immutable release tag for stable deployment or an exact qualified SHA/artifact for v2.4 testing.
-</Note>
+## Prerequisites
 
-## Server role
+- A supported Linux Server and administrator access.
+- A public address or DNS name reachable by Agents.
+- The paths described in [firewall/NAT requirements](/deployment/firewall-nat).
+- For remote MCP, public DNS and HTTPS plus single443 deployment.
 
-The Server is Linux-based and owns enrollment, Managed Host inventory, Objects/Groups, Access Policies, AI Identity, audit, backup/restore, and Server ConfigurationBundle.
+## 1. Run the Server installer
 
-For v2.4 candidate testing, use the exact source/artifact identity provided by the qualification process rather than mutable main/latest.
+Download and run the official Server installer:
 
-## Verify after installation
+~~~bash
+curl -fsSL https://raw.githubusercontent.com/datarelay-labs/datarelay-link/main/dist/bootstrap-server.sh -o bootstrap-server.sh
+sudo bash ./bootstrap-server.sh
+~~~
 
-```bash
-sudo drlink
-```
+Follow the prompts for the external address and deployment mode. Select **single443** for Claude/ChatGPT remote MCP, then configure public HTTPS and OAuth in the [MCP connection guide](/guides/mcp-clients).
 
-Then:
+## 2. Verify installation
 
-```text
-system version
-show status
-system diagnostics
-```
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
 
-Confirm the role is **DRLink Server** and that product version, release channel, exact Source HEAD, and Relay Engine version are truthful.
+Confirm role **DRLink Server** and healthy services. Resolve diagnostic errors using [troubleshooting](/troubleshooting/overview).
 
-## Public identity
+## 3. Configure the connection you need
 
-The installer may use a public IP or configured public domain as the product-facing identity. The selected identity must be used consistently by generated enrollment/Zero-Touch links and other user-facing URLs.
+| Goal | Next steps |
+| --- | --- |
+| Reach internal services | [Enroll an Agent](/guides/enrollment) → [SSH tutorial](/use-cases/remote-ssh) |
+| Approve restricted Internet traffic | [Internet Access](/guides/internet-access) |
+| Operate from Claude/ChatGPT | [MCP connection](/guides/mcp-clients) → [AI Access](/guides/ai-access) |
 
-Friendly Remote Service aliases and bootstrap hostnames are separate concerns and must not silently change management identity.
-
-## External boundary
-
-DataRelay Link does not silently configure cloud security groups, external NAT/DNAT, customer DNS records, OS users, SSH configuration, or application TLS certificates.
+The Server owns enrollment, inventory, policy, AI Identity, audit and backups. Create Remote Services on the owning Agent Host. Prepare external firewall/DNS, SSH accounts and application certificates in your environment.

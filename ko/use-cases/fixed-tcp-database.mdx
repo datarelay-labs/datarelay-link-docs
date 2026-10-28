@@ -21,12 +21,12 @@ description: "기존 DB의 TCP 포트를 별도 Fixed TCP Remote Service로 연�
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
 
-*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Fixed TCP Service Object 생성 확인 출력입니다. 공인 포트 할당과 DB 실제 접속은 별도로 검사해야 합니다.](/images/cli-captures/fixed-object-created.png)
 
-*그림 2. 실제 Fixed TCP Service Object 생성 확인 출력입니다. 공인 포트 할당과 DB 실제 접속은 별도로 검사해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 실제 Fixed TCP Service Object 생성 확인 출력입니다. 공인 포트 할당과 DB 실제 접속은 별도로 검사해야 합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -58,7 +58,7 @@ show remote-access
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다.](/images/cli-captures/agent-services.png)
 
-*그림 3. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Gateway Agent REPL:**
@@ -88,4 +88,4 @@ nc -vz <DRLink-공인-주소> <할당된-Fixed-TCP-공인-포트>
 
 Fixed TCP는 별도 Server 엔드포인트 풀을 쓰는 Service Object 하위 유형입니다. 기존 Remote Service를 표준 TCP/Fixed TCP 풀 사이에서 제자리 변경할 수 없습니다. 공개 포트가 DB 대상 포트와 같다고 가정하지 말고 show remote-service branch-oracle 결과를 사용하세요.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

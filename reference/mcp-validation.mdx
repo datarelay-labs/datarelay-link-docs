@@ -1,30 +1,53 @@
 ---
-title: "MCP Validation Status"
-description: "Real Claude/ChatGPT evidence, candidate builds and release boundaries."
+title: "MCP Compatibility"
+description: "Claude/ChatGPT connection, basic operations, permissions and troubleshooting."
 ---
 
-# MCP validation scope and current status
+# Claude and ChatGPT MCP compatibility
 
-**As of 2026-10-28, real MCP connection and core tool tests are complete for both Claude and ChatGPT.** The evidence distinguishes each verified scope.
+DataRelay Link connects to Claude and ChatGPT over remote MCP. Real OAuth connection, tool discovery, command execution and file create/read/delete have been verified with both clients.
 
-| Client / check | Observed scope | Evidence |
+## Connection and basic operations
+
+| Capability | Claude | ChatGPT |
 | --- | --- | --- |
-| ChatGPT actual connection | OAuth, Server identity, commands/argv, processes, file read/write/delete/upload/download, Git add/commit/push to a disposable local bare remote | [Issue #223 rev18](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6458663341) |
-| ChatGPT negative checks | Wrong target/relative path denied; unauthenticated public MCP 401; CLI policy ALLOW and unknown-identity DENY | [rev19](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6458779077) |
-| Claude actual connection | Owner-provided tool receipts: 20 discovered tools; Server, UID0 command, file create/read/delete and absent-file check, 6/6; independent ChatGPT absent-file/service readback | [rev23](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6470259599) |
-| ChatGPT documentation sample | server_run → READY → server_job_input/EOF → server_job_poll ECHO, exit 0; server_exec sleep job stopped through server_job_stop | Connected receipts below, 2026-10-28 |
+| Remote HTTPS MCP | Verified | Verified |
+| OAuth and operator consent | Verified | Verified |
+| Tool discovery | Verified | Verified |
+| Server information and commands | Verified | Verified |
+| File create/read/delete | Verified | Verified |
 
-## Build scope and release scope
+Client account/workspace controls and DataRelay Link AI Access determine which actions are available. Authentication does not authorize ungranted targets, operations or file paths.
 
-- Published stable remains GitHub Release **v2.3.0**.
-- CLI reference was reconciled with main **0feab808aaaa51102d8a7988d09433da916bfcec** and installed help.
-- Native MCP candidate **e4f66183fae6bd13a1611e809182838612b4fdc1**, [PR #224](https://github.com/datarelay-labs/datarelay-link/pull/224), was Draft/unmerged when checked. Its MCP-only rollout can differ from the Source HEAD shown by general system version; inspect installed MCP hashes and the rollout receipt as well.
-- Development-server success is not universal client/environment or stable release qualification. Extended Claude async stdin/stop and Native MCP remote GitHub push have not been independently demonstrated. CLI-wide E2E and MCP evidence remain distinct.
+## Available workflows
 
-## Live documentation sample receipts
+- Read system/process information from enrolled Managed Hosts.
+- Read/write/upload/download within approved file scopes.
+- Run Server-local commands, Git and asynchronous jobs with output/input/stop.
+- Inspect actual allowed/denied activity through AI Access audit.
 
-Input/output job **sj_10488471ec2c3e092d2438b4998477b8**: after READY, sent DRLink documentation sample plus newline with eof=true; accepted_bytes=28, input_closed=true. Poll from stdout_cursor=6 returned ECHO:DRLink documentation sample, exit_status=0.
+See [all 20 tool permissions and arguments](/reference/mcp-tools). OS permissions and external service authentication still apply. GitHub operations also require repository Git authentication.
 
-Stop job **sj_0ee3af01f5334c01725876d08e503e48**: server_exec sleep 30 followed by server_job_stop; state=completed, exit_status=-9. This is intentional termination, distinct from normal exit 0. Both jobs ended without touching existing product jobs. These are historical IDs, not reusable handles.
+## Verify after connection
 
-[Connection guide](/guides/mcp-clients) · [Server control lab](/use-cases/ai-server-control) · [Release status](/reference/release-status)
+Ask either client:
+
+~~~text
+Use only DataRelay Link get_server to identify the connected Server.
+Show the Managed Hosts I can access with list_hosts.
+Do not execute commands or change files yet.
+~~~
+
+Server administration and Managed Host access are separate grants. An empty host list does not imply Server-self is unavailable. Continue with [read-only access](/use-cases/ai-readonly) or the [file/Git/job tutorial](/use-cases/ai-server-control).
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| TLS error | Public MCP hostname, certificate and external HTTPS reachability |
+| Missing/expired OAuth request | Correct Server and current browser request |
+| AI Access DENY | Actual identity, target, permission and paths |
+| OS permission error | Product execution account and file/command permissions |
+| Missing tools | Client's saved tool catalog and account policy |
+
+Follow the [client connection guide](/guides/mcp-clients) for recovery.

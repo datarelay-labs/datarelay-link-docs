@@ -13,7 +13,7 @@ description: "Use one DRLink Agent as the relay for two independent internal ser
 
 ![Real Data Relay Link CLI capture — Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle.](/images/cli-captures/agent-guided-menu.png)
 
-*Figure 1. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 Complete [Remote SSH through NAT](/use-cases/remote-ssh) through its enrollment step, but put the Agent on the **gateway** (10.20.0.10), not on the two destination machines. Independently confirm from the gateway OS that both target IPs and ports are reachable. This local LAN firewall/routing setup is outside DRLink.
@@ -22,12 +22,12 @@ Complete [Remote SSH through NAT](/use-cases/remote-ssh) through its enrollment 
 
 ![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
 
-*Figure 2. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 ![Real Data Relay Link CLI capture — Real Network Object creation confirmation; this alone does not publish a Remote Service.](/images/cli-captures/network-object-created.png)
 
-*Figure 3. Real Network Object creation confirmation; this alone does not publish a Remote Service. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Real Network Object creation confirmation; this alone does not publish a Remote Service. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -47,7 +47,7 @@ Each Network Object is **one destination**. A Network Group or CIDR range is not
 
 ![Real Data Relay Link CLI capture — Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic.](/images/cli-captures/agent-services.png)
 
-*Figure 4. Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 4. Captured Remote Services inventory: distinguish DEGRADED from DISABLED; a listed endpoint is not proof of live traffic. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Gateway Agent REPL:**
@@ -98,4 +98,4 @@ If one destination fails, the other service can remain operational. On the gatew
 
 A reachable LAN target may legitimately be saved DEGRADED until current runtime verification succeeds. The owning Agent is the Relay Host; never create the Remote Service on the Server. Destination + Service duplication on that Agent is rejected.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

@@ -7,15 +7,15 @@ description: "검증된 AI Identity가 지정한 Managed Host에서 host/process
 
 **완성 결과:** 실제 인증된 AI 클라이언트가 **branch-a**의 호스트/프로세스 정보를 조회할 수 있지만 임의 명령 실행과 다른 대상에 대한 권한은 없습니다.
 
-<Warning>
-  **v2.4 개발 대상 기능이며 안정 릴리스 완료를 뜻하지 않습니다.** 외부 MCP는 **single443 배포**, 유효한 HTTPS 인증서, 지원되는 원격 MCP/OAuth 클라이언트 및 실제 사용자 인증이 필요합니다. Claude와 ChatGPT의 실제 연결·핵심 작업은 검증됐습니다. [클라이언트 연결 가이드](/ko/guides/mcp-clients)를 따르고 이 읽기 전용 identity의 허용·거부는 별도로 확인하세요.
-</Warning>
+<Note>
+  원격 MCP에는 single443와 신뢰할 수 있는 공개 HTTPS가 필요합니다. [Claude·ChatGPT 연결](/ko/guides/mcp-clients)을 완료하고 이 실습에서는 별도 최소 권한 identity를 사용하세요.
+</Note>
 
 ## 1단계 — 서버·Agent·배포 모드 확인
 
 ![실제 Data Relay Link CLI 캡처 — 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다.](/images/cli-captures/server-status.png)
 
-*그림 1. 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -27,13 +27,13 @@ system diagnostics
 system certificate status
 ~~~
 
-**branch-a**가 정상 등록되어 있고 Agent 관리 연결이 가능해야 합니다. MCP 사용을 위한 별도의 SSH Remote Service는 필요하지 않습니다. 공용 **https://&lt;호스트&gt;/mcp**는 **single443**에서만 제공됩니다. **direct** 모드라면 검증된 동일 불변 소스로 Server 설치 프로그램의 모드 전환 절차를 수행해야 합니다. [배포 모드](/ko/deployment/modes)를 따르고, 오래된 인증서만 보고 준비 완료로 판단하지 마세요.
+**branch-a**가 정상 등록되어 있고 Agent 관리 연결이 가능해야 합니다. MCP 사용을 위한 별도의 SSH Remote Service는 필요하지 않습니다. 공용 **https://&lt;호스트&gt;/mcp**는 **single443**에서만 제공됩니다. **direct** 모드라면 설치된 제품과 같은 버전의 Server 설치 프로그램에서 배포 모드를 전환합니다. [배포 모드](/ko/deployment/modes)를 따르고, 오래된 인증서만 보고 준비 완료로 판단하지 마세요.
 
 ## 2단계 — AI Identity와 최소 권한 Object 생성
 
 ![실제 Data Relay Link CLI 캡처 — Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다.](/images/cli-captures/server-guided-menu.png)
 
-*그림 2. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. Server의 실제 menu 화면: Remote Access는 4번, Internet Access는 5번, AI Access는 6번, System은 7번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -72,7 +72,7 @@ test ai-access source auditor-ai destination branch-a permission exec-check
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Direct 모드의 MCP 경고: 인증서와 공개 주소가 설정되지 않았으며 single443 전환이 필요합니다. MCP 접속 성공 화면이 아닙니다.](/images/cli-captures/mcp-direct-not-ready.png)
 
-*그림 3. 실제 Direct 모드의 MCP 경고: 인증서와 공개 주소가 설정되지 않았으며 single443 전환이 필요합니다. MCP 접속 성공 화면이 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Direct 모드의 MCP 경고: 인증서와 공개 주소가 설정되지 않았으며 single443 전환이 필요합니다. MCP 접속 성공 화면이 아닙니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 이미 **single443**으로 구성된 Server에 DNS/HTTPS/인증서 발급 환경을 마련한 다음 **Server REPL**에서 실제 소유 도메인/이메일로 교체하여 실행합니다.
@@ -118,7 +118,7 @@ system diagnostics
 
 Claude와 ChatGPT 실제 MCP 테스트가 완료되었습니다. 클라이언트 연결 가이드를 따르고 최초 소유자 mcp-owner-full-access까지 전체 유효 정책을 확인하세요. observer를 추가해도 기존 command-exec 권한은 제거되지 않습니다. 소유자 권한이 넓다면 이 읽기 전용 실습에는 별도 비소유자 identity가 필요합니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)
 
 ## 로그 파일만 읽도록 추가 제한
 

@@ -5,7 +5,7 @@ description: "인증서부터 OAuth 승인·실제 도구 호출까지."
 
 # Claude와 ChatGPT를 DataRelay Link에 연결하기
 
-**Claude와 ChatGPT의 실제 원격 MCP 연결·도구 호출 테스트를 완료했습니다.** Claude는 20개 도구 검색과 명령·파일 생성/읽기/삭제 6개 작업, ChatGPT는 명령·파일·Git 및 비동기 작업을 확인했습니다. [검증 범위와 빌드](/ko/reference/mcp-validation)를 확인하세요. 이 문서는 v2.4 개발 Native MCP 기준입니다.
+**Claude와 ChatGPT의 실제 원격 MCP 연결·도구 호출 테스트를 완료했습니다.** Claude는 20개 도구 검색과 명령·파일 생성/읽기/삭제 6개 작업, ChatGPT는 명령·파일·Git 및 비동기 작업을 확인했습니다. [클라이언트 호환성](/ko/reference/mcp-validation)을 확인한 뒤 설치된 Server에서 아래 절차를 따르세요.
 
 ## 1단계 — 공개 HTTPS와 Server 확인
 
@@ -78,6 +78,6 @@ Server 자체 접근을 별도로 허용했다면 **get_server**가 server:self�
 
 ## 도구가 16개만 보이거나 호출이 거부될 때
 
-해당 Native MCP 후보는 **20개**를 광고합니다. server_exec / server_job_poll / server_job_input / server_job_stop이 없으면 기존 클라이언트의 도구 스냅샷을 확인하세요. ChatGPT workspace 관리자의 지원되는 Actions Refresh 기능이 있으면 새 도구를 검토·활성화합니다. 개인 앱에는 이 메뉴가 없을 수 있으므로 제공되지 않는 Refresh를 반복해서 찾거나 OAuth를 재승인하지 마세요. 계정이 지원하는 새 테스트 연결로 스캔할 경우 기존 연결은 새 연결 검증까지 유지합니다.
+DataRelay Link는 **20개**를 광고합니다. server_exec / server_job_poll / server_job_input / server_job_stop이 없으면 기존 클라이언트의 도구 스냅샷을 확인하세요. ChatGPT workspace 관리자의 지원되는 Actions Refresh 기능이 있으면 새 도구를 검토·활성화합니다. 개인 앱에는 이 메뉴가 없을 수 있으므로 제공되지 않는 Refresh를 반복해서 찾거나 OAuth를 재승인하지 마세요. 계정이 지원하는 새 테스트 연결로 스캔할 경우 기존 연결은 새 연결 검증까지 유지합니다.
 
-**401**은 인증, **AI Access DENY**는 identity/대상/permission/paths, **executor disabled**는 Server의 실행 프로필, OS permission 오류는 실행 계정 문제입니다. 각 경계를 따로 확인하세요. MCP 권한이 AI 클라이언트의 승인·보안 제한까지 해제하지는 않습니다.
+**401**이면 인증을, **AI Access DENY**이면 identity·대상·permission·paths를 확인하세요. OS permission 오류는 실행 계정의 권한을 점검합니다. 실행 기능에 문제가 있으면 `system diagnostics mcp`와 제품 업데이트 절차를 사용하세요. AI 클라이언트의 승인·보안 제한도 그대로 적용됩니다.
