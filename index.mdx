@@ -37,14 +37,14 @@ AI Access         authenticated AI Identity → approved target permissions
 ## Mental model
 
 ```mermaid
-flowchart LR
-    O[Operator / approved source] --> S[DataRelay Link Server]
-    A[Managed Host / Agent] -->|outbound relay| S
-    S -->|Remote Service| A
-    A --> T[Local or LAN target]
-    H[Restricted application host] -->|HTTP(S) proxy - agentless| S
-    S --> I[Approved Internet destination]
-    AI[Authenticated AI Identity] -->|AI Access / MCP| S
+flowchart TD
+    O["Operator / approved source"] --> S["DataRelay Link Server"]
+    A["Managed Host / Agent"] -->|"outbound relay"| S
+    S -->|"Remote Service"| A
+    A --> T["Local or LAN target"]
+    H["Restricted application host"] -->|"HTTP(S) proxy - agentless"| S
+    S --> I["Approved Internet destination"]
+    AI["Authenticated AI Identity"] -->|"AI Access / MCP"| S
 ```
 
 The key distinction is simple:

@@ -54,7 +54,7 @@ show network-objects
 show service-object apt-http
 ~~~
 
-For HTTPS repositories, additionally define **set service-object apt-https type tcp port 443** and create corresponding exact-destination rules for that service.
+For HTTPS repositories, additionally define `set service-object apt-https type tcp port 443` and create corresponding exact-destination rules for that service.
 
 ## Step 4 — enable only the required Internet Access
 
@@ -103,7 +103,7 @@ curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" \
   --head https://example.org/
 ~~~
 
-Expected: explicit proxy policy **DENY** for this unlisted domain. Review **system audit** and **system diagnostics** on the Server to distinguish deny from DNS/network failure. Also confirm approved APT traffic reached DRLink; a successful direct-to-Internet update does not prove this scenario.
+Expected: explicit proxy policy **DENY** for this unlisted domain. Review `system audit` and `system diagnostics` on the Server to distinguish deny from DNS/network failure. Also confirm approved APT traffic reached DRLink; a successful direct-to-Internet update does not prove this scenario.
 
 ## Cleanup and troubleshooting
 

@@ -40,7 +40,7 @@ sudo drlink system diagnostics
 *그림 2. Server에서 2번 Create Service Object를 선택하여 프로토콜과 목적지 포트를 정의합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
 
 
-서버에서 **sudo drlink**를 열고 **Server REPL**에서 실행합니다.
+서버에서 `sudo drlink`를 열고 **Server REPL**에서 실행합니다.
 
 ~~~text
 set service-object ssh type tcp port 22
@@ -82,7 +82,7 @@ sudo drlink system diagnostics
 
 **확인:** Role **Agent Host**, 정상 등록 및 제어 채널 연결.
 
-이제 내부 호스트에서 **sudo drlink**를 열어 **Agent REPL**에서:
+이제 내부 호스트에서 `sudo drlink`를 열어 **Agent REPL**에서:
 
 ~~~text
 set remote-service support-ssh destination this-host service ssh enabled
@@ -127,10 +127,10 @@ system audit
 
 ## 실패 시/철회
 
-- **DEGRADED:** Agent에서 **system diagnostics → system synchronize → show remote-service support-ssh** 순서로 확인
+- **DEGRADED:** Agent에서 `system diagnostics → system synchronize → show remote-service support-ssh` 순서로 확인
 - **시간 초과:** 공인 포트 방화벽/NAT, Agent 터널, 서버 정책, 대상 22번 포트 검사
 - **Permission denied:** 대상 SSH 사용자·키·sshd 권한 검사
-- **서비스 제거:** 소유 Agent에서 **unset remote-service support-ssh** 실행 전 포트 예약과 연결 중단 영향을 확인합니다. 단일 서비스 때문에 전체 Managed Host를 삭제하지 마세요.
+- **서비스 제거:** 소유 Agent에서 `unset remote-service support-ssh` 실행 전 포트 예약과 연결 중단 영향을 확인합니다. 단일 서비스 때문에 전체 Managed Host를 삭제하지 마세요.
 
 ## 최신 동작 확인 — 2026-10-28
 

@@ -7,7 +7,7 @@ description: "표준 프록시만으로 승인된 Ubuntu 저장소에 APT 업데
 
 **완성 결과:** 보호된 Ubuntu 서버가 DRLink Internet Access 프록시를 통해 **승인된 Ubuntu 패키지 저장소에만** 접속합니다. 다른 도메인은 DENY이며 보호 서버에 DRLink Agent를 설치할 필요가 없습니다.
 
-예제: Ubuntu **10.20.30.15** → DRLink 프록시 **10.20.30.5:6080** → **archive.ubuntu.com / security.ubuntu.com**. 실제 프록시 포트는 설치 환경의 **system diagnostics**에서 확인하세요. 6080은 고정 기본값이 아닌 예시입니다.
+예제: Ubuntu **10.20.30.15** → DRLink 프록시 **10.20.30.5:6080** → **archive.ubuntu.com / security.ubuntu.com**. 실제 프록시 포트는 설치 환경의 `system diagnostics`에서 확인하세요. 6080은 고정 기본값이 아닌 예시입니다.
 
 ## 1단계 — 현재 Ubuntu 저장소 확인
 
@@ -54,7 +54,7 @@ show network-objects
 show service-object apt-http
 ~~~
 
-HTTPS 저장소를 사용한다면 **set service-object apt-https type tcp port 443**을 추가하고 해당 FQDN에 **별도 WHITELIST Rule**을 만듭니다.
+HTTPS 저장소를 사용한다면 `set service-object apt-https type tcp port 443`을 추가하고 해당 FQDN에 **별도 WHITELIST Rule**을 만듭니다.
 
 ## 4단계 — Internet Access WHITELIST 생성
 
@@ -102,7 +102,7 @@ test internet-access source apt-source destination ubuntu-security service apt-h
 curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" --head https://example.org/
 ~~~
 
-**기대:** 허용하지 않은 도메인은 프록시 정책에 의해 **DENY**. Server에서 **system audit**로 실제 출발지/목적지/차단 사유를 확인합니다. 단순 DNS/TCP timeout은 정책 DENY 증거가 아닙니다.
+**기대:** 허용하지 않은 도메인은 프록시 정책에 의해 **DENY**. Server에서 `system audit`로 실제 출발지/목적지/차단 사유를 확인합니다. 단순 DNS/TCP timeout은 정책 DENY 증거가 아닙니다.
 
 ## 장애 처리와 정리
 

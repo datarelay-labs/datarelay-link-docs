@@ -10,7 +10,7 @@ description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를
 예제: 사무실 공인 IP **203.0.113.10**, Managed Host **branch-a**, Service Object **ssh**. 모두 실제 값으로 교체합니다.
 
 <Warning>
-  v2.4 Remote Access는 **No Policy/No Rules = ALLOW**입니다. **set remote-access disabled = ALLOW ALL**이며 긴급 차단 명령이 아닙니다. WHITELIST를 무심코 삭제/초기화하면 원래 열려 있던 상태로 돌아갈 수 있습니다.
+  v2.4 Remote Access는 **No Policy/No Rules = ALLOW**입니다. `set remote-access disabled = ALLOW ALL`이며 긴급 차단 명령이 아닙니다. WHITELIST를 무심코 삭제/초기화하면 원래 열려 있던 상태로 돌아갈 수 있습니다.
 </Warning>
 
 ## 1단계 — 기존 접속 정책과 서버 백업 확인
@@ -90,11 +90,11 @@ test remote-access source unapproved-test destination branch-a service ssh
 ssh -p <예약-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
 ~~~
 
-그다음 **별도 비허용 네트워크**에서 동일 접속을 시도하고 **system audit**에서 정책 DENY를 확인합니다. 시간 초과나 외부 방화벽 차단만으로 DRLink 정책 차단이 증명되지는 않습니다.
+그다음 **별도 비허용 네트워크**에서 동일 접속을 시도하고 `system audit`에서 정책 DENY를 확인합니다. 시간 초과나 외부 방화벽 차단만으로 DRLink 정책 차단이 증명되지는 않습니다.
 
 ## 장애·롤백 주의
 
-접속 불가 시 실제 NAT 출발 IP, Service Object, Managed Host, Agent 연결, 모든 Rule을 확인합니다. **unset remote-access policy**는 초기 **ALLOW**로 돌아가며 **set remote-access disabled** 또한 **ALLOW ALL**입니다. 검토 없이 둘 중 하나를 응급 롤백으로 사용하지 말고 승인된 이전 정책/백업에 근거해 변경하세요.
+접속 불가 시 실제 NAT 출발 IP, Service Object, Managed Host, Agent 연결, 모든 Rule을 확인합니다. `unset remote-access policy`는 초기 **ALLOW**로 돌아가며 `set remote-access disabled` 또한 **ALLOW ALL**입니다. 검토 없이 둘 중 하나를 응급 롤백으로 사용하지 말고 승인된 이전 정책/백업에 근거해 변경하세요.
 
 ## 최신 동작 확인 — 2026-10-28
 

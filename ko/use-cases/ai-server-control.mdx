@@ -17,7 +17,7 @@ Native MCP 후보를 이미 설치·설정했다면 다시 배포하지 마세�
 python3 tools/operator-native-mcp-full-control.py --check   --source /path/to/verified-source   --head e4f66183fae6bd13a1611e809182838612b4fdc1   --exec-user drlink-operator --allowed-root /srv/drlink-mcp-lab
 ~~~
 
-운영자는 출력·계정·백업 계획을 검토한 후 같은 helper의 **--apply**를 권한 있는 Server 콘솔에서 실행합니다. MCP bridge가 재시작되며 영수증 경로를 보관해야 합니다. 전체 제품 릴리스/설치 명령이 아니라 **개발 후보의 MCP 전용 배포 helper**입니다. root를 선택할 때만 --allow-root가 추가로 필요합니다. [후보 소스](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py)를 확인하세요.
+운영자는 출력·계정·백업 계획을 검토한 후 같은 helper의 `--apply`를 권한 있는 Server 콘솔에서 실행합니다. MCP bridge가 재시작되며 영수증 경로를 보관해야 합니다. 전체 제품 릴리스/설치 명령이 아니라 **개발 후보의 MCP 전용 배포 helper**입니다. root를 선택할 때만 `--allow-root`가 추가로 필요합니다. [후보 소스](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py)를 확인하세요.
 
 ## 2단계 — 별도 identity와 Rule을 검증
 
@@ -91,4 +91,4 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 
 중지 후 completed와 종료 신호에 따른 음수 exit_status가 나올 수 있습니다. exit 0 정상 완료와 구분하세요. **이 실습에서 반환된 job_id만** 중지합니다. 실습 저장소 .git 정리는 소유 운영자가 경로를 확인한 뒤 처리하며 다른 저장소는 지우지 않습니다.
 
-Server REPL의 **show ai-access-log identity mcp-lab**로 작업을 확인합니다. 끝난 뒤 Rule을 유지할 필요가 없으면 **unset ai-access mcp-lab-server**의 영향도를 검토하고 삭제합니다. 다른 사용자가 쓰는 전체 AI Access나 인증서를 초기화하지 마세요.
+Server REPL의 `show ai-access-log identity mcp-lab`로 작업을 확인합니다. 끝난 뒤 Rule을 유지할 필요가 없으면 `unset ai-access mcp-lab-server`의 영향도를 검토하고 삭제합니다. 다른 사용자가 쓰는 전체 AI Access나 인증서를 초기화하지 마세요.

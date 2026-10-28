@@ -51,7 +51,7 @@ set remote-access enabled
 test remote-access source dba-public destination branch-gateway service oracle-db
 ~~~
 
-Expected: **ALLOW** for the approved source. Review all matching Rules and the **show remote-access** state for unintended sources.
+Expected: **ALLOW** for the approved source. Review all matching Rules and the `show remote-access` state for unintended sources.
 
 ## Step 4 — create the service on the gateway Agent
 
@@ -81,7 +81,7 @@ A successful TCP probe only proves a socket handshake. Complete the actual proto
 
 ## Recovery and teardown
 
-If connection fails, check Server policy and the gateway's **system diagnostics**, the target listener and external port mapping. The host's database encryption and account controls remain mandatory. Retire only this service with **unset remote-service branch-oracle** on the owning gateway Agent after reviewing DB-client interruptions; do not retire the whole Managed Host.
+If connection fails, check Server policy and the gateway's `system diagnostics`, the target listener and external port mapping. The host's database encryption and account controls remain mandatory. Retire only this service with `unset remote-service branch-oracle` on the owning gateway Agent after reviewing DB-client interruptions; do not retire the whole Managed Host.
 
 ## Current behavior check — 2026-10-28
 

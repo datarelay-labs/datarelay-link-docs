@@ -103,7 +103,7 @@ From the actually approved protected host, configure the standard HTTP(S) proxy 
 
 ## Recovery and cleanup
 
-If validation or apply rejects the bundle, **no partial configuration change** is expected; inspect the reported error rather than bypassing transaction guards. Compare the recorded revisions with **system diff &lt;REVISION_A&gt; &lt;REVISION_B&gt;** and plan a reviewed **system rollback &lt;REVISION&gt;** only if required. Avoid treating a blind rollback as risk-free: it can change current access. Keep exported files in protected storage and remove temporary copies after the approved work.
+If validation or apply rejects the bundle, **no partial configuration change** is expected; inspect the reported error rather than bypassing transaction guards. Compare the recorded revisions with `system diff <REVISION_A> <REVISION_B>` and plan a reviewed `system rollback <REVISION>` only if required. Avoid treating a blind rollback as risk-free: it can change current access. Keep exported files in protected storage and remove temporary copies after the approved work.
 
 ## Current behavior check — 2026-10-28
 

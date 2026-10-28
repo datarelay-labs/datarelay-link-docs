@@ -9,7 +9,7 @@ sidebarTitle: "Use Cases"
 These are **operator playbooks**, not feature lists. Each page states which machine runs each command, what the result should be, what to test, and how to recover.
 
 <Warning>
-  The playbooks target the **v2.4.0 development CLI** on a qualified immutable candidate, not the currently published **v2.3.0 stable** release. Do not execute v2.4 commands against v2.3.0 and assume identical grammar or features. Run **sudo drlink system version** first. Use a qualified exact-SHA build or wait for a formally released v2.4 version.
+  The playbooks target the **v2.4.0 development CLI** on a qualified immutable candidate, not the currently published **v2.3.0 stable** release. Do not execute v2.4 commands against v2.3.0 and assume identical grammar or features. Run `sudo drlink system version` first. Use a qualified exact-SHA build or wait for a formally released v2.4 version.
 </Warning>
 
 ## Remote Access — outside to inside
@@ -39,7 +39,7 @@ These are **operator playbooks**, not feature lists. Each page states which mach
 | Safeguard identity and restore after a failure | [Backup, restore and recovery](/use-cases/backup-recovery) |
 
 <Note>
-  Images below are visual captures of **genuine Data Relay Link v2.4 development CLI PTY/stdout E2E records**—not an invented Web UI or synthetic command results. Numbered orange markers point to authentic menu options or result lines. Sources were captured on 2026-10-13/17; sensitive addresses/hosts were masked. Menu choices may change by build: verify the installed **menu**, **help**, and **system version**.
+  Images below are visual captures of **genuine Data Relay Link v2.4 development CLI PTY/stdout E2E records**—not an invented Web UI or synthetic command results. Numbered orange markers point to authentic menu options or result lines. Sources were captured on 2026-10-13/17; sensitive addresses/hosts were masked. Menu choices may change by build: verify the installed **menu**, **help**, and `system version`.
 </Note>
 
 ## Shared preparation
@@ -64,14 +64,14 @@ sudo drlink show status
 sudo drlink system diagnostics
 ~~~
 
-3. Commands under **Server REPL** run after entering **sudo drlink** on the Linux DRLink Server. **Agent REPL** commands run in **sudo drlink** on the owning Agent Host. **Protected host / outside workstation** commands run in a normal OS shell on that machine.
+3. Commands under **Server REPL** run after entering `sudo drlink` on the Linux DRLink Server. **Agent REPL** commands run in `sudo drlink` on the owning Agent Host. **Protected host / outside workstation** commands run in a normal OS shell on that machine.
 4. Replace all example addresses, hostnames, client names, account names and ports with values from your deployment. Documentation IP ranges (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24) are illustrative and do not route on the public Internet.
 5. **A policy ALLOW is not a working connection.** Each playbook includes both a policy test and a real application traffic test. **A timeout is not proof of DENY**: look for the actual policy decision/audit.
 6. Before changing production-facing policies, assess existing access, preserve a validated backup and use a maintenance window if interruptions are possible. Data Relay Link does not configure external firewalls, DNS, SSH users or TLS certificates on your behalf.
 
 ## When something differs
 
-Run **help commands**, **system diagnostics** and the corresponding **show** / **test** command on the actual installed v2.4 exact HEAD. Review [CLI reference](/drlink/cli-reference), [troubleshooting](/troubleshooting/overview) and [release status](/reference/release-status). Stop if your CLI rejects the documented command; do not invent hidden or legacy syntax.
+Run **help commands**, `system diagnostics` and the corresponding **show** / **test** command on the actual installed v2.4 exact HEAD. Review [CLI reference](/drlink/cli-reference), [troubleshooting](/troubleshooting/overview) and [release status](/reference/release-status). Stop if your CLI rejects the documented command; do not invent hidden or legacy syntax.
 
 ## New AI workflows — 2026-10-28
 
