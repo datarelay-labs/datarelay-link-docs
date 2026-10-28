@@ -105,3 +105,9 @@ system synchronize
 - **HEALTHY인데 앱 실패:** 외부 포트/NAT/내부 대상 서비스를 별도로 점검
 
 추가 정보는 [백업/복원 참조](/ko/operations/backup-restore)와 [문제 해결](/ko/operations/troubleshooting)을 확인하세요.
+
+## 최신 동작 확인 — 2026-10-28
+
+복원 당시 저장된 호스트 존재/프록시 건강 상태는 Agent의 새 검증이 필요합니다. Server의 현재 Remote Service 검증이 없으면 연결된 Agent도 재조정합니다. diagnostics/synchronize와 실제 통신을 확인하고 복원/rollback 실패 시 아카이브·오류 증거를 보존하세요.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

@@ -103,4 +103,10 @@ system audit
 
 ## 문제 해결·롤백
 
-검증 실패는 변경 적용이 아니므로 오류 원인을 확인하고 다시 Diff합니다. **system diff <REVISION_A> <REVISION_B>**로 이력을 비교할 수 있습니다. **system rollback <REVISION>**는 현재 운영 접근 정책까지 바꿀 수 있으므로 승인받은 복구 상황에서만 실행하세요. 안전한 보관 기준에 따라 임시 YAML과 Export 파일을 정리합니다.
+검증 실패는 변경 적용이 아니므로 오류 원인을 확인하고 다시 Diff합니다. **system diff &lt;REVISION_A&gt; &lt;REVISION_B&gt;**로 이력을 비교할 수 있습니다. **system rollback &lt;REVISION&gt;**는 현재 운영 접근 정책까지 바꿀 수 있으므로 승인받은 복구 상황에서만 실행하세요. 안전한 보관 기준에 따라 임시 YAML과 Export 파일을 정리합니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+새 export의 sourceRevision을 검토할 변경에 포함하세요. 이전 test/diff가 유효해도 apply 시 오래된 revision은 거부됩니다. 다시 export하고 변경을 조정하세요. 동일 상태 재적용 NO CHANGE는 오래된 export로 강제 덮어쓰기를 허용한다는 의미가 아닙니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

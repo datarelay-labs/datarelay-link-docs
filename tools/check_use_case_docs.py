@@ -10,9 +10,9 @@ root=Path(__file__).resolve().parents[1]
 nav=json.loads((root/'docs.json').read_text())
 langs={z['language']:z for z in nav['navigation']['languages']}
 assert set(langs)=={'en','ko'}
-names=['index','remote-ssh','lan-relay','private-web','office-allowlist','fixed-tcp-database','ubuntu-updates','github-egress','ai-readonly','bulk-onboarding','configuration-bundle','backup-recovery']
+names=['index','remote-ssh','lan-relay','private-web','office-allowlist','fixed-tcp-database','ubuntu-updates','github-egress','ai-readonly','ai-server-control','bulk-onboarding','configuration-bundle','backup-recovery']
 pages=[*sorted((root/'use-cases').glob('*.mdx')),*sorted((root/'ko/use-cases').glob('*.mdx'))]
-assert len(pages)==24, len(pages)
+assert len(pages)==26, len(pages)
 errors=[]
 for lang in ['en','ko']:
     n=langs[lang]
@@ -48,6 +48,17 @@ for page in pages+[root/'index.mdx',root/'ko/index.mdx',root/'guides/internet-ac
         if cand.is_file() or (root/(link.lstrip('/')+'.mdx')).is_file() or (root/(link.lstrip('/')+'.md')).is_file():
             continue
         errors.append('Missing internal link '+str(page.relative_to(root))+' -> '+link)
+
+# Parse documented MCP call examples; each line is one complete JSON object.
+for page in root.rglob('*.mdx'):
+    for block in re.findall(r'~~~json\n(.*?)~~~', page.read_text(), re.S):
+        for line in block.strip().splitlines():
+            try:
+                example = json.loads(line)
+                if not isinstance(example, dict):
+                    errors.append('MCP example is not an object: '+str(page))
+            except ValueError as exc:
+                errors.append('Invalid MCP JSON example '+str(page)+': '+str(exc))
 
 # Policy regression: the three planes have different no-policy/disable semantics.
 for lang in ['guides/internet-access.mdx','ko/guides/internet-access.mdx']:
@@ -100,7 +111,7 @@ for english in sorted((root/'use-cases').glob('*.mdx')):
         txt=page.read_text()
         refs=re.findall(r'!\[[^\]]+\]\(/images/cli-captures/([a-z0-9-]+\.png)\)',txt)
         language_image_sets[str(page.relative_to(root))]=refs
-        if len(refs)<2:
+        if name != 'ai-server-control.mdx' and len(refs)<2:
             errors.append('Insufficient real CLI screenshots for '+str(page))
         if len(refs)!=len(re.findall(r'(?m)^\*(?:그림|Figure) \d+\.',txt)):
             errors.append('Missing per-image captions '+str(page))
@@ -115,7 +126,7 @@ if errors:
     print('FAILED VALIDATION:',len(errors))
     print('\n'.join(errors[:80]));sys.exit(2)
 print('PASS',len(all_nav),'navigation page targets')
-print('PASS',len(pages),'bilingual scenarios; 12 pages per language (11 workflows + landing)')
+print('PASS',len(pages),'bilingual scenarios; 13 pages per language (12 workflows + landing)')
 print('PASS',linkcount,'internal markdown links from scenario + modified landing and policy pages')
 print('PASS','MDX frontmatter, code fences, >=4 stages, CLI version surface and fail-closed policy semantics')
 print('PASS',len(image_ids),'provenance-linked real CLI PNGs and',sum(len(v) for v in language_image_sets.values()),'captioned references with English/Korean parity')

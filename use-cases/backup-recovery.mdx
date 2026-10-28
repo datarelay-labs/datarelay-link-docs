@@ -105,3 +105,9 @@ Check that immutable Managed Host identities, Remote Service IDs and public endp
 - **Service appears HEALTHY without real traffic:** verify the application's endpoint separately. Runtime/heartbeat status alone does not prove the destination is reachable.
 
 See [backup/restore reference](/operations/backup-restore) and [troubleshooting](/troubleshooting/overview) for further recovery boundaries.
+
+## Current behavior check — 2026-10-28
+
+After restore, backup-time host presence and proxy health require fresh Agent verification. Connected Agents reconcile when the Server lacks current Remote Service verification; run diagnostics/synchronize and test real traffic. Keep both the archive and error evidence if restore or rollback fails.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

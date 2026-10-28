@@ -1,46 +1,59 @@
 ---
 title: "AI Access & MCP"
-description: "Authenticate AI Identities and authorize explicit target permissions through the MCP Bridge."
+description: "Identity, per-call policy, file scopes and Server-local control."
 ---
 
-# AI Access & MCP
+# AI Access and MCP
 
-AI Access separates **authentication** from **authorization**.
+**Claude and ChatGPT real MCP tests are complete.** Follow [client setup](/guides/mcp-clients), the [20-tool reference](/reference/mcp-tools), and [validation scope](/reference/mcp-validation).
 
-~~~text
-supported OAuth / credential
-→ verified AI Identity
-→ AI Access policy
-→ Permission Object / Group
-→ approved target
-~~~
+Authentication establishes **who the AI Identity is**. AI Access controls **which target and operation it may use**. Each privileged invocation rechecks current identity and policy, then runs within target OS permissions.
 
-A display name alone is never authentication.
+## Configure least privilege
 
-## AI Identity
+Run on Server REPL; branch-a is an actual enrolled Managed Host name.
 
 ~~~text
-set ai-identity <NAME>
-show ai-identities
-show ai-identity <NAME>
+set ai-identity auditor-ai
+set permission-object observer permissions host-info,process-read
+set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access enabled
+test ai-access source auditor-ai destination branch-a permission observer
+show ai-access-log identity auditor-ai
 ~~~
 
-Interactive AI uses OAuth Authorization Code verification where supported. Automation/custom AI can use OAuth Client Credentials where supported.
+AI Access is **WHITELIST-only**. No policy, no match and disabled enforcement mean **DENY ALL**. Rules have no ordering or individual allow/deny actions.
 
-## Permission Objects
-
-Examples include host-info, process-read, file-read, command-exec, file-write, file-upload, and file-download.
-
-A true read-only permission set does not include command execution.
-
-## AI Access Rule
+## Files and commands
 
 ~~~text
-set permission-object read-only permissions host-info,process-read,file-read
-set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
-test ai-access source claude destination production-servers permission read-only
+set permission-object app-reader permissions file-read
+set ai-access app-read mode whitelist source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
+test ai-access source auditor-ai destination branch-a permission file-read path /var/log/myapp/health.log
+test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
 ~~~
 
-AI Access Rules are not ordered and have no per-rule action. AI authentication remains mandatory even when policy enforcement is disabled.
+The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require paths. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
 
-The v2.4 target uses a server-side MCP Bridge over authenticated HTTPS. MCP does not bypass Agent identity, AI Access policy, or target OS permissions. Remote Services and SSH are not prerequisites for approved AI operations.
+## Two target types
+
+| Target | Execution path | Example |
+| --- | --- | --- |
+| Managed Host | Server → trusted Agent → target OS | Internal host/process/log inspection |
+| server:self | Explicitly enabled Server executor | Files, shell, Git and asynchronous jobs |
+
+Server-local execution needs local operator profile/account opt-in and a separate AI Access grant. Root is an additional explicit choice. See the [Server control lab](/use-cases/ai-server-control).
+
+## Initial owner and OAuth lifecycle
+
+The first approved OAuth owner may receive **mcp-owner-full-access** with all seven Managed Host capabilities. Adding one observer Rule does not remove earlier broad grants. Use a separate scoped identity and inspect all matching rules.
+
+~~~text
+system credential configure ai-identity auditor-ai authentication oauth
+system credential approve-oauth <PENDING-ID> auditor-ai
+system credential deny-oauth <PENDING-ID>
+system credential rotate ai-identity auditor-ai
+system credential revoke ai-identity auditor-ai
+~~~
+
+Rotate/revoke can interrupt clients. Inspect actual ALLOW/DENY using **show ai-access-log** and identity/destination/permission filters. Keep tokens, private keys and enrollment tickets out of prompts, public docs and support output.

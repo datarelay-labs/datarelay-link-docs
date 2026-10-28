@@ -8,7 +8,7 @@ description: "검증된 AI Identity가 지정한 Managed Host에서 host/process
 **완성 결과:** 실제 인증된 AI 클라이언트가 **branch-a**의 호스트/프로세스 정보를 조회할 수 있지만 임의 명령 실행과 다른 대상에 대한 권한은 없습니다.
 
 <Warning>
-  **v2.4 개발 대상 기능이며 안정 릴리스 완료를 뜻하지 않습니다.** 외부 MCP는 **single443 배포**, 유효한 HTTPS 인증서, 지원되는 원격 MCP/OAuth 클라이언트 및 실제 사용자 인증이 필요합니다. 정책 테스트 ALLOW만으로 ChatGPT 등의 실제 사용자 접속을 검증한 것이 아닙니다.
+  **v2.4 개발 대상 기능이며 안정 릴리스 완료를 뜻하지 않습니다.** 외부 MCP는 **single443 배포**, 유효한 HTTPS 인증서, 지원되는 원격 MCP/OAuth 클라이언트 및 실제 사용자 인증이 필요합니다. Claude와 ChatGPT의 실제 연결·핵심 작업은 검증됐습니다. [클라이언트 연결 가이드](/ko/guides/mcp-clients)를 따르고 이 읽기 전용 identity의 허용·거부는 별도로 확인하세요.
 </Warning>
 
 ## 1단계 — 서버·Agent·배포 모드 확인
@@ -27,7 +27,7 @@ system diagnostics
 system certificate status
 ~~~
 
-**branch-a**가 정상 등록되어 있고 Agent 관리 연결이 가능해야 합니다. MCP 사용을 위한 별도의 SSH Remote Service는 필요하지 않습니다. 공용 **https://<호스트>/mcp**는 **single443**에서만 제공됩니다. **direct** 모드라면 검증된 동일 불변 소스로 Server 설치 프로그램의 모드 전환 절차를 수행해야 합니다. [배포 모드](/ko/deployment/modes)를 따르고, 오래된 인증서만 보고 준비 완료로 판단하지 마세요.
+**branch-a**가 정상 등록되어 있고 Agent 관리 연결이 가능해야 합니다. MCP 사용을 위한 별도의 SSH Remote Service는 필요하지 않습니다. 공용 **https://&lt;호스트&gt;/mcp**는 **single443**에서만 제공됩니다. **direct** 모드라면 검증된 동일 불변 소스로 Server 설치 프로그램의 모드 전환 절차를 수행해야 합니다. [배포 모드](/ko/deployment/modes)를 따르고, 오래된 인증서만 보고 준비 완료로 판단하지 마세요.
 
 ## 2단계 — AI Identity와 최소 권한 Object 생성
 
@@ -113,3 +113,13 @@ system diagnostics
 ## 장애/권한 철회
 
 실패하면 TLS·OAuth·클라이언트 플랜·Agent 신뢰·AI Access Rule을 서로 구분해 점검합니다. 파일 접근에는 경로 제한 **paths**가 필요하며 읽기 권한에 명령 실행을 포함하지 않습니다. **system credential revoke ai-identity auditor-ai**는 기존 인증을 끊는 보안 작업이므로 의도한 때만 수행하세요. Rule 제거는 **unset ai-access auditor-host** 영향 검토 후 실행하며 다른 ID나 인증서를 삭제하지 않습니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+Claude와 ChatGPT 실제 MCP 테스트가 완료되었습니다. 클라이언트 연결 가이드를 따르고 최초 소유자 mcp-owner-full-access까지 전체 유효 정책을 확인하세요. observer를 추가해도 기존 command-exec 권한은 제거되지 않습니다. 소유자 권한이 넓다면 이 읽기 전용 실습에는 별도 비소유자 identity가 필요합니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+
+## 로그 파일만 읽도록 추가 제한
+
+운영자가 branch-a의 /var/log/myapp/health.log에 민감정보 없는 실습 로그를 준비한 경우, [AI Access 파일 예제](/ko/guides/ai-access)의 app-reader Rule을 사용합니다. Claude/ChatGPT에 해당 파일 read_file만 요청하고 command-exec나 다른 경로는 허용하지 마세요. file-read 정책 테스트에는 path를 반드시 포함합니다. 실제 파일 존재·OS 권한과 도구의 ALLOW·DENY를 각각 확인합니다.

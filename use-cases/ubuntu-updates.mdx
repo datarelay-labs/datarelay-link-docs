@@ -99,7 +99,7 @@ Expected: every required repository index is refreshed through the DRLink proxy.
 From the same protected host:
 
 ~~~bash
-curl --verbose --proxy "http://10.20.30.5:6080" \
+curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" \
   --head https://example.org/
 ~~~
 
@@ -108,3 +108,9 @@ Expected: explicit proxy policy **DENY** for this unlisted domain. Review **syst
 ## Cleanup and troubleshooting
 
 The shell trap deletes the temporary APT proxy file at shell exit. Leave the approved policy only if required operationally; changing destination rules affects **new** connections. If APT fails, verify the requested mirror names and HTTP/HTTPS ports, listener reachability, NAT-visible source and Internet Access policy. Preserve existing long-lived application proxy settings rather than overwriting them for a test. Do not modify external firewall state just to manufacture a qualification result.
+
+## Current behavior check — 2026-10-28
+
+If diagnostics reports an invalid Internet Access listener, repair through the same immutable Server installer using FRP_EGRESS_LISTEN_ADDR and, only when needed, FRP_EGRESS_LISTEN_PORT. These are installer-owned settings, not set server fields. Keep mode/identity unchanged, validate backup and retest actual APT traversal.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

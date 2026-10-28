@@ -95,3 +95,9 @@ Repeat from an independently unapproved source. Confirm an explicit policy DENY 
 ## Recovery and safety
 
 If the office cannot reach the service, verify the NAT-visible office IP, Service Object name, target Managed Host, tunnel health and matched Rules with **test remote-access** / **system audit**. To change access safely, edit or replace the Rule under a maintenance plan. **unset remote-access policy** resets to default ALLOW; **set remote-access disabled** is also ALLOW ALL. Do not use either to repair a failed restriction unless a deliberately approved broad-access change is intended.
+
+## Current behavior check — 2026-10-28
+
+Inspect every enabled Rule and referenced Group before the negative test. Remote Access disabled enforcement and full policy reset open access (ALLOW ALL/initial ALLOW); they are not safe ways to prove denial. Group policy tests require every expanded combination to allow before reporting aggregate ALLOW.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

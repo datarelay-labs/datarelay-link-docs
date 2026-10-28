@@ -86,3 +86,9 @@ system audit
 - **Timeout:** 외부 방화벽/NAT, Agent 연결, 내부 8443 리스너 검사
 - **예상치 못한 ALLOW:** 모든 Remote Access Rule 확인. **set remote-access disabled**는 DENY가 아닌 **ALLOW ALL**입니다.
 - **서비스 종료:** 소유 Agent에서 **unset remote-service firewall-ui** 실행 전 연결 중단을 검토합니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+애플리케이션의 TLS와 로그인은 유지됩니다. 할당된 공개 엔드포인트에서 인증서 호스트명을 검증하고 인증서 검사를 끄지 마세요. 재연결 뒤 소유 Agent에서 synchronize하고 현재 Remote Service 세대까지 확인한 후 복구로 판단합니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

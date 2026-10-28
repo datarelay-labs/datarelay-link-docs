@@ -70,9 +70,9 @@ Expected: both exact hostname selectors **ALLOW**. There must be no blanket **AN
   bypass="${bypass:+${bypass},}127.0.0.1,localhost"
   export no_proxy="$bypass" NO_PROXY="$bypass"
 
-  git ls-remote https://github.com/git/git.git HEAD
-  curl --head --show-error https://api.github.com/
-  curl --head --show-error https://example.org/
+  no_proxy= NO_PROXY= git -c http.proxy="$PROXY_URL" ls-remote https://github.com/git/git.git HEAD
+  curl --noproxy '' --proxy "$PROXY_URL" --head --show-error https://api.github.com/
+  curl --noproxy '' --proxy "$PROXY_URL" --head --show-error https://example.org/
 )
 ~~~
 
@@ -101,3 +101,9 @@ Verify source IP, destination hostname/port and matched policy result. The test 
 - **TLS trust error:** repair destination trust/certificates or a documented application proxy trust chain; DRLink does not decrypt the target TLS.
 - **Proxy timeout:** check the listener and external firewall separately from a policy denial.
 - **Unwanted broad access:** inspect all enabled Internet Access rules and Network/Service Group membership; disable the offending Rule or change it through reviewed policy mutation. Internet Access disabled enforcement is **DENY ALL**.
+
+## Current behavior check — 2026-10-28
+
+Use explicit proxy routing in the application test and clear public-host no_proxy bypasses only for that invocation. A Managed Host source selector matches only a provable active proxy-visible peer IP; behind NAT use the observed IP/CIDR. No UDP or private/metadata destination bypass is implied by an FQDN allowlist.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

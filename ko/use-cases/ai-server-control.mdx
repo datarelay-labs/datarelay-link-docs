@@ -1,0 +1,94 @@
+---
+title: "실습: AI Server 파일·Git·작업 제어"
+description: "Claude·ChatGPT로 파일 왕복·Git·stdin·출력 조회·중지 따라 하기."
+---
+
+# Claude·ChatGPT로 Server 파일·Git·비동기 작업 실행
+
+**결과:** 전용 실습 디렉터리에서 파일 생성/읽기/삭제, 로컬 Git commit, stdin/EOF·출력·중지를 수행합니다. [MCP 연결](/ko/guides/mcp-clients)을 먼저 완료하세요. 이 실습은 **server:self**용 Native MCP 전체 제어 프로필이 필요하며 일반 Agent 작업과 구분됩니다.
+
+## 1단계 — 운영자가 실행 계정·작업 공간 준비
+
+운영자가 기존 비root 계정 **drlink-operator**와 그 계정이 소유한 **/srv/drlink-mcp-lab**을 준비했다고 가정합니다. 계정·디렉터리는 실제 환경 값으로 바꿉니다. 최소 권한 실습에는 root가 필요하지 않습니다. **command-exec는 해당 OS 계정 권한을 부여하며 cwd 밖 접근을 막는 샌드박스가 아닙니다.**
+
+Native MCP 후보를 이미 설치·설정했다면 다시 배포하지 마세요. 신규 설정은 해당 후보의 검토된 operator helper를 사용합니다. 아래는 **검사만** 수행하는 Server 셸 예제이며 소스 디렉터리·HEAD를 실제 검증 후보로 지정합니다.
+
+~~~bash
+python3 tools/operator-native-mcp-full-control.py --check   --source /path/to/verified-source   --head e4f66183fae6bd13a1611e809182838612b4fdc1   --exec-user drlink-operator --allowed-root /srv/drlink-mcp-lab
+~~~
+
+운영자는 출력·계정·백업 계획을 검토한 후 같은 helper의 **--apply**를 권한 있는 Server 콘솔에서 실행합니다. MCP bridge가 재시작되며 영수증 경로를 보관해야 합니다. 전체 제품 릴리스/설치 명령이 아니라 **개발 후보의 MCP 전용 배포 helper**입니다. root를 선택할 때만 --allow-root가 추가로 필요합니다. [후보 소스](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py)를 확인하세요.
+
+## 2단계 — 별도 identity와 Rule을 검증
+
+이미 OAuth로 연결한 전용 identity **mcp-lab**을 사용한다고 가정합니다. 실제 클라이언트 identity로 바꾸세요. **Server REPL**:
+
+~~~text
+set permission-object mcp-lab-ops permissions host-info,process-read,file-read,file-write,command-exec
+set ai-access mcp-lab-server mode whitelist source mcp-lab destination server:self permission mcp-lab-ops paths '/srv/drlink-mcp-lab/**' enabled
+set ai-access enabled
+test ai-access source mcp-lab destination server:self permission command-exec path /srv/drlink-mcp-lab
+test ai-access source mcp-lab destination server:self permission file-read path /srv/drlink-mcp-lab/note.txt
+test ai-access source mcp-lab destination server:self permission file-read path /etc/shadow
+show ai-access
+~~~
+
+예상: 첫 두 정책 테스트 ALLOW, 마지막은 다른 Rule이 권한을 넓히지 않는 한 DENY. 파일이 실제 존재하는지는 별도입니다. 업로드/다운로드가 필요하면 file-upload/file-download를 추가 검토합니다. 그룹 전체에 grant하지 말고 실제 대상과 경로를 확인하세요.
+
+## 3단계 — 파일 왕복 실습
+
+아래 JSON은 MCP 도구 **이름과 인자**이며 셸에 붙이는 명령이 아닙니다. Claude 또는 ChatGPT에 이 도구 호출을 요청합니다. 파일이 이미 있다면 다른 고유 이름을 사용하세요.
+
+~~~text
+DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
+실습 디렉터리 /srv/drlink-mcp-lab에 note.txt가 없는지 확인하고,
+새 파일에 DRLink MCP tutorial을 저장한 뒤 읽어서 동일한지 확인해줘.
+다른 파일은 바꾸지 마.
+~~~
+
+~~~json
+{"tool":"server_write_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt","content":"DRLink MCP tutorial"}}
+{"tool":"server_read_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt"}}
+~~~
+
+결과가 base64를 포함하면 반환 스키마에 따라 디코딩하고 원문과 비교합니다. 실패한 도구 호출을 성공한 파일 작업으로 기록하지 마세요.
+
+## 4단계 — 로컬 Git 예제
+
+운영자가 디렉터리 소유권을 확인하고 **아직 Git 저장소가 아닌 빈 실습 공간**을 선택합니다. 아래 init은 그 공간에만 실행합니다. 이후 만든 note.txt만 추가합니다. 실제 저장소·글로벌 Git 설정을 바꾸지 않습니다.
+
+~~~json
+{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","init"]}}
+{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","add","note.txt"]}}
+{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","-c","user.name=DRLink Lab","-c","user.email=lab@example.net","commit","-m","Add MCP tutorial note"]}}
+{"tool":"server_git","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["git","log","-1","--oneline"]}}
+~~~
+
+각 작업의 완료 state와 exit_status=0, 마지막 commit을 확인합니다. 원격 push는 실제 remote·네트워크·그 OS 계정의 Git 인증 및 사용자 승인이 추가로 필요합니다. MCP OAuth는 GitHub 자격 증명이 아닙니다. 기존 검증의 push 대상은 별도 로컬 bare remote였으므로 GitHub push 성공으로 표시하지 않습니다.
+
+## 5단계 — 비동기 stdin·EOF와 커서 출력
+
+~~~json
+{"tool":"server_run","arguments":{"cwd":"/srv/drlink-mcp-lab","argv":["python3","-u","-c","import sys; print('READY', flush=True); line=sys.stdin.readline(); print('ECHO:'+line.strip(), flush=True)"],"timeout_seconds":60,"wait_ms":1000}}
+~~~
+
+**running**, READY와 **job_id**를 확인하고 60초 안에 다음 호출을 합니다. 실제 반환 job_id로 바꾸세요. READY를 받았을 때 반환된 stdout.next_cursor를 다음 poll에 사용합니다(예제에서는 6). 시스템이 Python을 다른 경로로 설치했다면 해당 argv를 사용합니다.
+
+~~~json
+{"tool":"server_job_input","arguments":{"job_id":"<returned-job-id>","data":"DRLink documentation sample\n","eof":true}}
+{"tool":"server_job_poll","arguments":{"job_id":"<returned-job-id>","stdout_cursor":6,"stderr_cursor":0,"wait_ms":1000}}
+~~~
+
+예상: accepted_bytes=28, input_closed=true, ECHO:DRLink documentation sample, 최종 exit_status=0. 아직 running이면 새 next_cursor로 이어 읽습니다. 타임아웃이면 빠르게 새 전용 작업을 만들어 재시도하고 기존 작업의 실패 기록을 보존하세요.
+
+## 6단계 — 본인이 만든 작업 중지·정리
+
+~~~json
+{"tool":"server_exec","arguments":{"cwd":"/srv/drlink-mcp-lab","command":"sleep 30","timeout_seconds":45,"wait_ms":0}}
+{"tool":"server_job_stop","arguments":{"job_id":"<sleep-job-id>"}}
+{"tool":"server_delete_file","arguments":{"path":"/srv/drlink-mcp-lab/note.txt"}}
+~~~
+
+중지 후 completed와 종료 신호에 따른 음수 exit_status가 나올 수 있습니다. exit 0 정상 완료와 구분하세요. **이 실습에서 반환된 job_id만** 중지합니다. 실습 저장소 .git 정리는 소유 운영자가 경로를 확인한 뒤 처리하며 다른 저장소는 지우지 않습니다.
+
+Server REPL의 **show ai-access-log identity mcp-lab**로 작업을 확인합니다. 끝난 뒤 Rule을 유지할 필요가 없으면 **unset ai-access mcp-lab-server**의 영향도를 검토하고 삭제합니다. 다른 사용자가 쓰는 전체 AI Access나 인증서를 초기화하지 마세요.

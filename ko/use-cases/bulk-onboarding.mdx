@@ -89,3 +89,9 @@ show managed-host-group branches
 ## 장애·정리
 
 등록이 실패하면 **show enrollments**, 만료·취소 여부, Agent의 **system diagnostics**와 Server 연결을 점검합니다. 이미 소비된 코드는 새 등록에 사용할 수 없습니다. 그룹 할당만 해제하려면 **unset managed-host branch-b group branches**를 사용합니다. 전체 장치 **unset managed-host branch-b**는 별도 신원·서비스 철회이므로 그룹 정리 목적으로 실행하면 안 됩니다.
+
+## 최신 동작 확인 — 2026-10-28
+
+UTF-8 CSV 헤더는 label,ssh_user,note이며 빈 ssh_user는 관리 전용 등록입니다. Zero-Touch는 DNS 없이 검증된 숫자 IP/Private CA 짧은 명령을 사용할 수 있고 준비 조건 실패 시 티켓을 발급하면 안 됩니다. Managed Host Group은 인벤토리 메타데이터이며 Network Group 정책 멤버십과 별개입니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

@@ -89,3 +89,9 @@ A **Managed Host Group** organizes registered host inventory. It is **not** a Ne
 ## Verify / recover
 
 Check that both actual hosts appear in the group, their immutable Managed Host identities are preserved and no unintended Remote Service was automatically published. If enrollment fails, inspect **show enrollments**, expiration/revocation state and Agent **system diagnostics**; do not log or disclose secret ticket material. To adjust only metadata, use **unset managed-host branch-b group branches**. Deleting a Managed Host is a separate irreversible trust/endpoint retirement and requires explicit review.
+
+## Current behavior check — 2026-10-28
+
+The UTF-8 CSV header is label,ssh_user,note. A blank ssh_user means management-only enrollment. Zero-Touch can use a verified numeric-IP/private-CA compact launcher without DNS; failed prerequisites must not issue a ticket. Managed Host Group membership is inventory metadata, separate from Network Group policy membership.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

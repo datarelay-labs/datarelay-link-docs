@@ -86,3 +86,9 @@ From a second, unapproved source, test access and confirm the **policy denial**,
 - **Browser timeout:** check external firewall, reserved port, Agent connectivity and target 10.40.10.8:8443.
 - **Unexpected ALLOW:** inspect all matching Remote Access rules and their effective mode; **set remote-access disabled** is **ALLOW ALL**, not a safe emergency deny.
 - **Retire console:** remove **firewall-ui** on the owning Agent after impact review, leaving unrelated LAN services untouched.
+
+## Current behavior check — 2026-10-28
+
+The application keeps its own TLS and login. Verify its certificate hostname at the allocated public endpoint without skipping certificate checks. After a reconnect, synchronize on the owning Agent and check the current Remote Service generation before declaring recovery.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

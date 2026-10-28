@@ -95,3 +95,9 @@ ssh -p <예약-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
 ## 장애·롤백 주의
 
 접속 불가 시 실제 NAT 출발 IP, Service Object, Managed Host, Agent 연결, 모든 Rule을 확인합니다. **unset remote-access policy**는 초기 **ALLOW**로 돌아가며 **set remote-access disabled** 또한 **ALLOW ALL**입니다. 검토 없이 둘 중 하나를 응급 롤백으로 사용하지 말고 승인된 이전 정책/백업에 근거해 변경하세요.
+
+## 최신 동작 확인 — 2026-10-28
+
+부정 테스트 전에 모든 활성 Rule과 참조 Group을 확인하세요. Remote Access enforcement disabled와 정책 초기화는 ALLOW ALL/초기 ALLOW이므로 차단 검증 방법이 아닙니다. Group 정책 테스트는 확장한 모든 조합이 허용돼야 전체 ALLOW입니다.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

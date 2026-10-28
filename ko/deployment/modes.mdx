@@ -28,3 +28,7 @@ Remote Service endpoint는 설정된 endpoint pool에서 별도로 할당됩니�
 배포 모드를 바꾸더라도 v2.4 control-plane DB, Managed Host/Agent identity, Remote Service, endpoint 예약, 정책, 신뢰 정보는 그대로 유지되어야 합니다.
 
 설치 프로그램은 cloud security group, 외부 firewall/NAT, DNS provider record를 자동 변경하지 않습니다.
+
+## MCP를 사용하는 경우
+
+공개 원격 MCP는 **single443** 전용입니다. Direct의 TCP/443 Relay 제어는 HTTPS MCP가 아닙니다. [Claude / ChatGPT 연결 가이드](/ko/guides/mcp-clients)를 따르세요. 배포 모드를 바꾸면 연결이 끊길 수 있으므로 동일한 불변 소스의 installer와 검증한 백업으로 계획된 전환을 수행합니다.

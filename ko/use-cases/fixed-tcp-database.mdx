@@ -83,3 +83,9 @@ nc -vz <DRLink-공인-주소> <할당된-Fixed-TCP-공인-포트>
 ## 장애/서비스 제거
 
 실패하면 Server 정책, Agent **system diagnostics**, DB 서비스 리스너, 외부 포트 개방을 각각 점검합니다. DB 자체 인증/TLS는 그대로 필요합니다. 서비스 철회 시 소유 Agent에서 **unset remote-service branch-oracle**로 해당 Remote Service만 제거합니다. 운영 DB 세션 중단 가능성을 검토한 뒤 실행하세요.
+
+## 최신 동작 확인 — 2026-10-28
+
+Fixed TCP는 별도 Server 엔드포인트 풀을 쓰는 Service Object 하위 유형입니다. 기존 Remote Service를 표준 TCP/Fixed TCP 풀 사이에서 제자리 변경할 수 없습니다. 공개 포트가 DB 대상 포트와 같다고 가정하지 말고 show remote-service branch-oracle 결과를 사용하세요.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)

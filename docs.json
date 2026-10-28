@@ -82,6 +82,7 @@
               "use-cases/ubuntu-updates",
               "use-cases/github-egress",
               "use-cases/ai-readonly",
+              "use-cases/ai-server-control",
               "use-cases/bulk-onboarding",
               "use-cases/configuration-bundle",
               "use-cases/backup-recovery"
@@ -119,7 +120,10 @@
             "group": "AI Access",
             "icon": "robot",
             "pages": [
-              "guides/ai-access"
+              "guides/ai-access",
+              "guides/mcp-clients",
+              "reference/mcp-tools",
+              "reference/mcp-validation"
             ]
           },
           {
@@ -201,6 +205,7 @@
               "ko/use-cases/ubuntu-updates",
               "ko/use-cases/github-egress",
               "ko/use-cases/ai-readonly",
+              "ko/use-cases/ai-server-control",
               "ko/use-cases/bulk-onboarding",
               "ko/use-cases/configuration-bundle",
               "ko/use-cases/backup-recovery"
@@ -238,7 +243,10 @@
             "group": "AI Access",
             "icon": "robot",
             "pages": [
-              "ko/guides/ai-access"
+              "ko/guides/ai-access",
+              "ko/guides/mcp-clients",
+              "ko/reference/mcp-tools",
+              "ko/reference/mcp-validation"
             ]
           },
           {

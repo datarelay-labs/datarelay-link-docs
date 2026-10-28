@@ -82,3 +82,9 @@ A successful TCP probe only proves a socket handshake. Complete the actual proto
 ## Recovery and teardown
 
 If connection fails, check Server policy and the gateway's **system diagnostics**, the target listener and external port mapping. The host's database encryption and account controls remain mandatory. Retire only this service with **unset remote-service branch-oracle** on the owning gateway Agent after reviewing DB-client interruptions; do not retire the whole Managed Host.
+
+## Current behavior check — 2026-10-28
+
+Fixed TCP remains a Service Object subtype using its separate Server endpoint pool. An existing Remote Service cannot switch across standard TCP/Fixed TCP pools in place. Read the allocated endpoint from show remote-service branch-oracle, rather than assuming the public port equals the database target port.
+
+[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)

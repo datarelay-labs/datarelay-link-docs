@@ -55,7 +55,7 @@ These are **operator playbooks**, not feature lists. Each page states which mach
 *Figure 2. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
 
 
-1. Complete [Server installation](/getting-started/server-installation), [deployment mode](/deployment/modes), and [firewall/NAT](/deployment/firewall-nat) using a supported product artifact. Enroll an Agent only for Remote Access or AI Access; agentless HTTP(S) Internet Access does not require one on the protected application host.
+1. Complete [Server installation](/getting-started/server-installation), [deployment mode](/deployment/modes), and [firewall/NAT](/deployment/firewall-nat) using a supported product artifact. Enroll an Agent for Remote Access or Managed Host AI Access; Server-self MCP needs no Agent; agentless HTTP(S) Internet Access does not require one on the protected application host.
 2. Open a Server terminal and verify role, channel, exact Source HEAD and health:
 
 ~~~bash
@@ -72,3 +72,13 @@ sudo drlink system diagnostics
 ## When something differs
 
 Run **help commands**, **system diagnostics** and the corresponding **show** / **test** command on the actual installed v2.4 exact HEAD. Review [CLI reference](/drlink/cli-reference), [troubleshooting](/troubleshooting/overview) and [release status](/reference/release-status). Stop if your CLI rejects the documented command; do not invent hidden or legacy syntax.
+
+## New AI workflows — 2026-10-28
+
+| Goal | Follow |
+| --- | --- |
+| Connect Claude and ChatGPT over remote MCP | [HTTPS, OAuth and discovery](/guides/mcp-clients) |
+| Operate Server-local files, Git and jobs | [Server control lab](/use-cases/ai-server-control) |
+| Check verified scope and candidate | [MCP validation status](/reference/mcp-validation) |
+
+Server-self operations need separate authorization but no Agent. AI operations on Managed Hosts need a trusted Agent. Existing images retain their stated October capture provenance; new MCP examples use tool arguments and actual result receipts.

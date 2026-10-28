@@ -131,3 +131,9 @@ system audit
 - **시간 초과:** 공인 포트 방화벽/NAT, Agent 터널, 서버 정책, 대상 22번 포트 검사
 - **Permission denied:** 대상 SSH 사용자·키·sshd 권한 검사
 - **서비스 제거:** 소유 Agent에서 **unset remote-service support-ssh** 실행 전 포트 예약과 연결 중단 영향을 확인합니다. 단일 서비스 때문에 전체 Managed Host를 삭제하지 마세요.
+
+## 최신 동작 확인 — 2026-10-28
+
+재연결 후 소유 Agent에서 system synchronize와 show remote-service support-ssh를 확인합니다. HEALTHY는 현재 런타임 검증이 필요하며 저장된 플래그/heartbeat만으로 판단하지 않습니다. 복구 후 실제 SSH를 다시 연결하고 DEGRADED를 지우려는 목적으로 재등록하지 마세요.
+
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
