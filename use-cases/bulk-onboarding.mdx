@@ -88,7 +88,7 @@ A **Managed Host Group** organizes registered host inventory. It is **not** a Ne
 
 ## Verify / recover
 
-Check that both actual hosts appear in the group, their immutable Managed Host identities are preserved and no unintended Remote Service was automatically published. If enrollment fails, inspect **show enrollments**, expiration/revocation state and Agent **system diagnostics**; do not log or disclose secret ticket material. To adjust only metadata, use **unset managed-host branch-b group branches**. Deleting a Managed Host is a separate irreversible trust/endpoint retirement and requires explicit review.
+Check that both actual hosts appear in the group, their immutable Managed Host identities are preserved and no unintended Remote Service was automatically published. If enrollment fails, inspect `show enrollments`, expiration/revocation state and Agent `system diagnostics`; do not log or disclose secret ticket material. To adjust only metadata, use `unset managed-host branch-b group branches`. Deleting a Managed Host is a separate irreversible trust/endpoint retirement and requires explicit review.
 
 ## Current behavior check — 2026-10-28
 

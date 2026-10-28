@@ -17,7 +17,7 @@ Keep an already working installation. First-time setup uses the reviewed candida
 python3 tools/operator-native-mcp-full-control.py --check   --source /path/to/verified-source   --head e4f66183fae6bd13a1611e809182838612b4fdc1   --exec-user drlink-operator --allowed-root /srv/drlink-mcp-lab
 ~~~
 
-After reviewing the plan/account/backup, the operator uses the helper's **--apply** on an authorized Server console. It restarts only the MCP bridge and records a rollback receipt. This is a **development-candidate MCP rollout helper**, not a product release installer. Selecting root additionally needs --allow-root. Review the [pinned helper source](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py).
+After reviewing the plan/account/backup, the operator uses the helper's `--apply` on an authorized Server console. It restarts only the MCP bridge and records a rollback receipt. This is a **development-candidate MCP rollout helper**, not a product release installer. Selecting root additionally needs `--allow-root`. Review the [pinned helper source](https://github.com/datarelay-labs/datarelay-link/blob/e4f66183fae6bd13a1611e809182838612b4fdc1/tools/operator-native-mcp-full-control.py).
 
 ## Step 2 — verify the dedicated identity and rule
 
@@ -90,4 +90,4 @@ Expect accepted_bytes=28, input_closed=true, ECHO:DRLink documentation sample an
 
 A stopped job can report completed with a negative signal exit status, distinct from normal exit 0. Stop **only the returned tutorial job**. Let the owning operator review/remove the disposable .git directory; never remove an unrelated repository.
 
-Review **show ai-access-log identity mcp-lab** in Server REPL. Retire the Rule with reviewed **unset ai-access mcp-lab-server** when no longer needed. Do not reset shared AI Access or certificates.
+Review `show ai-access-log identity mcp-lab` in Server REPL. Retire the Rule with reviewed `unset ai-access mcp-lab-server` when no longer needed. Do not reset shared AI Access or certificates.

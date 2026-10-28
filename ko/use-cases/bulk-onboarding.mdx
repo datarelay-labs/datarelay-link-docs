@@ -9,7 +9,7 @@ description: "일회용 등록 정보를 안전하게 발급하고 Managed Host 
 
 ## 1단계 — 지점별 준비
 
-각 호스트에서 DRLink Server의 등록·관리 엔드포인트로 아웃바운드 연결할 수 있는지 확인합니다. Agent 설치 권한과 [Linux](/ko/getting-started/linux-client), [Windows](/ko/getting-started/windows-client), [macOS](/ko/getting-started/macos-client) 별 요구사항을 확인하세요. 서버 설치 버전은 **sudo drlink system version**으로 확인하며 검증된 v2.4 후보를 사용합니다.
+각 호스트에서 DRLink Server의 등록·관리 엔드포인트로 아웃바운드 연결할 수 있는지 확인합니다. Agent 설치 권한과 [Linux](/ko/getting-started/linux-client), [Windows](/ko/getting-started/windows-client), [macOS](/ko/getting-started/macos-client) 별 요구사항을 확인하세요. 서버 설치 버전은 `sudo drlink system version`으로 확인하며 검증된 v2.4 후보를 사용합니다.
 
 ## 2단계 — 일괄 등록 발급
 
@@ -88,7 +88,7 @@ show managed-host-group branches
 
 ## 장애·정리
 
-등록이 실패하면 **show enrollments**, 만료·취소 여부, Agent의 **system diagnostics**와 Server 연결을 점검합니다. 이미 소비된 코드는 새 등록에 사용할 수 없습니다. 그룹 할당만 해제하려면 **unset managed-host branch-b group branches**를 사용합니다. 전체 장치 **unset managed-host branch-b**는 별도 신원·서비스 철회이므로 그룹 정리 목적으로 실행하면 안 됩니다.
+등록이 실패하면 `show enrollments`, 만료·취소 여부, Agent의 `system diagnostics`와 Server 연결을 점검합니다. 이미 소비된 코드는 새 등록에 사용할 수 없습니다. 그룹 할당만 해제하려면 `unset managed-host branch-b group branches`를 사용합니다. 전체 장치 `unset managed-host branch-b`는 별도 신원·서비스 철회이므로 그룹 정리 목적으로 실행하면 안 됩니다.
 
 ## 최신 동작 확인 — 2026-10-28
 

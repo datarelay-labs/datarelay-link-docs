@@ -48,7 +48,7 @@ set permission-object exec-check permissions command-exec
 show permission-objects
 ~~~
 
-The **set ai-identity** wizard establishes the identity definition. For an interactive AI client, configure the supported OAuth Authorization Code authentication flow. Example CLI authentication-mode setting, subject to the actual client/Server contract:
+The `set ai-identity` wizard establishes the identity definition. For an interactive AI client, configure the supported OAuth Authorization Code authentication flow. Example CLI authentication-mode setting, subject to the actual client/Server contract:
 
 ~~~text
 system credential configure ai-identity auditor-ai authentication oauth
@@ -114,7 +114,7 @@ The end-to-end result is only validated once the **actual external AI client** c
 
 ## Recovery and least privilege
 
-A failure may be OAuth authentication, external TLS, client capability, Agent trust or policy. Diagnose each boundary individually. Avoid broad permissions, file access without rule-bound **paths**, and unnecessary command execution. Revoking a credential with **system credential revoke ai-identity auditor-ai** interrupts that identity; use only when the security owner intends it. To retire the rule, review effects before **unset ai-access auditor-host**; do not remove unrelated identities or MCP certificates.
+A failure may be OAuth authentication, external TLS, client capability, Agent trust or policy. Diagnose each boundary individually. Avoid broad permissions, file access without rule-bound **paths**, and unnecessary command execution. Revoking a credential with `system credential revoke ai-identity auditor-ai` interrupts that identity; use only when the security owner intends it. To retire the rule, review effects before `unset ai-access auditor-host`; do not remove unrelated identities or MCP certificates.
 
 ## Current behavior check — 2026-10-28
 

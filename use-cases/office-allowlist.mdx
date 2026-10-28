@@ -84,7 +84,7 @@ Expected: **ALLOW** for the office, **DENY** for the unapproved source *if no ot
 
 ## Step 5 — test real traffic from both networks
 
-Use the reserved SSH public port printed by **show remote-service** on the Agent. From the actual office network:
+Use the reserved SSH public port printed by `show remote-service` on the Agent. From the actual office network:
 
 ~~~bash
 ssh -p <reserved-public-port> <actual-os-user>@<drlink-public-host>
@@ -94,7 +94,7 @@ Repeat from an independently unapproved source. Confirm an explicit policy DENY 
 
 ## Recovery and safety
 
-If the office cannot reach the service, verify the NAT-visible office IP, Service Object name, target Managed Host, tunnel health and matched Rules with **test remote-access** / **system audit**. To change access safely, edit or replace the Rule under a maintenance plan. **unset remote-access policy** resets to default ALLOW; **set remote-access disabled** is also ALLOW ALL. Do not use either to repair a failed restriction unless a deliberately approved broad-access change is intended.
+If the office cannot reach the service, verify the NAT-visible office IP, Service Object name, target Managed Host, tunnel health and matched Rules with `test remote-access` / `system audit`. To change access safely, edit or replace the Rule under a maintenance plan. `unset remote-access policy` resets to default ALLOW; `set remote-access disabled` is also ALLOW ALL. Do not use either to repair a failed restriction unless a deliberately approved broad-access change is intended.
 
 ## Current behavior check — 2026-10-28
 

@@ -39,7 +39,7 @@ Confirm role **DRLink Server** and the correct v2.4 development/candidate Source
 *Figure 2. On the Server select 2 Create Service Object to register protocol and port. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
 
 
-**Server REPL** (start with **sudo drlink**):
+**Server REPL** (start with `sudo drlink`):
 
 ~~~text
 set service-object ssh type tcp port 22
@@ -98,7 +98,7 @@ Expected: an allocated/reserved Server endpoint and a **HEALTHY** Remote Service
 *Figure 5. Real E2E service detail with HEALTHY and reserved endpoint; public address is masked. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
 
 
-On the **outside workstation**, take the public host and reserved port from **show remote-service support-ssh**:
+On the **outside workstation**, take the public host and reserved port from `show remote-service support-ssh`:
 
 ~~~bash
 ssh -p <reserved-public-port> <existing-os-user>@<public-drlink-host>
@@ -126,10 +126,10 @@ Check that only the intended service is published and that the Remote Access pol
 
 ## Troubleshooting and removal
 
-- **DEGRADED:** on the Agent run **system diagnostics**, then **system synchronize**, then **show remote-service support-ssh**. Inspect target SSH on 127.0.0.1:22 and the Agent's outbound firewall.
+- **DEGRADED:** on the Agent run `system diagnostics`, then `system synchronize`, then `show remote-service support-ssh`. Inspect target SSH on 127.0.0.1:22 and the Agent's outbound firewall.
 - **SSH timeout:** check public port mapping/security group and policy. The product does not open external firewalls.
 - **Permission denied:** troubleshoot the target OS SSH account/key, not DRLink enrollment.
-- **Remove access:** on the owning **Agent REPL**, run **unset remote-service support-ssh** after reviewing the impact. Removal is not the same as disabling or pausing; endpoint reservation semantics differ. Do not retire the entire Managed Host to remove one SSH service.
+- **Remove access:** on the owning **Agent REPL**, run `unset remote-service support-ssh` after reviewing the impact. Removal is not the same as disabling or pausing; endpoint reservation semantics differ. Do not retire the entire Managed Host to remove one SSH service.
 
 ## Current behavior check — 2026-10-28
 

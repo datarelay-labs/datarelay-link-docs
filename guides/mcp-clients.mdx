@@ -42,7 +42,7 @@ curl -i -X POST https://mcp.example.net/mcp   -H 'Content-Type: application/json
 
 ## Step 2 — prepare identity and authorization
 
-Use **set ai-identity chatgpt-lab** or **set ai-identity claude-lab** on the Server. A name or OAuth login alone does not grant authorization. Prefer distinct identities for the two clients.
+Use `set ai-identity chatgpt-lab` or `set ai-identity claude-lab` on the Server. A name or OAuth login alone does not grant authorization. Prefer distinct identities for the two clients.
 
 The first approved owner may receive all Managed Host MCP capabilities through **mcp-owner-full-access**. Inspect existing rules before describing an identity as read-only. Follow [read-only access](/use-cases/ai-readonly) or the separately authorized [Server control lab](/use-cases/ai-server-control).
 
@@ -62,7 +62,7 @@ Verify the fresh pending ID and client shown in the browser. Run its displayed c
 sudo drlink system credential approve-oauth <PENDING-ID> claude-lab
 ~~~
 
-Bind ChatGPT's request to chatgpt-lab. A previously bound client may not need an identity argument. Return to the browser to finish. Reject an unwanted request with **system credential deny-oauth &lt;PENDING-ID&gt;**. If the request is not found, check the Server and expiry before retrying. Never paste tokens into chat.
+Bind ChatGPT's request to chatgpt-lab. A previously bound client may not need an identity argument. Return to the browser to finish. Reject an unwanted request with `system credential deny-oauth <PENDING-ID>`. If the request is not found, check the Server and expiry before retrying. Never paste tokens into chat.
 
 ## Step 6 — verify actual allowed and denied calls
 
@@ -74,7 +74,7 @@ For the one host I select, show get_system_info.
 Do not execute commands or change files.
 ~~~
 
-With separately granted Server-self access, **get_server** returns server:self. An empty Managed Host list does not imply Server-self is unavailable. Use the [read-only lab](/use-cases/ai-readonly) for a genuine command-exec denial, then inspect **show ai-access-log identity &lt;IDENTITY&gt;**.
+With separately granted Server-self access, **get_server** returns server:self. An empty Managed Host list does not imply Server-self is unavailable. Use the [read-only lab](/use-cases/ai-readonly) for a genuine command-exec denial, then inspect `show ai-access-log identity <IDENTITY>`.
 
 ## Missing tools and troubleshooting
 

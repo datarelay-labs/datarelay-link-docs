@@ -46,7 +46,7 @@ set permission-object exec-check permissions command-exec
 show permission-objects
 ~~~
 
-**set ai-identity**의 Guided Wizard에서 실제 인증에 필요한 설정을 구성합니다. 대화형 AI는 지원되는 **OAuth Authorization Code** 인증을 사용합니다. 서버 계약에 맞는 OAuth 방식 지정:
+`set ai-identity`의 Guided Wizard에서 실제 인증에 필요한 설정을 구성합니다. 대화형 AI는 지원되는 **OAuth Authorization Code** 인증을 사용합니다. 서버 계약에 맞는 OAuth 방식 지정:
 
 ~~~text
 system credential configure ai-identity auditor-ai authentication oauth
@@ -112,7 +112,7 @@ system diagnostics
 
 ## 장애/권한 철회
 
-실패하면 TLS·OAuth·클라이언트 플랜·Agent 신뢰·AI Access Rule을 서로 구분해 점검합니다. 파일 접근에는 경로 제한 **paths**가 필요하며 읽기 권한에 명령 실행을 포함하지 않습니다. **system credential revoke ai-identity auditor-ai**는 기존 인증을 끊는 보안 작업이므로 의도한 때만 수행하세요. Rule 제거는 **unset ai-access auditor-host** 영향 검토 후 실행하며 다른 ID나 인증서를 삭제하지 않습니다.
+실패하면 TLS·OAuth·클라이언트 플랜·Agent 신뢰·AI Access Rule을 서로 구분해 점검합니다. 파일 접근에는 경로 제한 **paths**가 필요하며 읽기 권한에 명령 실행을 포함하지 않습니다. `system credential revoke ai-identity auditor-ai`는 기존 인증을 끊는 보안 작업이므로 의도한 때만 수행하세요. Rule 제거는 `unset ai-access auditor-host` 영향 검토 후 실행하며 다른 ID나 인증서를 삭제하지 않습니다.
 
 ## 최신 동작 확인 — 2026-10-28
 
