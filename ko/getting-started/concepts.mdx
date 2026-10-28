@@ -44,3 +44,13 @@ Fixed TCP의 Service Object 포트는 **목적지 TCP 포트**입니다. 외부�
 ## Remote Service 상태
 
 HEALTHY, DEGRADED, DISABLED를 사용합니다. 일시적인 대상 연결, Server 연결, 동기화 문제 때문에 유효한 설정을 자동으로 삭제하지는 않습니다.
+
+## 정책 모드와 기본 동작
+
+| 정책 | 지원 모드 | 정책 없음 | Enforcement disabled |
+| --- | --- | --- | --- |
+| Remote Access | BLACKLIST / WHITELIST | ALLOW | ALLOW ALL |
+| Internet Access | WHITELIST 전용 | DENY | DENY ALL |
+| AI Access | WHITELIST 전용 | DENY | DENY ALL |
+
+WHITELIST는 매칭 허용 Rule이 없으면 DENY입니다. BLACKLIST는 Remote Access에서만 지원하며 매칭하면 DENY, 미일치면 ALLOW입니다. Rule 순서와 Rule별 action은 없습니다. 정책 초기화는 Mode/Rule을 삭제하고 각 정책의 초기 상태로 돌아갑니다. AI 인증은 정책 상태와 별도로 항상 필요합니다.

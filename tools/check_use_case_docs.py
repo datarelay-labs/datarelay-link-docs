@@ -83,6 +83,23 @@ for p in pages:
         if m!='whitelist':errors.append('Non-WHITELIST policy '+str(p)+':'+m)
 
 
+# Authoritative landing/concept/security/lifecycle pages must agree with each plane.
+for prefix in ('', 'ko/'):
+    for name in ('getting-started/concepts', 'reference/architecture', 'operations/lifecycle', 'security/overview'):
+        page = root/(prefix+name+'.mdx')
+        text = page.read_text()
+        expected = {
+            'Remote Access': ('BLACKLIST', 'ALLOW ALL'),
+            'Internet Access': ('WHITELIST', 'DENY ALL'),
+            'AI Access': ('WHITELIST', 'DENY ALL'),
+        }
+        for plane, required in expected.items():
+            rows = [line for line in text.splitlines() if line.startswith('| '+plane+' |')]
+            if len(rows) != 1 or not all(value in rows[0] for value in required):
+                errors.append('Inconsistent policy matrix '+str(page)+' '+plane)
+        if 'same BLACKLIST/WHITELIST' in text or 'makes policy enforcement effectively ALLOW ALL' in text:
+            errors.append('Legacy shared-policy semantics '+str(page))
+
 # Real CLI capture image coverage: no fabricated Web UI and no broken media assets.
 import struct
 image_dir=root/'images/cli-captures'
