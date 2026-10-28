@@ -5,7 +5,7 @@ description: "Public TLS, OAuth consent and real tool calls from both clients."
 
 # Connect Claude and ChatGPT to DataRelay Link
 
-**Real remote MCP connection and tool calls have been tested with both Claude and ChatGPT.** Claude discovered 20 tools and completed six command/file tasks; ChatGPT exercised commands, files, Git and asynchronous jobs. See [builds and validation scope](/reference/mcp-validation). This guide targets the v2.4 development Native MCP extension.
+**Real remote MCP connection and tool calls have been tested with both Claude and ChatGPT.** Claude discovered 20 tools and completed six command/file tasks; ChatGPT exercised commands, files, Git and asynchronous jobs. See [client compatibility](/reference/mcp-validation). Follow the steps below on your installed Server.
 
 ## Step 1 — verify the public origin
 
@@ -78,6 +78,6 @@ With separately granted Server-self access, **get_server** returns server:self. 
 
 ## Missing tools and troubleshooting
 
-This Native MCP candidate advertises **20 tools**. If server_exec / server_job_poll / server_job_input / server_job_stop are missing, inspect the client's saved action snapshot. Supported workspace admin Actions Refresh can review/enable new tools. Personal apps may have no Refresh control; repeated OAuth approval will not refresh a frozen catalog. Where supported, scan a new test connection while retaining the working connection until verified.
+DataRelay Link exposes **20 tools**. If server_exec / server_job_poll / server_job_input / server_job_stop are missing, inspect the client's saved action snapshot. Supported workspace admin Actions Refresh can review/enable new tools. Personal apps may have no Refresh control; repeated OAuth approval will not refresh a frozen catalog. Where supported, scan a new test connection while retaining the working connection until verified.
 
-Separate **401** authentication, **AI Access DENY** identity/target/permission/paths, **executor disabled** profile, and OS-account permission errors. MCP grants do not override the AI client's own approvals or security restrictions.
+For **401**, check authentication. For **AI Access DENY**, inspect identity, target, permission and paths. For OS permission errors, check the execution account. If a runtime function is unavailable, use `system diagnostics mcp` and the product update workflow. The AI client's own approvals and security controls still apply.

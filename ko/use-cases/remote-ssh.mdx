@@ -11,16 +11,16 @@ description: "Linux Agent를 등록하고 필요한 SSH 포트 하나만 외부�
 
 ## 준비
 
-- [서버 설치](/ko/getting-started/server-installation) 완료, v2.4 검증 아티팩트와 외부 방화벽 경로 확보
+- [서버 설치](/ko/getting-started/server-installation) 완료, Server 설치 프로그램와 외부 방화벽 경로 확보
 - 내부 호스트에서 DRLink Server로 아웃바운드 통신 가능
 - 내부 호스트에 **이미 동작하는 sshd와 SSH 사용자 계정/키** 존재. DRLink는 계정이나 sshd를 생성하지 않습니다.
 - 원격 접속을 외부에 공개하기 전에 필요하면 [접근 허용 IP 제한](/ko/use-cases/office-allowlist)을 먼저 설정하세요. **Remote Access의 초기 No Policy 상태는 ALLOW**입니다.
 
 ## 1단계 — 서버 상태 확인
 
-![실제 Data Relay Link CLI 캡처 — 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다.](/images/cli-captures/server-version.png)
+![실제 Data Relay Link CLI 캡처 — 제품 버전 조회: 설치 버전과 DRLink Server 역할을 확인합니다.](/images/cli-captures/server-version.png)
 
-*그림 1. 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 제품 버전 조회: 설치 버전과 DRLink Server 역할을 확인합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **DRLink Server 셸:**
@@ -31,13 +31,13 @@ sudo drlink show status
 sudo drlink system diagnostics
 ~~~
 
-**확인:** Role이 **DRLink Server**이고 설치 채널/버전/Source HEAD가 의도한 v2.4 후보인지 검증합니다.
+**확인:** Role이 **DRLink Server**이고 서비스 상태가 정상인지 확인합니다.
 
 ## 2단계 — SSH Service Object 생성
 
 ![실제 Data Relay Link CLI 캡처 — Server에서 2번 Create Service Object를 선택하여 프로토콜과 목적지 포트를 정의합니다.](/images/cli-captures/server-service-object-menu.png)
 
-*그림 2. Server에서 2번 Create Service Object를 선택하여 프로토콜과 목적지 포트를 정의합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. Server에서 2번 Create Service Object를 선택하여 프로토콜과 목적지 포트를 정의합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 서버에서 `sudo drlink`를 열고 **Server REPL**에서 실행합니다.
@@ -64,12 +64,12 @@ show enrollments
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Agent Host 상태: Agent 역할, Healthy 런타임 및 Server Connected를 확인합니다.](/images/cli-captures/agent-status.png)
 
-*그림 3. 실제 Agent Host 상태: Agent 역할, Healthy 런타임 및 Server Connected를 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Agent Host 상태: Agent 역할, Healthy 런타임 및 Server Connected를 확인합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 ![실제 Data Relay Link CLI 캡처 — 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다.](/images/cli-captures/agent-create-service-menu.png)
 
-*그림 4. 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 4. 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **내부 Agent Host 셸:**
@@ -96,7 +96,7 @@ show remote-services
 
 ![실제 Data Relay Link CLI 캡처 — 실제 SSH Remote Service 검증 결과: HEALTHY 상태와 예약 엔드포인트를 확인합니다. 실제 공인 주소는 가렸습니다.](/images/cli-captures/ssh-service-healthy.png)
 
-*그림 5. 실제 SSH Remote Service 검증 결과: HEALTHY 상태와 예약 엔드포인트를 확인합니다. 실제 공인 주소는 가렸습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 5. 실제 SSH Remote Service 검증 결과: HEALTHY 상태와 예약 엔드포인트를 확인합니다. 실제 공인 주소는 가렸습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **외부 PC 셸:** 위에서 조회한 예약 포트·공인 주소·실제 SSH 계정을 사용합니다.
@@ -111,7 +111,7 @@ ssh -p <할당된-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Remote Access 정책 테스트: No Policy 상태의 ALLOW 결과입니다. WHITELIST 적용 성공 결과는 아닙니다.](/images/cli-captures/remote-test-allow.png)
 
-*그림 6. 실제 Remote Access 정책 테스트: No Policy 상태의 ALLOW 결과입니다. WHITELIST 적용 성공 결과는 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 6. 실제 Remote Access 정책 테스트: No Policy 상태의 ALLOW 결과입니다. WHITELIST 적용 성공 결과는 아닙니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -136,4 +136,4 @@ system audit
 
 재연결 후 소유 Agent에서 system synchronize와 show remote-service support-ssh를 확인합니다. HEALTHY는 현재 런타임 검증이 필요하며 저장된 플래그/heartbeat만으로 판단하지 않습니다. 복구 후 실제 SSH를 다시 연결하고 DEGRADED를 지우려는 목적으로 재등록하지 마세요.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

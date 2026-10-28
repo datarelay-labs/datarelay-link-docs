@@ -17,7 +17,7 @@ Agent/Gateway OS에서 내부 **10.40.10.8:8443** 연결이 실제로 되는지 
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
 
-*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -35,7 +35,7 @@ show service-object console-https
 
 ![실제 Data Relay Link CLI 캡처 — 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다.](/images/cli-captures/agent-create-service-menu.png)
 
-*그림 2. 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 소유 Agent Host에서 2번 Create Remote Service를 선택합니다. Server에서 원격 서비스를 직접 생성하는 메뉴가 아닙니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 목적지 LAN에 도달 가능한 Agent를 [등록](/ko/guides/enrollment)한 뒤 **Agent REPL:**
@@ -67,7 +67,7 @@ curl --resolve console.example.net:<예약된-공인-포트>:<DRLink-공인-IP> 
 
 ![실제 Data Relay Link CLI 캡처 — Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다.](/images/cli-captures/server-inbound-default.png)
 
-*그림 3. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -91,4 +91,4 @@ system audit
 
 애플리케이션의 TLS와 로그인은 유지됩니다. 할당된 공개 엔드포인트에서 인증서 호스트명을 검증하고 인증서 검사를 끄지 마세요. 재연결 뒤 소유 Agent에서 synchronize하고 현재 Remote Service 세대까지 확인한 후 복구로 판단합니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

@@ -5,7 +5,7 @@ description: "Arguments, permissions and job results for all 20 native tools."
 
 # The 20 Native MCP tools
 
-Catalog from candidate **e4f66183fae6bd13a1611e809182838612b4fdc1** public TOOL_DEFS and connected schemas. Client namespace prefixes vary. These are MCP names, not drlink CLI commands.
+The table lists DataRelay Link MCP tool names, required arguments and permissions. Client namespace prefixes may vary. These are AI tool calls, separate from drlink CLI commands.
 
 | Tool | Required arguments | DRLink permission | Purpose |
 | --- | --- | --- | --- |
@@ -32,9 +32,9 @@ Catalog from candidate **e4f66183fae6bd13a1611e809182838612b4fdc1** public TOOL_
 
 ## Targets and OS account
 
-Use an endpoint returned by **list_hosts/get_host** for a Managed Host. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require the relevant Server-self profile and explicit permission.
+Use an endpoint returned by **list_hosts/get_host** for a Managed Host. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require explicit Server management permission.
 
-Server discovery and local execution are operator opt-ins. Full-control shell, Git, service and package commands run with the selected OS account's authority; root needs an additional opt-in. **cwd is an initial-directory check, not a filesystem sandbox for a general shell.** The restricted profile has a narrower command/Git contract.
+Server-local shell, Git, service and package commands use the configured OS account and AI Access. **cwd is an initial-directory check, not a filesystem sandbox for a general shell.**
 
 ## Arguments and results
 

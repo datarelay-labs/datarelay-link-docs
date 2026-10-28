@@ -40,9 +40,9 @@ The first policy test allows the in-scope path; file existence and OS permission
 | Target | Execution path | Example |
 | --- | --- | --- |
 | Managed Host | Server → trusted Agent → target OS | Internal host/process/log inspection |
-| server:self | Explicitly enabled Server executor | Files, shell, Git and asynchronous jobs |
+| server:self | Server-local operations | Files, shell, Git and asynchronous jobs |
 
-Server-local execution needs local operator profile/account opt-in and a separate AI Access grant. Root is an additional explicit choice. See the [Server control lab](/use-cases/ai-server-control).
+Server-local operations require their own AI Access grant and run with the product execution account. Administrative authority is not granted by OAuth alone. See the [Server control lab](/use-cases/ai-server-control).
 
 ## Initial owner and OAuth lifecycle
 

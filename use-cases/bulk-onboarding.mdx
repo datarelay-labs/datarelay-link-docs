@@ -9,13 +9,13 @@ description: "Issue multiple one-time Agent enrollments and manage inventory wit
 
 ## Step 1 — prepare each site
 
-Each destination must have outbound connectivity to the Server's enrollment/control endpoints and permission to install the platform-specific Agent. Follow [Linux](/getting-started/linux-client), [Windows](/getting-started/windows-client) or [macOS](/getting-started/macos-client) requirements before running the generated installer. The Server must already be installed from a qualified immutable product artifact.
+Each destination must have outbound connectivity to the Server's enrollment/control endpoints and permission to install the platform-specific Agent. Follow [Linux](/getting-started/linux-client), [Windows](/getting-started/windows-client) or [macOS](/getting-started/macos-client) requirements before running the generated installer. The Server must already be installed from a product distribution.
 
 ## Step 2 — issue a bounded enrollment batch
 
 ![Real Data Relay Link CLI capture — Real enrollment list excerpt: completed, expired and revoked states; no raw enrollment tickets displayed.](/images/cli-captures/enrollment-inventory.png)
 
-*Figure 1. Real enrollment list excerpt: completed, expired and revoked states; no raw enrollment tickets displayed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Real enrollment list excerpt: completed, expired and revoked states; no raw enrollment tickets displayed. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -53,7 +53,7 @@ Expect **Agent Host** role, real enrollment identity and healthy control connect
 
 ![Real Data Relay Link CLI capture — Actual Server Managed Host inventory: confirm registered host rows and connected status.](/images/cli-captures/managed-hosts.png)
 
-*Figure 2. Actual Server Managed Host inventory: confirm registered host rows and connected status. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Actual Server Managed Host inventory: confirm registered host rows and connected status. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -71,7 +71,7 @@ Resolve any actual assigned Managed Host names/immutable IDs before proceeding; 
 
 ![Actual DRLink Server main CLI menu — choose 1 Managed Hosts for inventory and enrollment](/images/cli-captures/server-managed-host-menu.png)
 
-*Figure 3. Real Server CLI menu: choose 1 Managed Hosts for registered hosts and inventory operations. Captured from an actual development CLI PTY session.*
+*Figure 3. Real Server CLI menu: choose 1 Managed Hosts for registered hosts and inventory operations. Actual CLI output example.*
 
 
 **Server REPL:**
@@ -94,4 +94,4 @@ Check that both actual hosts appear in the group, their immutable Managed Host i
 
 The UTF-8 CSV header is label,ssh_user,note. A blank ssh_user means management-only enrollment. Zero-Touch can use a verified numeric-IP/private-CA compact launcher without DNS; failed prerequisites must not issue a ticket. Managed Host Group membership is inventory metadata, separate from Network Group policy membership.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

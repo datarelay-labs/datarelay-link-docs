@@ -13,7 +13,7 @@ description: "허용한 GitHub Git·HTTPS API만 DRLink 프록시로 통과시�
 
 ![실제 Data Relay Link CLI 캡처 — Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다.](/images/cli-captures/server-egress-default.png)
 
-*그림 1. Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. Internet Access 설정 이전의 실제 출력: No Policy·Unmatched DENY·FAIL CLOSED입니다. 허용된 트래픽 성공 화면이 아닙니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -42,7 +42,7 @@ set service-object https443 type tcp port 443
 
 ![실제 Data Relay Link CLI 캡처 — 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다.](/images/cli-captures/internet-test-syntax.png)
 
-*그림 2. 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 실제 도움말: test internet-access는 사전 생성된 Object/Group으로 정책을 검사하며 실트래픽 테스트를 대체하지 않습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -84,7 +84,7 @@ test internet-access source git-source destination github-api service https443
 
 ![실제 Data Relay Link CLI 캡처 — 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다.](/images/cli-captures/server-status.png)
 
-*그림 3. 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 정책 설정 이전의 실제 Server 상태: Remote Access는 초기 ALLOW, Internet Access와 AI Access는 기본 DENY입니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -105,4 +105,4 @@ Git이 계속 DENY되면 실제 Git 원격 URL, NAT 출발지, DNS 호스트명 
 
 애플리케이션 테스트에서 프록시를 명시하고 해당 호출에 한해서만 공인 호스트 no_proxy 우회를 비웁니다. Managed Host source는 실제 프록시 peer IP가 입증되는 활성 주소일 때만 매칭합니다. NAT 뒤에서는 관측한 IP/CIDR을 사용하세요. FQDN 허용이 UDP나 사설/metadata 대상 우회를 의미하지 않습니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

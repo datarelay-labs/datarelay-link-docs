@@ -16,7 +16,7 @@ keywords:
 
 # OCI 무료티어 DataRelay Link 서버 구축
 
-이 가이드는 OCI Ubuntu 24.04 Host와 지속적인 Reserved Public IPv4를 준비하는 절차입니다. 기존 OCI Console 실제 스크린샷은 유지하고, 제품 설치와 Managed Host 등록은 아래의 현재 v2.4 문서 흐름으로 이어집니다.
+이 가이드는 OCI Ubuntu 24.04 Host와 지속적인 Reserved Public IPv4를 준비하는 절차입니다. 기존 OCI Console 실제 스크린샷은 유지하고, 제품 설치와 Managed Host 등록은 아래의 현재 제품 문서 흐름으로 이어집니다.
 
 <Note>
   OCI Console 메뉴명, Free Tier 정책, 리전별 capacity와 가격은 바뀔 수 있습니다. 실제 생성 직전 Console의 **Always Free Eligible** 표시와 예상 비용을 최종 기준으로 확인하세요. Oracle은 장기간 사용량이 낮은 Always Free Compute Instance를 회수할 수 있다고 명시하므로, 현재 OCI 정책을 확인하지 않은 채 Free Tier VM을 SLA가 보장되는 운영 서버로 가정하지 마세요.
@@ -58,7 +58,7 @@ Direct 모드도 stable 지원입니다. Direct를 선택하면 TCP 6099가 별�
 | 5 | Compute Instance | Ubuntu 24.04 x86_64 / eligible일 때 `VM.Standard.E2.1.Micro` |
 | 6 | Public 주소 | **Reserved Public IPv4** 연결 |
 | 7 | SSH 접속 | `ubuntu@&lt;RESERVED-IP&gt;` |
-| 8 | DataRelay Link 설치 | 현재 Server Installation / exact qualified source 사용 |
+| 8 | DataRelay Link 설치 | 현재 Server Installation / Server installer 사용 |
 | 9 | 검증 | `system version`, `show status`, `system diagnostics` + listener 확인 |
 | 10 | 첫 Client | 현재 Zero-Touch one-line Enrollment |
 

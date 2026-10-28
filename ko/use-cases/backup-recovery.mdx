@@ -13,9 +13,9 @@ description: "PKI·Managed Host·예약 포트·접근 정책을 보존하고 �
 
 ## 1단계 — 백업 전 상태 기록
 
-![실제 Data Relay Link CLI 캡처 — 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다.](/images/cli-captures/server-version.png)
+![실제 Data Relay Link CLI 캡처 — 제품 버전 조회: 설치 버전과 DRLink Server 역할을 확인합니다.](/images/cli-captures/server-version.png)
 
-*그림 1. 실제 제품 버전 조회: development 채널, Source HEAD 및 DRLink Server 역할을 확인합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. 제품 버전 조회: 설치 버전과 DRLink Server 역할을 확인합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server 셸:**
@@ -30,13 +30,13 @@ sudo drlink show internet-access
 sudo drlink show ai-access
 ~~~
 
-설치 버전/Source HEAD, Managed Host ID, Remote Service 예약 포트, 접근 정책 모드를 기록합니다.
+설치된 제품 버전, Managed Host ID, Remote Service 예약 포트, 접근 정책 모드를 기록합니다.
 
 ## 2단계 — 일관된 Server 백업 생성
 
 ![실제 Data Relay Link CLI 캡처 — Server의 System 메뉴: 백업/복원 3번, 진단 5번, 버전 정보 8번을 선택합니다.](/images/cli-captures/server-system-menu.png)
 
-*그림 2. Server의 System 메뉴: 백업/복원 3번, 진단 5번, 버전 정보 8번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. Server의 System 메뉴: 백업/복원 3번, 진단 5번, 버전 정보 8번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -71,7 +71,7 @@ sudo drlink system restore <검증된-백업-파일-경로>
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Agent Diagnostics 발췌: 복구 후 Agent 런타임과 Server 연결을 점검합니다.](/images/cli-captures/agent-diagnostics.png)
 
-*그림 3. 실제 Agent Diagnostics 발췌: 복구 후 Agent 런타임과 Server 연결을 점검합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Agent Diagnostics 발췌: 복구 후 Agent 런타임과 Server 연결을 점검합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -110,4 +110,4 @@ system synchronize
 
 복원 당시 저장된 호스트 존재/프록시 건강 상태는 Agent의 새 검증이 필요합니다. Server의 현재 Remote Service 검증이 없으면 연결된 Agent도 재조정합니다. diagnostics/synchronize와 실제 통신을 확인하고 복원/rollback 실패 시 아카이브·오류 증거를 보존하세요.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

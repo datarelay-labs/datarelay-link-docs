@@ -13,7 +13,7 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 
 ![실제 Data Relay Link CLI 캡처 — Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다.](/images/cli-captures/agent-guided-menu.png)
 
-*그림 1. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 [SSH 원격 접속](/ko/use-cases/remote-ssh)의 등록 단계를 따라 Agent를 **10.20.0.10 게이트웨이**에 설치합니다. 이후 게이트웨이 OS에서 두 대상 IP/포트로 TCP 연결이 가능한지 확인하세요. 내부 라우팅과 방화벽 변경은 DRLink 외부의 관리자 작업입니다.
@@ -22,12 +22,12 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)
 
-*그림 2. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다.](/images/cli-captures/network-object-created.png)
 
-*그림 3. 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 실제 Network Object 생성 확인 출력입니다. Object 생성만으로 Remote Service가 외부 공개되지는 않습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -47,7 +47,7 @@ show service-objects
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다.](/images/cli-captures/agent-services.png)
 
-*그림 4. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 4. 실제 Remote Service 목록: DEGRADED와 DISABLED 상태를 구분하고, 목록 표시만으로 실통신 성공을 판단하지 않습니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Gateway Agent REPL:**
@@ -98,4 +98,4 @@ Remote Service 목록에 의도한 두 엔드포인트만 있는지 확인하고
 
 LAN 대상의 현재 런타임을 검증하기 전까지 DEGRADED 저장은 가능합니다. 소유 Agent가 Relay Host이며 Remote Service를 Server에서 만들지 않습니다. 같은 Agent의 Destination + Service 중복은 거부됩니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

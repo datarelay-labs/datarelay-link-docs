@@ -7,15 +7,15 @@ description: "Authenticate an AI Identity and allow only selected read-only oper
 
 **Outcome:** A verified AI client can request host/process information from **branch-a** but cannot execute commands or access unrelated hosts merely by supplying an AI display name.
 
-<Warning>
-  **v2.4 development scope, not a stable-release claim.** Public MCP requires a **single443** Server, a working HTTPS certificate and a compatible client whose current plan/application supports remote MCP and OAuth. Claude and ChatGPT actual connection/core operations have been tested. Follow the [client setup guide](/guides/mcp-clients); verify this read-only identity independently because owner/admin test grants are broader.
-</Warning>
+<Note>
+  Remote MCP needs single443 and trusted public HTTPS. Complete [Claude/ChatGPT setup](/guides/mcp-clients) and use a separate least-privilege identity for this exercise.
+</Note>
 
 ## Step 1 — confirm topology and Agent
 
 ![Real Data Relay Link CLI capture — Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY.](/images/cli-captures/server-status.png)
 
-*Figure 1. Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Captured Server status before policy setup: Remote Access default ALLOW; Internet Access and AI Access default DENY. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -29,13 +29,13 @@ system certificate status
 
 The target **branch-a** must already be enrolled with a functioning Agent management path. A Remote Service or exposed SSH is **not required** for MCP operations. Public MCP over **https://&lt;host&gt;/mcp** is supported on **single443**, not **direct** mode.
 
-If you must change from direct to single443, plan a Server installer mode migration using the **same exact immutable qualified source** and the [deployment modes guide](/deployment/modes). Do not infer MCP readiness just because a stale certificate exists.
+If you must change from direct to single443, plan a Server installer mode migration using the **same product version** and the [deployment modes guide](/deployment/modes). Do not infer MCP readiness just because a stale certificate exists.
 
 ## Step 2 — create an identity and read-only Permission Object
 
 ![Real Data Relay Link CLI capture — Server menu: enter menu, then choose Remote Access 4, Internet Access 5, AI Access 6 or System 7.](/images/cli-captures/server-guided-menu.png)
 
-*Figure 2. Server menu: enter menu, then choose Remote Access 4, Internet Access 5, AI Access 6 or System 7. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Server menu: enter menu, then choose Remote Access 4, Internet Access 5, AI Access 6 or System 7. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -72,9 +72,9 @@ Expected: **ALLOW** for **observer** and **DENY** for **exec-check**, provided n
 
 ## Step 4 — prepare the public HTTPS MCP origin
 
-![Real Data Relay Link CLI capture — Actual warning from a Direct-mode candidate: MCP TLS was not configured; single443 is required. This is NOT a successful MCP connection.](/images/cli-captures/mcp-direct-not-ready.png)
+![Real Data Relay Link CLI capture — Direct-mode configuration warning: MCP TLS was not configured; single443 is required. This is NOT a successful MCP connection.](/images/cli-captures/mcp-direct-not-ready.png)
 
-*Figure 3. Actual warning from a Direct-mode candidate: MCP TLS was not configured; single443 is required. This is NOT a successful MCP connection. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Direct-mode configuration warning: MCP TLS was not configured; single443 is required. This is NOT a successful MCP connection. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 On an existing single443 Server, ensure a controlled DNS hostname, public HTTPS reachability and appropriate certificate authority validation. **Server REPL**, using your real hostname and contact email:
@@ -120,7 +120,7 @@ A failure may be OAuth authentication, external TLS, client capability, Agent tr
 
 Claude and ChatGPT real MCP tests are complete; follow the client-specific setup guide. Verify the complete effective policy, including the initial owner mcp-owner-full-access Rule. Adding observer does not remove an earlier command-exec grant. A distinct non-owner identity is required for this read-only exercise when the owner already has broader access.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)
 
 ## Add a scoped log-reading exercise
 

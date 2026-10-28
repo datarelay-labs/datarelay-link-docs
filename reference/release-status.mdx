@@ -1,34 +1,33 @@
 ---
-title: "Release Status"
-description: "Understand the stable release, development tree, and bundled relay-engine version."
+title: "Version & Updates"
+description: "Inspect installed versions and update the product or engine."
 ---
 
-# Release Status
+# Product version and updates
 
-## Published stable
+## Inspect the installed version
 
-The latest published GitHub release is **v2.3.0**.
+Run from the Server or Agent Host shell:
 
-Stable field deployment must use the immutable release/tag and its qualified artifacts rather than mutable development branches.
+~~~bash
+sudo drlink system version
+~~~
 
-## Current development target
+The output identifies product version, channel, Relay Engine and host role. Include this information when diagnosing a Server or Agent problem.
 
-This documentation is being updated for **v2.4.0 development**.
+## Product and Relay Engine
 
-v2.4 introduces the current Managed Host / Object / Remote Service / Remote Access / Internet Access / AI Access / ConfigurationBundle model documented on this site.
+DataRelay Link and its included Relay Engine have separate versions. Product updates deliver management/security/compatibility changes; engine updates refresh the connection engine.
 
-<Warning>
-  A v2.4 source tree, VERSION value, branch name, or documentation page does not make v2.4 stable. Stable publication requires exact-HEAD qualification and an immutable release/tag.
-</Warning>
+~~~text
+system update product
+system update engine
+~~~
 
-## Relay Engine
+Check the host role and update impact first. Before a Server change, create a [backup](/operations/backup-restore), then verify status and real service connectivity afterward. Follow the [update procedure](/operations/updates).
 
-DataRelay Link product version and Relay Engine version are separate. The currently pinned Relay Engine in the v2.4 development target remains FRP 0.71.0 unless release metadata changes.
+## Manual scope
 
-## Source of truth
+This site explains the installed product's Managed Hosts, Remote Services, Remote/Internet/AI Access and ConfigurationBundle. If a documented command is absent from an older installation, update the product and check again. Get distribution files and change notes from the [official releases page](https://github.com/datarelay-labs/datarelay-link/releases).
 
-For stable deployment identity, use the latest published GitHub Release. For current v2.4 product behavior under development, use the Product Master, CLI/AI Master, and exact qualification evidence in the product repository.
-
-## Latest MCP verification
-
-**2026-10-28:** actual Claude and ChatGPT connection/core workflows completed. Native MCP candidate, main and stable remain distinct. See [MCP validation](/reference/mcp-validation) for exact SHAs, scope and PR status. This supersedes older statements that basic ChatGPT connectivity is still unverified.
+On the Server, use `system update check-engine` to inspect available engine updates without applying them.

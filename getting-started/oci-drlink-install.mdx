@@ -8,7 +8,7 @@ icon: "server"
 # Part II — Install and operate DataRelay Link
 
 <Note>
-  The latest published stable release is **v2.3.0**. This site documents the **v2.4.0 development target**. For stable deployment use the immutable stable release. For v2.4 testing use an exact qualified SHA or candidate artifact.
+  After preparing OCI networking and the VM, run the product Server installer using [Server installation](/getting-started/server-installation).
 </Note>
 
 ## 6. Prepare the Ubuntu host
@@ -22,7 +22,7 @@ Review OCI Security Lists/NSGs and the Ubuntu host firewall deliberately. Do not
 
 ## 7. Install the Server
 
-Continue with [Server Installation](/getting-started/server-installation). For a v2.4 candidate, use the exact source or artifact identity provided by qualification.
+Continue with [Server Installation](/getting-started/server-installation). The installation guide covers the product installer and post-install checks.
 
 For this OCI topology, Enterprise single-443 is usually the simplest public exposure model:
 
@@ -44,7 +44,7 @@ show status
 system diagnostics
 ```
 
-Confirm the role is DRLink Server and product version, release channel, exact Source HEAD, and Relay Engine version are truthful.
+Confirm role DRLink Server, the installed product version and healthy services.
 
 ## 9. Verify reboot persistence
 
@@ -106,7 +106,7 @@ Remote Access policy is configured separately on the Server if the endpoint shou
   </Card>
 
   <Card title="Quick Start" icon="rocket" href="/getting-started/quickstart">
-    Follow the current v2.4 Managed Host workflow.
+    Follow the current Managed Host workflow.
   </Card>
 </CardGroup>
 

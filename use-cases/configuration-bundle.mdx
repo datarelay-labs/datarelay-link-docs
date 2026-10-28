@@ -54,13 +54,13 @@ configurationBundle:
         enabled: true
 ~~~
 
-This is the v2.4 **Server** bundle schema. Do not add **apiVersion**/**kind** or Agent-only **remoteServices** here. Resources omitted from the bundle remain unchanged, but existing Internet Access rules also remain unless deliberately changed. Review them before applying.
+This is the **Server** bundle schema. Do not add **apiVersion**/**kind** or Agent-only **remoteServices** here. Resources omitted from the bundle remain unchanged, but existing Internet Access rules also remain unless deliberately changed. Review them before applying.
 
 ## Step 3 — validate and compare before mutation
 
 ![Real Data Relay Link CLI capture — Real configuration revision diff: compare the changes and sourceRevision before applying a bundle.](/images/cli-captures/config-revision-diff.png)
 
-*Figure 2. Real configuration revision diff: compare the changes and sourceRevision before applying a bundle. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. Real configuration revision diff: compare the changes and sourceRevision before applying a bundle. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server shell:**
@@ -77,7 +77,7 @@ Expected: syntax/context valid, an understandable change diff and no unintended 
 
 ![Real Data Relay Link CLI capture — Real revision history: inspect previous set/unset operations and revision IDs before planned rollback.](/images/cli-captures/configuration-revisions.png)
 
-*Figure 3. Real revision history: inspect previous set/unset operations and revision IDs before planned rollback. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Real revision history: inspect previous set/unset operations and revision IDs before planned rollback. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 After inspecting the security-impact confirmation and having the necessary operator authorization:
@@ -109,4 +109,4 @@ If validation or apply rejects the bundle, **no partial configuration change** i
 
 Carry sourceRevision from a fresh export into the reviewed change. A stale apply is rejected even if test/diff previously looked valid; re-export and reconcile before retrying. Same-state reapply can be NO CHANGE, but an old export is not a reusable force-overwrite mechanism.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

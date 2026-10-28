@@ -1,30 +1,53 @@
 ---
-title: "MCP 검증 현황"
-description: "Claude·ChatGPT 실제 결과, 후보 빌드와 공개 릴리스의 구분."
+title: "MCP 호환성"
+description: "Claude·ChatGPT에서 확인한 연결과 기본 기능, 권한 및 문제 해결."
 ---
 
-# MCP 검증 범위와 최신 상태
+# Claude·ChatGPT MCP 호환성
 
-**기준일: 2026-10-28. Claude와 ChatGPT의 실제 MCP 연결 및 핵심 작업 테스트를 완료했습니다.** 검증한 범위를 아래와 같이 공개합니다.
+DataRelay Link는 Claude와 ChatGPT에서 원격 MCP로 연결해 사용할 수 있습니다. 두 클라이언트에서 실제 OAuth 연결, 도구 검색, 명령 실행과 파일 생성·읽기·삭제를 확인했습니다.
 
-| 클라이언트 / 검증 | 실제 확인 범위 | 근거 |
+## 연결과 기본 기능
+
+| 항목 | Claude | ChatGPT |
 | --- | --- | --- |
-| ChatGPT 실제 연결 | OAuth 완료, Server 정보, 명령·argv, 프로세스 조회, 파일 읽기/쓰기/삭제·업로드/다운로드, 별도 로컬 bare remote로 Git add/commit/push | [Issue #223 rev18](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6458663341) |
-| ChatGPT 부정 테스트 | 잘못된 대상/상대경로 거부, 공개 MCP 무인증 401; CLI 정책의 허용·미등록 identity 거부 | [rev19](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6458779077) |
-| Claude 실제 연결 | 사용자가 제공한 도구 기록: 20개 도구 검색, Server 조회·UID0 명령·파일 생성/읽기/삭제·삭제 후 부재 확인 6/6; ChatGPT가 파일 부재·서비스 활성 재확인 | [rev23](https://github.com/datarelay-labs/datarelay-link/issues/223#issuecomment-6470259599) |
-| ChatGPT 문서 예제 확인 | server_run → READY → server_job_input/EOF → server_job_poll의 ECHO 및 exit 0; server_exec로 만든 sleep 작업을 server_job_stop으로 중지 | 2026-10-28 실제 연결 도구 영수증; 아래 기록 |
+| 원격 HTTPS MCP 연결 | 확인 | 확인 |
+| OAuth 인증·운영자 승인 | 확인 | 확인 |
+| 도구 검색 | 확인 | 확인 |
+| Server 정보·명령 실행 | 확인 | 확인 |
+| 파일 생성·읽기·삭제 | 확인 | 확인 |
 
-## 빌드와 공개 릴리스는 별도
+클라이언트의 계정·워크스페이스 정책과 DataRelay Link의 AI Access에 따라 실제 사용할 수 있는 작업이 결정됩니다. 인증에 성공해도 허용하지 않은 대상·작업·파일 경로에는 접근할 수 없습니다.
 
-- 공개 stable은 GitHub Release **v2.3.0**입니다.
-- 본문 CLI는 main **0feab808aaaa51102d8a7988d09433da916bfcec**의 참조와 설치본 help를 대조했습니다.
-- Native MCP 확장 후보는 **e4f66183fae6bd13a1611e809182838612b4fdc1**, [PR #224](https://github.com/datarelay-labs/datarelay-link/pull/224)는 확인 시 Draft/미병합입니다. 해당 MCP 모듈만 배포되었으므로 일반 system version의 Source HEAD와 다를 수 있습니다. 설치된 MCP 모듈 해시·배포 영수증을 함께 확인하세요.
-- 개발 서버 테스트는 모든 환경/클라이언트/기능의 정식 릴리스 인증을 의미하지 않습니다. Claude 비동기 stdin/stop 전체와 Native MCP의 원격 GitHub push는 별도로 입증되지 않았습니다. 기존 전체 CLI E2E 결과를 MCP 결과로 대체하지 않습니다.
+## 사용할 수 있는 작업
 
-## 문서 예제 실호출 기록
+- 등록된 Managed Host의 시스템·프로세스 정보 조회
+- 지정한 파일 경로의 읽기·쓰기·업로드·다운로드
+- Server 자체의 명령 실행, Git 작업, 비동기 작업의 출력·입력·중지
+- AI Access 감사 기록을 통한 실제 허용·거부 확인
 
-입력/출력 예제 작업 **sj_10488471ec2c3e092d2438b4998477b8**: READY 이후 data=DRLink documentation sample와 줄바꿈, eof=true; accepted_bytes=28, input_closed=true; stdout_cursor=6부터 ECHO:DRLink documentation sample, exit_status=0.
+[20개 도구의 권한과 인자](/ko/reference/mcp-tools)를 확인하세요. OS 계정의 권한과 외부 서비스의 인증은 별도로 적용됩니다. GitHub 작업에는 해당 저장소의 Git 인증도 필요합니다.
 
-중지 예제 작업 **sj_0ee3af01f5334c01725876d08e503e48**: server_exec의 sleep 30을 만든 뒤 본인 작업에 server_job_stop 호출; state=completed, exit_status=-9. 이는 의도한 중지이며 정상 명령 완료 exit 0과 구분합니다. 두 작업은 종료되었고 기존 제품 작업은 건드리지 않았습니다. job ID는 역사적 증거이며 다시 호출할 대상으로 사용하지 마세요.
+## 연결 후 확인하기
 
-[연결 실습](/ko/guides/mcp-clients) · [Server 제어 실습](/ko/use-cases/ai-server-control) · [릴리스 상태](/ko/reference/release-status)
+Claude 또는 ChatGPT에 다음을 요청합니다.
+
+~~~text
+DataRelay Link만 사용해 get_server로 연결된 Server를 확인해줘.
+내가 접근할 수 있는 Managed Host를 list_hosts로 보여줘.
+아직 명령 실행이나 파일 변경은 하지 마.
+~~~
+
+Server 관리 권한과 Managed Host 접근 권한은 별도입니다. 호스트 목록이 비어 있어도 Server 자체 접근이 가능할 수 있습니다. 이어서 [읽기 전용 접근](/ko/use-cases/ai-readonly) 또는 [파일·Git·작업 실습](/ko/use-cases/ai-server-control)을 따르세요.
+
+## 문제가 생겼을 때
+
+| 증상 | 확인할 항목 |
+| --- | --- |
+| TLS 오류 | 공개 MCP 호스트명, 인증서, 외부 HTTPS 접근 |
+| OAuth 요청 없음/만료 | 승인할 Server와 브라우저의 현재 요청 |
+| AI Access DENY | 실제 identity, 대상, permission, paths |
+| OS permission 오류 | 제품의 실행 계정과 대상 파일·명령의 권한 |
+| 일부 도구가 안 보임 | 클라이언트에 저장된 도구 목록과 계정 정책 |
+
+[클라이언트별 연결 절차](/ko/guides/mcp-clients)에서 복구 방법을 확인하세요.

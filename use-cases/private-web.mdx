@@ -17,7 +17,7 @@ On the Agent/gateway OS, establish that **10.40.10.8:8443** is reachable and the
 
 ![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)
 
-*Figure 1. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 1. Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -35,7 +35,7 @@ Prefer setting the required Remote Access WHITELIST **before** publishing this s
 
 ![Real Data Relay Link CLI capture — On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server.](/images/cli-captures/agent-create-service-menu.png)
 
-*Figure 2. On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 2. On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 After [enrolling an Agent](/guides/enrollment) that can reach the target LAN IP, use the **Agent REPL**:
@@ -67,7 +67,7 @@ Expected: the appliance login page over validated TLS, not a DRLink management l
 
 ![Real Data Relay Link CLI capture — Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted.](/images/cli-captures/server-inbound-default.png)
 
-*Figure 3. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. Excerpt from actual v2.4 development CLI E2E/PTTY captures; sensitive addresses/hosts masked.*
+*Figure 3. Remote Access before any rules: No Policy, unmatched ALLOW. A new published service is not automatically source-restricted. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -91,4 +91,4 @@ From a second, unapproved source, test access and confirm the **policy denial**,
 
 The application keeps its own TLS and login. Verify its certificate hostname at the allocated public endpoint without skipping certificate checks. After a reconnect, synchronize on the owning Agent and check the current Remote Service generation before declaring recovery.
 
-[Current CLI inventory](/drlink/cli-reference) · [MCP validation status](/reference/mcp-validation)
+[Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

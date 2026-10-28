@@ -17,7 +17,7 @@ description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를
 
 ![실제 Data Relay Link CLI 캡처 — Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다.](/images/cli-captures/server-inbound-default.png)
 
-*그림 1. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 1. Remote Access 규칙 생성 이전의 실제 출력: No Policy·Unmatched ALLOW입니다. 새 서비스를 공개할 때 출발지 제한을 별도로 설정해야 합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -47,12 +47,12 @@ show network-object office-public
 
 ![실제 Data Relay Link CLI 캡처 — Remote Access 실제 메뉴: 규칙 생성은 2번, 정책 검증은 5번 Test / Explain을 선택합니다.](/images/cli-captures/remote-access-menu.png)
 
-*그림 2. Remote Access 실제 메뉴: 규칙 생성은 2번, 정책 검증은 5번 Test / Explain을 선택합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 2. Remote Access 실제 메뉴: 규칙 생성은 2번, 정책 검증은 5번 Test / Explain을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 ![실제 Data Relay Link CLI 캡처 — 정책 모드 선택 화면: 매칭된 출발지만 허용하려면 2번 whitelist를 선택합니다. 1번 blacklist는 동작이 다릅니다.](/images/cli-captures/remote-access-mode.png)
 
-*그림 3. 정책 모드 선택 화면: 매칭된 출발지만 허용하려면 2번 whitelist를 선택합니다. 1번 blacklist는 동작이 다릅니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 3. 정책 모드 선택 화면: 매칭된 출발지만 허용하려면 2번 whitelist를 선택합니다. 1번 blacklist는 동작이 다릅니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -70,7 +70,7 @@ show remote-access office-ssh
 
 ![실제 Data Relay Link CLI 캡처 — 실제 도움말: test remote-access 명령은 정의된 Source·Destination·Service 이름으로 정책을 검사합니다.](/images/cli-captures/remote-test-syntax.png)
 
-*그림 4. 실제 도움말: test remote-access 명령은 정의된 Source·Destination·Service 이름으로 정책을 검사합니다. 실제 v2.4 개발 후보 CLI E2E/PTTY 기록 발췌; 일부 주소·호스트 가림.*
+*그림 4. 실제 도움말: test remote-access 명령은 정의된 Source·Destination·Service 이름으로 정책을 검사합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
 **Server REPL:**
@@ -100,4 +100,4 @@ ssh -p <예약-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
 
 부정 테스트 전에 모든 활성 Rule과 참조 Group을 확인하세요. Remote Access enforcement disabled와 정책 초기화는 ALLOW ALL/초기 ALLOW이므로 차단 검증 방법이 아닙니다. Group 정책 테스트는 확장한 모든 조합이 허용돼야 전체 ALLOW입니다.
 
-[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 검증 현황](/ko/reference/mcp-validation)
+[현재 CLI 전체 목록](/ko/drlink/cli-reference) · [MCP 호환성](/ko/reference/mcp-validation)

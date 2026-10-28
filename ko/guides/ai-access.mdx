@@ -40,9 +40,9 @@ test ai-access source auditor-ai destination branch-a permission file-read path 
 | 대상 | 경로 | 예시 |
 | --- | --- | --- |
 | Managed Host | Server → 신뢰된 Agent → 대상 OS | 내부 서버 정보·프로세스·로그 조회 |
-| server:self | 명시적으로 활성화한 Server 자체 executor | 파일·셸·Git·비동기 작업 |
+| server:self | Server 자체 작업 | 파일·셸·Git·비동기 작업 |
 
-Server 자체 실행은 로컬 운영자의 profile/account opt-in과 별도 AI Access가 필요합니다. root는 추가 명시 설정이며 기본 전제가 아닙니다. 전체 관리 예제는 [Server 제어 실습](/ko/use-cases/ai-server-control)을 따르세요.
+Server 자체 작업도 별도 AI Access와 제품 실행 계정의 OS 권한을 따릅니다. OAuth 인증만으로 관리자 권한이 생기지는 않습니다. 전체 관리 예제는 [Server 제어 실습](/ko/use-cases/ai-server-control)을 따르세요.
 
 ## 최초 소유자와 OAuth 수명주기
 

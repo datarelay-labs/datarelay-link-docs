@@ -15,7 +15,7 @@ system backup validate <FILE>
 system restore <FILE>
 ```
 
-v2.4 Server의 기준 상태에는 SQLite control-plane DB와 필요한 신뢰 정보, 비밀값, 설정 데이터가 포함됩니다.
+Server의 기준 상태에는 SQLite control-plane DB와 필요한 신뢰 정보, 비밀값, 설정 데이터가 포함됩니다.
 
 WAL 모드로 실행 중인 데이터베이스는 SQLite가 보장하는 일관된 백업/스냅샷 방식으로 저장해야 합니다. 실행 중인 DB 파일 하나만 복사하는 방식은 올바른 백업이 아닙니다.
 
