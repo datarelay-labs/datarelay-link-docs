@@ -13,6 +13,8 @@ def check(root, product_root=None):
     links = 0
     for page in pages:
         text = page.read_text()
+        if "doctor" in text.split("---", 2)[1].lower():
+            errors.append(f"{page}: obsolete doctor command in page metadata")
         for target in re.findall(r'(?:href=["\']|\]\()(/[^\s"\')#]+)', text):
             links += 1
             path = root / target.lstrip("/")
