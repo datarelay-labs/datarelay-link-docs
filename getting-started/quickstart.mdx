@@ -25,15 +25,7 @@ system diagnostics
 
 The role must be **DRLink Server**.
 
-## 2. Ensure the Service Object exists
-
-For SSH:
-
-```text
-set service-object ssh type tcp port 22
-```
-
-## 3. Issue a Zero-Touch enrollment
+## 2. Issue a Zero-Touch enrollment
 
 On the Server:
 
@@ -41,9 +33,13 @@ On the Server:
 set enrollment zero-touch
 ```
 
-Run the generated one-time installation command on the target host.
+Select **Linux**, enter the Managed Host name/description, choose **SSH only** and the actual SSH port (default 22). Run the generated one-time command on the target host.
 
-## 4. Verify the Agent Host
+Services selected through Zero-Touch **SSH only**, **RDP only** or **Choose Remote Services** automatically receive the required Service Object, Remote Service and public endpoint reservation during enrollment. Do not create the same service manually again. Inspect actual names with `show remote-services` on the Agent.
+
+**A blank username in SSH only affects connection hints; it is not management-only enrollment.** To enroll without publishing services, run `set enrollment bulk`, choose count **1** and leave the SSH username blank. Choose Remote Services requires at least one service. OS accounts, sshd/RDP, external firewalls and Access Policy rules remain separate.
+
+## 3. Verify the Agent Host
 
 On the newly enrolled host:
 
@@ -60,16 +56,16 @@ show agent
 
 The role must be **Agent Host**.
 
-## 5. Create the Remote Service on the Agent Host
+## 4. Inspect the automatically created service
 
 ```text
-set remote-service ssh-access destination this-host service ssh enabled
-show remote-service ssh-access
+show remote-services
+show remote-service <actual-service-name>
 ```
 
 The endpoint is allocated and managed by DataRelay Link. Temporary Server or target failure can leave a valid Remote Service in DEGRADED state.
 
-## 6. Optional: restrict Remote Access
+## 5. Optional: restrict Remote Access
 
 With no policy configured, effective access is ALLOW.
 
@@ -78,10 +74,11 @@ On the Server:
 ```text
 set network-object office-admin type ip value 203.0.113.10
 set remote-access office-ssh mode whitelist source office-admin destination <managed-host> service ssh enabled
+set remote-access enabled
 test remote-access source office-admin destination <managed-host> service ssh
 ```
 
-## 7. Connect
+## 6. Connect
 
 Use the endpoint shown by the Agent:
 
@@ -90,3 +87,5 @@ ssh -p <public-port> <username>@<public-hostname>
 ```
 
 DataRelay Link does not create OS users or configure sshd; the target account/service must already exist.
+
+Replace `<actual-service-name>` and the policy service selector `ssh` with the actual Remote Service and Service Object names. Review source restrictions before publishing and inspect existing Object definitions before editing.

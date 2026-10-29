@@ -32,23 +32,7 @@ sudo drlink system diagnostics
 
 Confirm role **DRLink Server** and the installed product version before proceeding.
 
-## Step 2 — define an SSH Service Object
-
-![Real Data Relay Link CLI capture — On the Server select 2 Create Service Object to register protocol and port.](/images/cli-captures/server-service-object-menu.png)
-
-*Figure 2. On the Server select 2 Create Service Object to register protocol and port. CLI output example; sensitive addresses and hostnames are masked.*
-
-
-**Server REPL** (start with `sudo drlink`):
-
-~~~text
-set service-object ssh type tcp port 22
-show service-object ssh
-~~~
-
-Expected: a TCP Service Object with target port **22**. If it already exists, inspect it rather than creating a conflicting duplicate.
-
-## Step 3 — enroll the internal host
+## Step 2 — issue SSH Zero-Touch and enroll
 
 **Server REPL:**
 
@@ -57,18 +41,15 @@ set enrollment zero-touch
 show enrollments
 ~~~
 
+Select **Linux**, enter the host name/description, choose **SSH only** and the actual SSH port (default **22**). The SSH username is optional hint metadata; blank still publishes SSH. Services selected through Zero-Touch **SSH only**, **RDP only** or **Choose Remote Services** automatically receive the required Service Object, Remote Service and public endpoint reservation during enrollment. Do not create the same service manually again. Inspect actual names with `show remote-services` on the Agent.
+
 Copy the generated **one-time** installation command from the enrollment result; run that **exact** command on the internal Linux host using its privileged terminal. Ticket URLs are credentials: do not paste them into tickets, screenshots or public logs. Do not substitute a made-up installer URL.
 
-## Step 4 — verify the Agent and create a Remote Service
+## Step 3 — inspect the Agent and automatic service
 
 ![Real Data Relay Link CLI capture — Captured Agent Host status: confirm local Agent role, Healthy runtime, and connected Server.](/images/cli-captures/agent-status.png)
 
-*Figure 3. Captured Agent Host status: confirm local Agent role, Healthy runtime, and connected Server. CLI output example; sensitive addresses and hostnames are masked.*
-
-
-![Real Data Relay Link CLI capture — On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server.](/images/cli-captures/agent-create-service-menu.png)
-
-*Figure 4. On the owning Agent Host select 2 Create Remote Service; this does not create the service on the Server. CLI output example; sensitive addresses and hostnames are masked.*
+*Figure 2. Captured Agent Host status: confirm local Agent role, Healthy runtime, and connected Server. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Agent shell:**
@@ -81,24 +62,23 @@ sudo drlink system diagnostics
 
 Confirm role **Agent Host** and healthy enrollment.
 
-**Agent REPL:**
+**Agent REPL:** replace `<actual-service-name>` with the actual name returned by the list.
 
 ~~~text
-set remote-service support-ssh destination this-host service ssh enabled
-show remote-service support-ssh
 show remote-services
+show remote-service <actual-service-name>
 ~~~
 
 Expected: an allocated/reserved Server endpoint and a **HEALTHY** Remote Service when the target and runtime are verified. **DEGRADED** or **Pending allocation** requires reconnection/diagnostics; do not treat it as traffic success.
 
-## Step 5 — prove real SSH
+## Step 4 — prove real SSH
 
 ![Real Data Relay Link CLI capture — Real E2E service detail with HEALTHY and reserved endpoint; public address is masked.](/images/cli-captures/ssh-service-healthy.png)
 
-*Figure 5. Real E2E service detail with HEALTHY and reserved endpoint; public address is masked. CLI output example; sensitive addresses and hostnames are masked.*
+*Figure 3. Real E2E service detail with HEALTHY and reserved endpoint; public address is masked. CLI output example; sensitive addresses and hostnames are masked.*
 
 
-On the **outside workstation**, take the public host and reserved port from `show remote-service support-ssh`:
+On the **outside workstation**, take the public host and reserved port from `show remote-service <actual-service-name>`:
 
 ~~~bash
 ssh -p <reserved-public-port> <existing-os-user>@<public-drlink-host>
@@ -106,11 +86,11 @@ ssh -p <reserved-public-port> <existing-os-user>@<public-drlink-host>
 
 Expected: host-key verification and then the SSH service's normal authentication. Verify the target host's SSH host-key fingerprint out of band before accepting it. The public endpoint is not a substitute for SSH login credentials.
 
-## Step 6 — verify server inventory and security
+## Step 5 — verify server inventory and security
 
 ![Real Data Relay Link CLI capture — Real Remote Access ALLOW result with No Policy. This illustrates the default, NOT whitelist verification.](/images/cli-captures/remote-test-allow.png)
 
-*Figure 6. Real Remote Access ALLOW result with No Policy. This illustrates the default, NOT whitelist verification. CLI output example; sensitive addresses and hostnames are masked.*
+*Figure 4. Real Remote Access ALLOW result with No Policy. This illustrates the default, NOT whitelist verification. CLI output example; sensitive addresses and hostnames are masked.*
 
 
 **Server REPL:**
@@ -126,13 +106,13 @@ Check that only the intended service is published and that the Remote Access pol
 
 ## Troubleshooting and removal
 
-- **DEGRADED:** on the Agent run `system diagnostics`, then `system synchronize`, then `show remote-service support-ssh`. Inspect target SSH on 127.0.0.1:22 and the Agent's outbound firewall.
+- **DEGRADED:** on the Agent run `system diagnostics`, then `system synchronize`, then `show remote-service <actual-service-name>`. Inspect target SSH on 127.0.0.1:22 and the Agent's outbound firewall.
 - **SSH timeout:** check public port mapping/security group and policy. The product does not open external firewalls.
 - **Permission denied:** troubleshoot the target OS SSH account/key, not DRLink enrollment.
-- **Remove access:** on the owning **Agent REPL**, run `unset remote-service support-ssh` after reviewing the impact. Removal is not the same as disabling or pausing; endpoint reservation semantics differ. Do not retire the entire Managed Host to remove one SSH service.
+- **Remove access:** on the owning **Agent REPL**, run `unset remote-service <actual-service-name>` after reviewing the impact. Removal is not the same as disabling or pausing; endpoint reservation semantics differ. Do not retire the entire Managed Host to remove one SSH service.
 
 ## Current behavior check — 2026-10-28
 
-After Agent/server reconnection, run system synchronize on the owning Agent and inspect show remote-service support-ssh. HEALTHY requires verified current runtime, not a stored flag or heartbeat. Recheck the real SSH endpoint after recovery; do not re-enroll merely to clear DEGRADED.
+After Agent/server reconnection, run system synchronize on the owning Agent and inspect `show remote-service <actual-service-name>`. HEALTHY requires verified current runtime, not a stored flag or heartbeat. Recheck the real SSH endpoint after recovery; do not re-enroll merely to clear DEGRADED.
 
 [Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)

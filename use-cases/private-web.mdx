@@ -13,6 +13,12 @@ description: "Access an internal HTTPS management application through a controll
 
 On the Agent/gateway OS, establish that **10.40.10.8:8443** is reachable and the admin application has a trusted certificate for the name end users will use. DRLink Remote Access uses **TLS passthrough**, not TLS termination. A certificate-name mismatch is a deployment problem, not a reason to disable verification.
 
+## New Agent: configure the console with Zero-Touch
+
+On the Server run `set enrollment zero-touch`, select **Linux**, name/describe the host, then **Choose Remote Services → Add HTTPS**. Enter Service ID `firewall-ui`, Target host **10.40.10.8**, Target port **8443**, then **Finish**. Run the generated command on the gateway that can reach that LAN.
+
+The required Objects and Remote Service are automatic. Inspect `show remote-services` and the actual service detail on the Agent, then continue at **Step 4**. Steps 2–3 below are only for additional services on an existing Agent. Prepare required source restrictions before publishing.
+
 ## Step 2 — register the destination and service
 
 ![Real Data Relay Link CLI capture — Service Object type choices: 1 SSH/TCP 22, 3 HTTPS/TCP 443, or 6 Fixed TCP as needed.](/images/cli-captures/service-object-type.png)

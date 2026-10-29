@@ -13,6 +13,12 @@ description: "내부 장비의 HTTPS 관리 포트 하나를 TLS passthrough로 
 
 Agent/Gateway OS에서 내부 **10.40.10.8:8443** 연결이 실제로 되는지 확인하세요. 서비스는 사용자에게 보일 DNS 이름과 일치하는 정상 TLS 인증서를 제공해야 합니다. DRLink Remote Access는 **HTTPS TLS passthrough**이며 인증서를 대신 발급하거나 TLS를 종료하지 않습니다.
 
+## 신규 Agent: Zero-Touch로 관리 화면 연결
+
+Server에서 `set enrollment zero-touch` → **Linux** → 호스트 이름·설명 → **Choose Remote Services** → **Add HTTPS**를 선택합니다. Service ID는 `firewall-ui`, Target host는 **10.40.10.8**, Target port는 **8443**으로 입력하고 **Finish**합니다. 생성된 명령을 해당 LAN에 도달 가능한 게이트웨이에서 실행합니다.
+
+필요한 Object와 Remote Service는 자동 구성됩니다. Agent에서 `show remote-services`와 실제 이름의 상세 조회로 endpoint를 확인한 뒤 **4단계**로 이동합니다. 아래 2~3단계는 기존 Agent에 서비스를 추가할 때만 사용합니다. 공개 전 필요한 출발지 제한을 준비하세요.
+
 ## 2단계 — 목적지와 포트 정의
 
 ![실제 Data Relay Link CLI 캡처 — 실제 Service Object 유형 선택: SSH는 1번, HTTPS는 3번, Fixed TCP는 6번입니다.](/images/cli-captures/service-object-type.png)

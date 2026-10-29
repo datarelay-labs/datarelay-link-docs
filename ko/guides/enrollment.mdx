@@ -27,4 +27,12 @@ show managed-host <HOST>
 
 Managed Host identity는 label, hostname, NAT/public IP만으로 결정되지 않습니다.
 
-Remote Service는 등록이 끝난 **Agent Host에서** 생성합니다.
+등록 후 추가 서비스는 소유 **Agent Host에서** 생성합니다.
+
+## 자동 구성과 추가 구성
+
+Zero-Touch에서 **SSH only**, **RDP only** 또는 **Choose Remote Services**로 선택한 서비스는 등록 시 Service Object·Remote Service·공인 포트 예약까지 자동 구성됩니다. 같은 서비스를 수동으로 다시 생성하지 않습니다. Agent에서 `show remote-services`로 실제 이름을 확인하세요.
+
+**SSH only에서 사용자명을 비우는 것은 접속 예시만 생략하는 것이며 management-only 등록이 아닙니다.** 서비스 없이 등록하려면 `set enrollment bulk`에서 count **1**, SSH 사용자명 빈 값으로 발급합니다. Choose Remote Services는 서비스가 하나 이상 필요합니다. OS 계정·sshd/RDP·외부 방화벽·Access Policy Rule은 별도입니다.
+
+기존 Agent에 새 목적지/포트를 추가할 때만 Server의 Object 정의를 확인·준비하고 소유 Agent에서 `set remote-service <NAME>`을 사용합니다.

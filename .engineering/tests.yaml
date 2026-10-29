@@ -23,3 +23,20 @@ scenarios:
     invariants:
       - "repository diff has no whitespace errors"
     release_gate: true
+
+  - id: DOCS-WORKFLOW-001
+    name: Published workflow and link invariants
+    level: static
+    domains:
+      - core
+    triggers:
+      - pr
+      - preflight
+      - release
+    platforms:
+      - linux
+    command: "python3 tools/check_product_workflows.py && python3 tools/check_use_case_docs.py"
+    invariants:
+      - Zero-Touch workflows never recreate automatically enrolled services
+      - published internal links and bilingual scenarios resolve
+    release_gate: true

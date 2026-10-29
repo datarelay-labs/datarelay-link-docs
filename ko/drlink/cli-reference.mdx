@@ -156,7 +156,7 @@ set service-object legacy-db type fixed-tcp port 1521
 set service-group web-services members http,https
 
 set permission-object read-only permissions host-info,process-read,file-read
-set permission-group operators members read-only,operator
+set permission-group observers members read-only
 
 set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
 ~~~
@@ -174,8 +174,8 @@ set internet-access github-https mode whitelist source ubuntu-prod destination g
 ~~~
 
 ~~~text
-set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only enabled
-set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**',/opt/app/** enabled
+set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only paths '/var/log/myapp/**' enabled
+set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**,/opt/app/**' enabled
 ~~~
 
 ~~~text
@@ -370,3 +370,7 @@ help
 help commands
 exit
 ~~~
+
+## 등록 예제의 자동 구성
+
+SSH/RDP/Choose Remote Services로 발급하면 선택한 서비스는 자동 구성됩니다. 기본 실습은 `show remote-services`로 실제 이름을 확인하고 중복 생성하지 않습니다. 단건 SSH only의 빈 사용자명은 SSH 게시를 유지하지만 bulk의 빈 ssh_user는 management-only입니다. 위 명령 목록은 문법 참조이므로 Group 구성원·AI Identity·Managed Host·Service Object는 실행 전에 실제로 존재해야 합니다.

@@ -68,7 +68,7 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 
 ## 4단계 — 로컬 Git 예제
 
-운영자가 디렉터리 소유권을 확인하고 **아직 Git 저장소가 아닌 빈 실습 공간**을 선택합니다. 아래 init은 그 공간에만 실행합니다. 이후 만든 note.txt만 추가합니다. 실제 저장소·글로벌 Git 설정을 바꾸지 않습니다.
+3단계에서 만든 note.txt만 있는 전용 디렉터리이며 **기존 Git 저장소가 아닌지** 확인합니다. 아래 init은 그 공간에만 실행하고 note.txt만 추가합니다. 실제 저장소·글로벌 Git 설정을 바꾸지 않습니다.
 
 ~~~json
 {"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","init"]}}
@@ -105,3 +105,5 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 중지 후 completed와 종료 신호에 따른 음수 exit_status가 나올 수 있습니다. exit 0 정상 완료와 구분하세요. **이 실습에서 반환된 job_id만** 중지합니다. 실습 저장소 .git 정리는 소유 운영자가 경로를 확인한 뒤 처리하며 다른 저장소는 지우지 않습니다.
 
 Server REPL의 `show ai-access-log identity mcp-lab`로 작업을 확인합니다. 끝난 뒤 Rule을 유지할 필요가 없으면 `unset ai-access mcp-lab-server`의 영향도를 검토하고 삭제합니다. 다른 사용자가 쓰는 전체 AI Access나 인증서를 초기화하지 마세요.
+
+이 실습은 Server 자체를 대상으로 하므로 Agent 등록이나 SSH/RDP Remote Service가 필요하지 않습니다.

@@ -14,6 +14,8 @@ Normal user-created types are IP, CIDR, and FQDN. Registered Managed Hosts also 
 
 ```text
 set network-object github type fqdn value github.com
+set network-object office-admin type ip value 203.0.113.10
+set network-object vpn-admin type ip value 198.51.100.20
 set network-group approved-admins members office-admin,vpn-admin
 ```
 
@@ -25,6 +27,8 @@ UDP can exist through explicit configuration, but Remote Service and Internet Ac
 
 ```text
 set service-object ssh type tcp port 22
+set service-object http type tcp port 80
+set service-object https type tcp port 443
 set service-group web-services members http,https
 ```
 
@@ -34,9 +38,11 @@ Permission Objects contain reusable AI-operation permissions.
 
 ```text
 set permission-object read-only permissions host-info,process-read,file-read
-set permission-group operators members read-only,operator
+set permission-group observers members read-only
 ```
 
 ## Group rules
 
 Groups are flat reusable collections. Context validation applies to the whole selected Group. Internet Access destination, for example, rejects a Network Group if any member is a Managed Host.
+
+File permissions also need rule-bound `paths` in the AI Access rule.

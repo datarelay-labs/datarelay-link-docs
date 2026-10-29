@@ -67,7 +67,7 @@ Decode base64 where indicated by the response schema and compare the original co
 
 ## Step 4 — disposable local Git
 
-Use an operator-owned workspace that was empty and is **not an existing repository**. Initialize only there; add only the new note. Do not edit global Git configuration.
+Use the dedicated directory from Step 3, containing only the tutorial note and **not an existing repository**. Initialize only there; add only that note. Do not edit global Git configuration.
 
 ~~~json
 {"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","init"]}}
@@ -104,3 +104,5 @@ Expect accepted_bytes=28, input_closed=true, ECHO:DRLink documentation sample an
 A stopped job can report completed with a negative signal exit status, distinct from normal exit 0. Stop **only the returned tutorial job**. Let the owning operator review/remove the disposable .git directory; never remove an unrelated repository.
 
 Review `show ai-access-log identity mcp-lab` in Server REPL. Retire the Rule with reviewed `unset ai-access mcp-lab-server` when no longer needed. Do not reset shared AI Access or certificates.
+
+This tutorial targets the Server itself; no Agent enrollment or SSH/RDP Remote Service is required.

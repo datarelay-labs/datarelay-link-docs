@@ -21,6 +21,7 @@ A Managed Host must not be used as a **destination**, directly or through a Netw
 set network-object github type fqdn value github.com
 set service-object https type tcp port 443
 set internet-access github-https mode whitelist source ubuntu-prod destination github service https enabled
+set internet-access enabled
 test internet-access source ubuntu-prod destination github service https
 ~~~
 

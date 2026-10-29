@@ -16,7 +16,18 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 *그림 1. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
-[SSH 원격 접속](/ko/use-cases/remote-ssh)의 등록 단계를 따라 Agent를 **10.20.0.10 게이트웨이**에 설치합니다. 이후 게이트웨이 OS에서 두 대상 IP/포트로 TCP 연결이 가능한지 확인하세요. 내부 라우팅과 방화벽 변경은 DRLink 외부의 관리자 작업입니다.
+게이트웨이 **10.20.0.10**에서 두 대상 IP/포트로 TCP 연결이 가능한지 먼저 확인합니다. 신규 Agent는 아래 Zero-Touch에서 **LAN 대상 두 개**를 선택합니다. SSH only를 선택해 게이트웨이 자체 SSH를 불필요하게 게시하지 마세요. 내부 라우팅/방화벽은 관리자가 준비합니다.
+
+## 신규 게이트웨이: Zero-Touch로 두 서비스 한 번에 등록
+
+Server에서 `set enrollment zero-touch` → **Linux** → 호스트 이름·설명 → **Choose Remote Services**를 선택합니다.
+
+| 선택 | Service ID | Target host | Target port |
+| --- | --- | --- | --- |
+| Add SSH | lan-ssh | 10.20.0.21 | 22 |
+| Add HTTPS | lan-web | 10.20.0.22 | 443 |
+
+SSH에는 실제 대상 OS 계정을 입력하고, 두 서비스 추가 후 **Finish**로 발급합니다. 생성된 명령을 **게이트웨이**에서 한 번 실행하면 Object와 Remote Service·공인 포트가 자동 구성됩니다. Agent에서 `show remote-services`와 각 실제 이름의 `show remote-service`를 확인한 후 **4단계**로 이동합니다. 아래 2~3단계는 기존 Agent에 수동으로 추가할 때만 사용합니다.
 
 ## 2단계 — 목적지 및 Service Object 생성
 

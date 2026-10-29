@@ -36,3 +36,16 @@ test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
 Policy enforcement를 disabled로 바꾸면 Mode/Rule은 유지되고 effective ALLOW ALL이 됩니다. Policy Reset은 Mode와 Rule을 제거합니다.
 
 Policy가 ALLOW여도 실제 연결에는 enabled Remote Service, 정상 Agent/runtime path, reachable target이 필요합니다.
+
+## 사무실 SSH 허용 예
+
+등록된 Managed Host와 SSH Service Object를 먼저 확인합니다. 아래 `ubuntu-prod`·`ssh`는 실제 목록의 이름으로 바꾸고 기존 정책 Mode와 다른 Rule도 검토하세요.
+
+```text
+set network-object office-admin type ip value 203.0.113.10
+set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+set remote-access enabled
+test remote-access source office-admin destination ubuntu-prod service ssh
+```
+
+예제 IP는 실제 관찰되는 사무실 공인 출발지로 바꿉니다. 정책 ALLOW 후 실제 SSH 접속도 확인하세요.

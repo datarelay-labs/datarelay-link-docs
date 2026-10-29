@@ -1,0 +1,1307 @@
+{
+  "date": "2026-10-29",
+  "repository": "datarelay-labs/data-relay-link-docs",
+  "product_source_head": "90eeea7b938e064ed6e2e089b9d30cd93b81a9c4",
+  "scope": "116 published EN/KO MDX pages; CLI syntax and documented workflow review",
+  "findings": [
+    "Duplicate Service Object and Remote Service creation after SSH Zero-Touch",
+    "Missing platform/service/target choices in onboarding",
+    "Manual-only new-host LAN/HTTPS workflows and unnecessary gateway SSH prerequisite",
+    "Blank SSH username semantics differ between single and bulk issuance",
+    "Server-self MCP requires no Agent; Managed Host MCP needs no published SSH",
+    "Undefined group members, incomplete policy activation, language example gaps",
+    "Unquoted second wildcard rejected by product CLI tokenizer",
+    "ConfigurationBundle reviewed sourceRevision missing from example preparation",
+    "Git tutorial asked for an empty directory after creating its note"
+  ],
+  "validation": {
+    "pages": 116,
+    "internal_links": 380,
+    "unique_cli_forms": 258,
+    "grammar_only_not_product_mutation": true,
+    "existing_scenario_check": "PASS",
+    "mint_validate": "PASS with pre-existing duplicate-h1 warnings",
+    "negative_checker_tests": [
+      "duplicate service rejected",
+      "missing link rejected"
+    ]
+  },
+  "page_ledger": [
+    {
+      "path": "deployment/dns-hostname.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "deployment/firewall-nat.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "deployment/modes.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "drlink/cli-reference.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "drlink/configuration-bundle.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "drlink/overview.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "feedback/index.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "getting-started/concepts.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "getting-started/linux-client.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "getting-started/macos-client.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "getting-started/oci-drlink-install.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "getting-started/oci-free-tier-server.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "getting-started/oci-network-vm.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "getting-started/overview.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "getting-started/quickstart.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "getting-started/server-installation.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "getting-started/windows-client.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/ai-access.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "guides/custom-tcp-lan.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/enrollment.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/groups.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/http-https.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/internet-access.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/mcp-clients.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "guides/remote-access.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/services.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/ssh.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "guides/zero-touch.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "index.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/deployment/dns-hostname.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/deployment/firewall-nat.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/deployment/modes.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/drlink/cli-reference.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/drlink/configuration-bundle.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/drlink/overview.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/feedback/index.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/getting-started/concepts.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/getting-started/linux-client.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/getting-started/macos-client.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/getting-started/oci-drlink-install.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/getting-started/oci-free-tier-server.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/getting-started/oci-network-vm.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/getting-started/quickstart.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/getting-started/server-installation.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/getting-started/windows-client.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/ai-access.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/guides/custom-tcp-lan.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/enrollment.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/groups.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/http-https.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/internet-access.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/mcp-clients.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/guides/remote-access.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/services.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/ssh.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/guides/zero-touch.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/index.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/backup-restore.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/diagnostics.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/lifecycle.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/overview.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/troubleshooting.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/operations/updates.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/alternatives.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/architecture.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/glossary.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/license.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/mcp-tools.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/mcp-validation.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/network-ports.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/platforms.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/reference/release-status.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/security/overview.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/ai-readonly.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/ai-server-control.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/backup-recovery.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/bulk-onboarding.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/configuration-bundle.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/fixed-tcp-database.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/github-egress.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/index.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/lan-relay.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/office-allowlist.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "ko/use-cases/private-web.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/remote-ssh.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "ko/use-cases/ubuntu-updates.mdx",
+      "language": "ko",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "operations/backup-restore.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "operations/diagnostics.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "operations/lifecycle.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "operations/maintenance.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "operations/updates.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/alternatives.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/architecture.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/glossary.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/license.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/limitations.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/mcp-tools.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/mcp-validation.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/network-ports.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/platforms.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "reference/release-status.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "security/overview.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "troubleshooting/overview.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/ai-readonly.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/ai-server-control.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/backup-recovery.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/bulk-onboarding.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/configuration-bundle.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/fixed-tcp-database.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/github-egress.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/index.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/lan-relay.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/office-allowlist.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    },
+    {
+      "path": "use-cases/private-web.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/remote-ssh.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": true
+    },
+    {
+      "path": "use-cases/ubuntu-updates.mdx",
+      "language": "en",
+      "checks": [
+        "internal links",
+        "fences",
+        "CLI examples where present",
+        "workflow and cross-page consistency review"
+      ],
+      "changed": false
+    }
+  ]
+}

@@ -16,6 +16,15 @@ Agent Host
 → stable DataRelay Link endpoint
 ```
 
+## Automatic setup and additional services
+
+Services selected through Zero-Touch **SSH only**, **RDP only** or **Choose Remote Services** automatically receive the required Service Object, Remote Service and public endpoint reservation during enrollment. Do not create the same service manually again. Inspect actual names with `show remote-services` on the Agent.
+
+**A blank username in SSH only affects connection hints; it is not management-only enrollment.** To enroll without publishing services, run `set enrollment bulk`, choose count **1** and leave the SSH username blank. Choose Remote Services requires at least one service. OS accounts, sshd/RDP, external firewalls and Access Policy rules remain separate.
+
+Only when adding a new destination/port to an existing Agent, inspect/prepare the Server Object definitions and use `set remote-service <NAME>` on the owning Agent.
+
+
 ## Service Object vs Remote Service
 
 A **Service Object** describes a service such as TCP/22. A **Remote Service** binds that definition to a real destination and receives an endpoint.
