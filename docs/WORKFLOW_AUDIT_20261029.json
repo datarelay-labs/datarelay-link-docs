@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "repository": "datarelay-labs/data-relay-link-docs",
+  "repository": "datarelay-labs/datarelay-link-docs",
   "product_source_head": "90eeea7b938e064ed6e2e089b9d30cd93b81a9c4",
   "scope": "116 published EN/KO MDX pages; CLI syntax and documented workflow review",
   "findings": [
@@ -12,7 +12,8 @@
     "Undefined group members, incomplete policy activation, language example gaps",
     "Unquoted second wildcard rejected by product CLI tokenizer",
     "ConfigurationBundle reviewed sourceRevision missing from example preparation",
-    "Git tutorial asked for an empty directory after creating its note"
+    "Git tutorial asked for an empty directory after creating its note",
+    "Obsolete Doctor command name remained in diagnostic page title/description"
   ],
   "validation": {
     "pages": 116,
@@ -674,7 +675,7 @@
         "CLI examples where present",
         "workflow and cross-page consistency review"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "path": "ko/operations/lifecycle.mdx",
@@ -993,7 +994,7 @@
         "CLI examples where present",
         "workflow and cross-page consistency review"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "path": "operations/lifecycle.mdx",
@@ -1303,5 +1304,14 @@
       ],
       "changed": false
     }
-  ]
+  ],
+  "rendered_verification": {
+    "deployed_head": "9da0d063c0be8eb1d8810e2f557a314b25d891f4",
+    "actual_browser_pages": 116,
+    "english": 59,
+    "korean": 57,
+    "search_result_navigation": "observed",
+    "no_result_search": "observed result count 0",
+    "late_finding": "Diagnostic metadata corrected; affected pages rerun after deployment"
+  }
 }
