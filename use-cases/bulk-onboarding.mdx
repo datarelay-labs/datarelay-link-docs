@@ -95,3 +95,7 @@ Check that both actual hosts appear in the group, their immutable Managed Host i
 The UTF-8 CSV header is label,ssh_user,note. A blank ssh_user means management-only enrollment. Zero-Touch can use a verified numeric-IP/private-CA compact launcher without DNS; failed prerequisites must not issue a ticket. Managed Host Group membership is inventory metadata, separate from Network Group policy membership.
 
 [Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)
+
+## Automatic service result in this example
+
+The CSV row `branch-a,operator,...` automatically configures SSH/22 and its public endpoint. `branch-b,,...` is management-only and publishes no SSH. Inspect `show remote-services` on each Agent; do not recreate branch-a SSH manually. A blank `ssh_user` in bulk has different semantics from a blank username in single-host SSH only.

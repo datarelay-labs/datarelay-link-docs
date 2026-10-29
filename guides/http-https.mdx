@@ -19,6 +19,14 @@ set remote-service web-http destination this-host service http enabled
 set remote-service web-https destination this-host service https enabled
 ```
 
+## New host: use Zero-Touch
+
+On the Server run `set enrollment zero-touch`, select the platform and enter the host name/description. Choose **Choose Remote Services** and specify each service type, target host and port. Run the generated command on the target; the selected services are automatic. Inspect actual names/endpoints with `show remote-services`; do not repeat the manual creation below for the same service.
+
+## Add to an existing Agent
+
+The manual configuration below is for **additional services** on an enrolled Agent. First inspect `show service-objects` on the Server and `show remote-services` on the Agent; create only missing definitions/services.
+
 ## HTTPS behavior
 
 Remote Service forwarding is TCP transport. DataRelay Link does not terminate or replace the target application's HTTPS certificate.

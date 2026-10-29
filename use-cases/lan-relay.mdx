@@ -16,7 +16,18 @@ description: "Use one DRLink Agent as the relay for two independent internal ser
 *Figure 1. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. CLI output example; sensitive addresses and hostnames are masked.*
 
 
-Complete [Remote SSH through NAT](/use-cases/remote-ssh) through its enrollment step, but put the Agent on the **gateway** (10.20.0.10), not on the two destination machines. Independently confirm from the gateway OS that both target IPs and ports are reachable. This local LAN firewall/routing setup is outside DRLink.
+First verify that gateway **10.20.0.10** can reach both target IPs/ports. For a new Agent select the **two LAN targets** in Zero-Touch below. Do not use SSH only to publish the gateway's own SSH unnecessarily. Prepare LAN routing/firewalls separately.
+
+## New gateway: enroll both services with Zero-Touch
+
+On the Server run `set enrollment zero-touch`, select **Linux**, name/describe the host and choose **Choose Remote Services**.
+
+| Selection | Service ID | Target host | Target port |
+| --- | --- | --- | --- |
+| Add SSH | lan-ssh | 10.20.0.21 | 22 |
+| Add HTTPS | lan-web | 10.20.0.22 | 443 |
+
+Enter the target's existing OS username for SSH, add both services, then **Finish**. Run the generated command once on the **gateway**; Objects, Remote Services and public endpoints are automatic. On the Agent inspect `show remote-services` and each actual service name, then continue at **Step 4**. Steps 2–3 below are only for manual additions to an existing Agent.
 
 ## Step 2 — describe both destinations and services
 

@@ -125,3 +125,5 @@ Claude and ChatGPT real MCP tests are complete; follow the client-specific setup
 ## Add a scoped log-reading exercise
 
 If the operator has prepared a nonsensitive /var/log/myapp/health.log on branch-a, use the app-reader Rule in the [AI Access file example](/guides/ai-access). Ask Claude/ChatGPT for read_file on that path only. Do not grant command-exec or other paths. Include path in policy tests, then separately verify file existence/OS access and actual allowed/denied tool results.
+
+For a new Managed Host used only for MCP, use `set enrollment bulk`, count **1**, with a blank SSH username for management-only registration. Choose Remote Services requires at least one service. Publishing SSH/RDP is unnecessary; reuse an enrolled host without re-enrollment.

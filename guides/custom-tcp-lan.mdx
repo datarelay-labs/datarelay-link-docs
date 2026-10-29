@@ -7,6 +7,14 @@ description: "Publish arbitrary TCP services and services hosted on other LAN sy
 
 A Remote Service can target the Agent Host itself or another host the Agent can reach.
 
+## New host: use Zero-Touch
+
+On the Server run `set enrollment zero-touch`, select the platform and enter the host name/description. Choose **Choose Remote Services** and specify each service type, target host and port. Run the generated command on the target; the selected services are automatic. Inspect actual names/endpoints with `show remote-services`; do not repeat the manual creation below for the same service.
+
+## Add to an existing Agent
+
+The manual configuration below is for **additional services** on an enrolled Agent. First inspect `show service-objects` on the Server and `show remote-services` on the Agent; create only missing definitions/services.
+
 ## Create a Service Object
 
 On the Server:

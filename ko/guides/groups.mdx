@@ -12,6 +12,8 @@ description: "Network, Service, Permission Object와 Group을 재사용 가능�
 
 ```text
 set network-object github type fqdn value github.com
+set network-object office-admin type ip value 203.0.113.10
+set network-object vpn-admin type ip value 198.51.100.20
 set network-group approved-admins members office-admin,vpn-admin
 ```
 
@@ -21,13 +23,23 @@ type은 TCP, UDP, Fixed TCP입니다. 일반 Wizard는 SSH, HTTP, HTTPS, RDP, Cu
 
 UDP는 명시적 설정으로 존재할 수 있지만 Remote Service와 Internet Access v2.4에서는 거부됩니다.
 
+Server에서 웹 Service Object와 Group을 함께 정의하는 예입니다.
+
+```text
+set service-object http type tcp port 80
+set service-object https type tcp port 443
+set service-group web-services members http,https
+```
+
 ## Permission Object
 
 AI 작업 권한을 재사용 가능한 Permission Object/Group으로 정의합니다.
 
 ```text
 set permission-object read-only permissions host-info,process-read,file-read
-set permission-group operators members read-only,operator
+set permission-group observers members read-only
 ```
 
 Group은 flat collection이며 선택한 context의 유효성 검사는 Group 전체 구성원에 적용됩니다.
+
+파일 권한은 AI Access Rule에 `paths` 범위도 지정해야 합니다.

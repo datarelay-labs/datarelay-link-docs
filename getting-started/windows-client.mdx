@@ -18,6 +18,8 @@ On the Server:
 set enrollment zero-touch
 ```
 
+In the wizard select **Windows → RDP only** or **Choose Remote Services**, enter the host name/description and actual target ports. Services selected through Zero-Touch **SSH only**, **RDP only** or **Choose Remote Services** automatically receive the required Service Object, Remote Service and public endpoint reservation during enrollment. Do not create the same service manually again. Inspect actual names with `show remote-services` on the Agent.
+
 Run the generated Windows installation/enrollment command according to the product installation instructions.
 
 ## Verify
@@ -33,7 +35,7 @@ system diagnostics
 
 ## Remote Services
 
-Create Remote Services on the Windows Agent Host. RDP is represented as TCP/3389 through a Service Object; DataRelay Link does not enable RDP, create Windows credentials, or weaken Windows Firewall/NLA settings.
+Create only additional Remote Services on the Windows Agent Host after inspecting the enrollment-created services. RDP is represented as TCP/3389 through a Service Object; DataRelay Link does not enable RDP, create Windows credentials, or weaken Windows Firewall/NLA settings.
 
 ## Lifecycle
 

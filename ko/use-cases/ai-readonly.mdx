@@ -123,3 +123,5 @@ Claude와 ChatGPT 실제 MCP 테스트가 완료되었습니다. 클라이언트
 ## 로그 파일만 읽도록 추가 제한
 
 운영자가 branch-a의 /var/log/myapp/health.log에 민감정보 없는 실습 로그를 준비한 경우, [AI Access 파일 예제](/ko/guides/ai-access)의 app-reader Rule을 사용합니다. Claude/ChatGPT에 해당 파일 read_file만 요청하고 command-exec나 다른 경로는 허용하지 마세요. file-read 정책 테스트에는 path를 반드시 포함합니다. 실제 파일 존재·OS 권한과 도구의 ALLOW·DENY를 각각 확인합니다.
+
+MCP만 사용할 신규 Managed Host는 `set enrollment bulk`에서 count **1**, SSH 사용자명 빈 값으로 management-only 등록합니다. Choose Remote Services는 서비스가 하나 이상 필요합니다. SSH/RDP를 게시할 필요가 없고 기존 정상 호스트는 재등록하지 않습니다.

@@ -39,9 +39,12 @@ test remote-access source <SOURCE> destination <DESTINATION> service <SERVICE>
 Example:
 
 ~~~text
+set network-object office-admin type ip value 203.0.113.10
 set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
 ~~~
 
 Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL. Policy Reset removes Mode and Rules and returns to the initial no-policy ALLOW state.
 
 An ALLOW result still requires an enabled Remote Service, a working Agent/runtime path, and a reachable target.
+
+Replace the example IP with the actual office egress IP, and `ubuntu-prod`/`ssh` with the existing Managed Host and Service Object. Inspect the current policy mode and other rules before changing access. Verify real SSH separately.

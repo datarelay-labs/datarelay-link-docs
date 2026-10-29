@@ -7,6 +7,14 @@ description: "Publish SSH through DataRelay Link and connect using the assigned 
 
 SSH is a normal TCP service, usually destination port 22.
 
+## New host: use Zero-Touch
+
+On the Server run `set enrollment zero-touch`, select the platform and enter the host name/description. Choose **SSH only** and enter the actual SSH port (default 22). Run the generated command on the target; the selected services are automatic. Inspect actual names/endpoints with `show remote-services`; do not repeat the manual creation below for the same service.
+
+## Add to an existing Agent
+
+The manual configuration below is for **additional services** on an enrolled Agent. First inspect `show service-objects` on the Server and `show remote-services` on the Agent; create only missing definitions/services.
+
 ## Service Object
 
 On the Server:
@@ -31,7 +39,9 @@ For a reachable LAN target, select that destination instead of this-host.
 On the Server, use Remote Access policy to restrict who may use the Remote Service.
 
 ```text
+set network-object office-admin type ip value 203.0.113.10
 set remote-access office-ssh mode whitelist source office-admin destination <managed-host> service ssh enabled
+set remote-access enabled
 test remote-access source office-admin destination <managed-host> service ssh
 ```
 
@@ -42,3 +52,5 @@ ssh -p <public-port> <user>@<public-hostname>
 ```
 
 DataRelay Link does not create the SSH account, SSH keys, or sshd configuration.
+
+Replace the policy IP, Managed Host and service selector with actual values. Inspect the existing policy mode and other enabled rules.

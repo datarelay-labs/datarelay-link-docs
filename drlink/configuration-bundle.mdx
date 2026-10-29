@@ -9,6 +9,8 @@ Use one-shot CLI for one independent resource. Use ConfigurationBundle when seve
 
 ## Canonical Server shape
 
+The YAML below illustrates the resource changes. First obtain `configurationBundle.sourceRevision` from a fresh `system export configuration <FILE>`, and copy **that field and its exact value** immediately below `context: server` in the file you will apply. Omitting it from a copied example does not bind apply to the revision you reviewed. Replace references such as `ubuntu-prod` with actual existing selectors.
+
 ~~~yaml
 configurationBundle:
   context: server
