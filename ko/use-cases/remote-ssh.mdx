@@ -5,13 +5,9 @@ description: "Linux Agent를 등록하고 필요한 SSH 포트 하나만 외부�
 
 # NAT 뒤 내부 Linux 서버에 원격 SSH 접속하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → [배포 모드](/ko/deployment/modes)와 [방화벽/NAT](/ko/deployment/firewall-nat) 준비 → `sudo drlink show status`에서 Server 확인 → 대상의 SSH 리스너 및 Agent→Server 아웃바운드 통신 확인. 접속 출발지를 제한하려면 **공개 전에** [Remote Access WHITELIST](/ko/use-cases/office-allowlist)를 설정합니다. Remote Access는 정책이 없으면 기본 ALLOW입니다. Zero-Touch의 `SSH only`는 Service Object·Remote Service·엔드포인트를 **자동 생성**하므로 재생성하지 않습니다. 등록 후 승인·미승인 외부 출발지에서 실제 SSH를 확인하세요.
-
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → [배포 모드](/ko/deployment/modes)와 [방화벽/NAT](/ko/deployment/firewall-nat) 준비 → `sudo drlink show status`에서 Server 확인 → 대상의 SSH 리스너 및 Agent→Server 아웃바운드 통신 확인. 접속 출발지를 제한하려면 **공개 전에** [Remote Access WHITELIST](/ko/use-cases/office-allowlist)를 설정합니다. Remote Access는 정책이 없으면 기본 ALLOW입니다. Zero-Touch의 `SSH only`는 Service Object·Remote Service·엔드포인트를 **자동 생성**하므로 재생성하지 않습니다. 등록 후 승인·미승인 외부 출발지에서 실제 SSH를 확인하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → [배포 모드](/ko/deployment/modes)와 [방화벽/NAT](/ko/deployment/firewall-nat) 준비 → `sudo drlink show status`에서 Server 확인 → 대상의 SSH 리스너 및 Agent→Server 아웃바운드 통신 확인. 접속 출발지를 제한하려면 **공개 전에** [Remote Access WHITELIST](/ko/use-cases/office-allowlist)를 설정합니다. Remote Access는 정책이 없으면 기본 ALLOW입니다. Zero-Touch의 `SSH only`는 Service Object·Remote Service·엔드포인트를 **자동 생성**하므로 재생성하지 않습니다. 등록 후 승인·미승인 외부 출발지에서 실제 SSH를 확인하세요.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.

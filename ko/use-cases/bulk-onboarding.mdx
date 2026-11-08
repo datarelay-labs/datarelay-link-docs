@@ -5,13 +5,9 @@ description: "일회용 등록 정보를 안전하게 발급하고 Managed Host 
 
 # 지점별 서버 여러 대를 한 번에 등록·분류하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation), Agent별 OS 지원과 [등록/제어 방화벽](/ko/deployment/firewall-nat)을 확인합니다. 각 호스트에서 서비스 노출 여부를 먼저 결정하세요. Zero-Touch `SSH only`/`Choose Remote Services`로 선택한 서비스는 자동 생성됩니다. 관리 전용 등록은 `set enrollment bulk`, 필요한 개수 지정, SSH 사용자명 **빈칸**을 사용합니다. 등록만 위해 SSH를 공개하거나 객체를 재생성하지 마세요. 일회성 티켓을 보호하고 Server에서 각 Managed Host ID를 확인한 후 목적에 맞는 [Remote Access ACL](/ko/guides/remote-access) 또는 [AI Access](/ko/guides/ai-access)를 적용합니다.
-
 ## 처음 설치부터 시작하기 — 운영
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation), Agent별 OS 지원과 [등록/제어 방화벽](/ko/deployment/firewall-nat)을 확인합니다. 각 호스트에서 서비스 노출 여부를 먼저 결정하세요. Zero-Touch `SSH only`/`Choose Remote Services`로 선택한 서비스는 자동 생성됩니다. 관리 전용 등록은 `set enrollment bulk`, 필요한 개수 지정, SSH 사용자명 **빈칸**을 사용합니다. 등록만 위해 SSH를 공개하거나 객체를 재생성하지 마세요. 일회성 티켓을 보호하고 Server에서 각 Managed Host ID를 확인한 후 목적에 맞는 [Remote Access ACL](/ko/guides/remote-access) 또는 [AI Access](/ko/guides/ai-access)를 적용합니다.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation), Agent별 OS 지원과 [등록/제어 방화벽](/ko/deployment/firewall-nat)을 확인합니다. 각 호스트에서 서비스 노출 여부를 먼저 결정하세요. Zero-Touch `SSH only`/`Choose Remote Services`로 선택한 서비스는 자동 생성됩니다. 관리 전용 등록은 `set enrollment bulk`, 필요한 개수 지정, SSH 사용자명 **빈칸**을 사용합니다. 등록만 위해 SSH를 공개하거나 객체를 재생성하지 마세요. 일회성 티켓을 보호하고 Server에서 각 Managed Host ID를 확인한 후 목적에 맞는 [Remote Access ACL](/ko/guides/remote-access) 또는 [AI Access](/ko/guides/ai-access)를 적용합니다.
 
 [Linux Server 설치](/ko/getting-started/server-installation)를 완료하고 역할·서비스 상태를 확인합니다. Managed Host가 필요한 작업은 [Zero-Touch 또는 Bulk 등록](/ko/guides/enrollment) 후 실제 inventory를 확인합니다. Zero-Touch SSH/RDP가 자동으로 만든 서비스를 **다시 생성하지 않습니다**. Server 백업/설정만 하는 경우 Agent가 필요하지 않을 수 있고 MCP·광범위 Internet Access도 필수 전제가 아닙니다.
 

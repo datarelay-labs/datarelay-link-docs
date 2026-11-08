@@ -5,13 +5,9 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 
 # Agent 한 대로 내부 LAN 서비스 여러 개 연결하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 [외부 방화벽](/ko/deployment/firewall-nat) 준비 → LAN Gateway에서 두 대상 서비스에 실제 접속되는지 확인 → 신규 Agent 등록 시 [Zero-Touch](/ko/guides/zero-touch)의 `Choose Remote Services`를 선택합니다. 이때 선택된 서비스는 **자동 생성**되므로 아래 수동 생성 단계는 **기존 Agent에 새로운 서비스가 추가되는 경우에만** 사용하세요. 각 공개 서비스의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 외부 허용/차단 실제 연결을 검증합니다.
-
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 [외부 방화벽](/ko/deployment/firewall-nat) 준비 → LAN Gateway에서 두 대상 서비스에 실제 접속되는지 확인 → 신규 Agent 등록 시 [Zero-Touch](/ko/guides/zero-touch)의 `Choose Remote Services`를 선택합니다. 이때 선택된 서비스는 **자동 생성**되므로 아래 수동 생성 단계는 **기존 Agent에 새로운 서비스가 추가되는 경우에만** 사용하세요. 각 공개 서비스의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 외부 허용/차단 실제 연결을 검증합니다.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) 및 [외부 방화벽](/ko/deployment/firewall-nat) 준비 → LAN Gateway에서 두 대상 서비스에 실제 접속되는지 확인 → 신규 Agent 등록 시 [Zero-Touch](/ko/guides/zero-touch)의 `Choose Remote Services`를 선택합니다. 이때 선택된 서비스는 **자동 생성**되므로 아래 수동 생성 단계는 **기존 Agent에 새로운 서비스가 추가되는 경우에만** 사용하세요. 각 공개 서비스의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 외부 허용/차단 실제 연결을 검증합니다.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.

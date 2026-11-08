@@ -5,13 +5,9 @@ description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를
 
 # 사무실 IP 한 곳에서만 원격 SSH 접속 허용하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → [SSH Agent 등록](/ko/guides/enrollment) → Agent에서 실제 `show remote-services`로 Remote Service와 Service Object 이름 확인. Zero-Touch SSH-only가 생성한 객체를 중복 만들지 마세요. 사무실의 **NAT 후 공인 IP**와 독립적인 미승인 외부 테스트 출발지를 확보합니다. 정책이 없는 Remote Access는 **ALLOW**이며, enforcement 비활성화 또는 정책 초기화도 접근 제한이 아닙니다. 기존 Rule을 확인한 후 WHITELIST 설정, 실제 SSH와 감사 로그로 허용/차단을 검증하세요.
-
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → [SSH Agent 등록](/ko/guides/enrollment) → Agent에서 실제 `show remote-services`로 Remote Service와 Service Object 이름 확인. Zero-Touch SSH-only가 생성한 객체를 중복 만들지 마세요. 사무실의 **NAT 후 공인 IP**와 독립적인 미승인 외부 테스트 출발지를 확보합니다. 정책이 없는 Remote Access는 **ALLOW**이며, enforcement 비활성화 또는 정책 초기화도 접근 제한이 아닙니다. 기존 Rule을 확인한 후 WHITELIST 설정, 실제 SSH와 감사 로그로 허용/차단을 검증하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → [SSH Agent 등록](/ko/guides/enrollment) → Agent에서 실제 `show remote-services`로 Remote Service와 Service Object 이름 확인. Zero-Touch SSH-only가 생성한 객체를 중복 만들지 마세요. 사무실의 **NAT 후 공인 IP**와 독립적인 미승인 외부 테스트 출발지를 확보합니다. 정책이 없는 Remote Access는 **ALLOW**이며, enforcement 비활성화 또는 정책 초기화도 접근 제한이 아닙니다. 기존 Rule을 확인한 후 WHITELIST 설정, 실제 SSH와 감사 로그로 허용/차단을 검증하세요.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.
