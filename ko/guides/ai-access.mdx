@@ -35,6 +35,48 @@ test ai-access source auditor-ai destination branch-a permission file-read path 
 
 첫 번째는 파일 존재/OS 권한을 별도로 충족할 때 정책 ALLOW, 두 번째는 다른 Rule이 허용하지 않는 한 DENY입니다. 파일 권한에는 paths가 필요합니다. command-exec를 주면 OS 계정의 셸 권한으로 동작하므로 파일 경로만 제한한 읽기 전용 역할로 볼 수 없습니다.
 
+## 최대 권한(Full Control) 부여 — 명시 승인된 환경에만
+
+**본인이 관리하고 허가한 시스템에만 적용하세요.** 최대 권한은 Managed Host MCP의 **7가지 기능**(host-info, process-read, file-read, file-write, file-upload, file-download, command-exec)을 모두 허용합니다. 대상 OS 계정 권한이나 AI 클라이언트의 승인 절차를 무시하는 기능은 아닙니다. 전용 인증 identity와 감사 기록, 사용 기간을 지정하세요. 최초 OAuth Owner에게 이미 **mcp-owner-full-access**가 적용되었을 수 있으므로 중복 생성 전에 확인합니다.
+
+1. [Server 설치](/ko/getting-started/server-installation), [MCP HTTPS/OAuth 연결](/ko/guides/mcp-clients), Agent 대상의 [Managed Host 등록](/ko/guides/enrollment)을 완료한 뒤 **Server REPL**에서 전용 AI Identity를 만들고 OAuth 인증을 승인합니다.
+
+~~~text
+set ai-identity operator-ai
+system credential configure ai-identity operator-ai authentication oauth
+show ai-identities
+show managed-hosts
+show ai-access
+~~~
+
+2. 실제 OAuth 요청 승인·연결 후 **등록된 Managed Host 한 대**에 7가지 권한을 모두 부여합니다. branch-a를 실제 이름으로 바꾸세요. 아래 **/* 파일 범위는 매우 광범위**하며 최초 Owner 자동 부여 Rule에도 사용되는 범위입니다. 최소 권한 사용자에게 적용하지 마세요.
+
+~~~text
+set permission-object mcp-full-host permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
+set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission mcp-full-host paths '/*' enabled
+set ai-access enabled
+show ai-access
+test ai-access source operator-ai destination branch-a permission command-exec
+test ai-access source operator-ai destination branch-a permission file-read path /tmp/drlink-mcp-check.txt
+~~~
+
+정상 구성에서는 두 정책 테스트가 **ALLOW**여야 합니다. 파일 존재·OS 접근 권한은 별개입니다. 다른 Managed Host가 기존 Rule로 허용되지 않는 한 **DENY**인지 검사하고 실제 도구 호출 후 **show ai-access-log identity operator-ai**로 감사 로그를 확인하세요.
+
+3. **Server 자체(server:self)는 별도의 대상**입니다. 실제 Server 관리 권한이 필요할 때에만 아래 별도 Rule을 추가합니다. 이 경우 Server 실행 OS 계정의 일반 셸·Git·비동기 작업 권한을 제공하며, **cwd 및 paths는 command-exec를 샌드박스에 가두지 않습니다**. 읽기 전용 identity에는 부여하지 마세요.
+
+~~~text
+set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission mcp-full-host paths '/*' enabled
+test ai-access source operator-ai destination server:self permission command-exec
+test ai-access source operator-ai destination server:self permission file-read path /tmp/drlink-mcp-check.txt
+show ai-access
+~~~
+
+4. Claude 또는 ChatGPT의 **list_hosts → get_system_info**로 Agent를 확인하고, server:self를 승인했으면 **get_server**와 임시 디렉터리의 무해한 **server_exec**를 실행해 실제 결과·OS 실행 계정·감사 로그를 확인합니다. 별도 최소 권한 identity에서 DENY도 검증합니다. 도구 목록, OAuth 성공, 정책 ALLOW만으로 E2E 완료가 아닙니다.
+
+권한 회수 시 영향도를 검토한 뒤 Server에서 **unset ai-access operator-full-server**, **unset ai-access operator-full-host**를 선택적으로 사용합니다. 다른 Rule과 기존 Owner 권한은 유지합니다. 자격증명 revoke/rotate는 클라이언트 연결을 끊을 수 있는 별도 조치입니다.
+
+[전체 권한 시나리오](/ko/use-cases/ai-full-access) · [읽기 전용 시나리오](/ko/use-cases/ai-readonly)
+
 ## 두 가지 대상
 
 | 대상 | 경로 | 예시 |

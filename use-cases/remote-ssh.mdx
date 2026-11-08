@@ -5,6 +5,31 @@ description: "Enroll one Linux host and reach only its SSH service through the D
 
 # Remote SSH to a machine behind NAT
 
+## Before Step 1 — new installation checklist
+
+**First-time order:** Install the [Server](/getting-started/server-installation), choose a [deployment mode](/deployment/modes), and open the applicable [firewall/NAT paths](/deployment/firewall-nat). Verify `sudo drlink show status` reports Server. Check the target SSH listener and outbound Agent→Server path. Apply a [Remote Access WHITELIST](/use-cases/office-allowlist) **before** exposing SSH when the source must be restricted; without a Remote Access policy, inbound access defaults to ALLOW. Create an SSH-only Zero-Touch enrollment; it **automatically creates** the Service Object, Remote Service and endpoint, so do not create them again. Test both an authorized and an unauthorized external source after enrollment.
+
+## First-time setup — Remote Access
+
+**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation), choose a [deployment mode](/deployment/modes), and open the applicable [firewall/NAT paths](/deployment/firewall-nat). Verify `sudo drlink show status` reports Server. Check the target SSH listener and outbound Agent→Server path. Apply a [Remote Access WHITELIST](/use-cases/office-allowlist) **before** exposing SSH when the source must be restricted; without a Remote Access policy, inbound access defaults to ALLOW. Create an SSH-only Zero-Touch enrollment; it **automatically creates** the Service Object, Remote Service and endpoint, so do not create them again. Test both an authorized and an unauthorized external source after enrollment.
+
+1. **Install the Linux Server** using [Server installation](/getting-started/server-installation). Choose [Direct or single443](/deployment/modes) for your network; configure DNS, public relay/control access and the actual published endpoint pool in [Firewall & NAT](/deployment/firewall-nat). The product does not edit external firewalls.
+2. **Enroll the target as a Managed Host** from the **Server REPL** using the [enrollment guide](/guides/enrollment). Run the generated one-time bootstrap on the *target Agent Host*, not on the Server. For a first SSH-only enrollment, select **SSH only** in the Zero-Touch wizard; it automatically creates the Service Object, Remote Service and endpoint. **Do not recreate those objects**. For a LAN gateway or a new custom service, use management-only enrollment as appropriate, then define the Server Objects and add the new Remote Service on its owning Agent.
+3. **Apply the inbound Access Control policy deliberately.** Without a configured Remote Access policy, access is ALLOW; disabled enforcement also means ALLOW ALL. For restricted access, set a source Network Object and an explicit WHITELIST Rule for the actual Managed Host and Service Object as shown in [Office-only ACL](/use-cases/office-allowlist) *before relying on the endpoint*. Test an authorized and an unauthorized source.
+4. **Check both roles**, then follow the scenario steps below. Server shell:
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show managed-hosts
+sudo drlink show remote-access
+~~~
+
+5. **Test the real application** from the permitted outside workstation using the actual allocated endpoint. A policy-test ALLOW is not a real SSH/HTTPS/TCP connection. Verify the negative case and audit, and keep target OS authentication and service TLS in place.
+
+<Note>For remote connectivity, an Agent is required on the target or LAN gateway. MCP permission and Internet Access policy are separate and do not create an inbound Remote Service.</Note>
+
+
 **Outcome:** A support engineer outside the customer network connects to an internal Linux host's SSH port using a reserved public endpoint, without joining the LAN with a VPN.
 
 **Example topology:** outside workstation → DRLink Server (public address) → outbound Agent tunnel → Agent Host at 10.10.20.15:22.

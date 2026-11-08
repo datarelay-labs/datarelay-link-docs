@@ -5,6 +5,30 @@ description: "검증된 AI Identity가 지정한 Managed Host에서 host/process
 
 # AI에 특정 Managed Host의 읽기 전용 권한만 부여하기
 
+## 첫 사용 전 — 설치부터 확인
+
+**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation)에서 공개 MCP용 **single443** 선택 → [MCP 설정](/ko/guides/mcp-clients)에서 DNS·공인 TLS·OAuth 구성. 신규 Managed Host는 [관리 전용 등록](/ko/guides/enrollment)을 통해 `set enrollment bulk`, 개수 **1**, SSH 사용자명 **빈칸**으로 설치합니다. 읽기 전용만 필요하면 전용 non-owner AI Identity를 OAuth 연결하고 `host-info,process-read`만 특정 호스트에 허용하세요. 첫 OAuth Owner는 이미 `mcp-owner-full-access`를 가질 수 있으므로 기존 넓은 Rule의 영향 없이 실제 조회 ALLOW와 명령 실행 DENY를 확인해야 합니다. 의도적으로 전체 권한이 필요하면 [MCP Full 시나리오](/ko/use-cases/ai-full-access)를 사용하세요.
+
+## 처음 설치부터 시작하기 — AI / MCP
+
+**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation)에서 공개 MCP용 **single443** 선택 → [MCP 설정](/ko/guides/mcp-clients)에서 DNS·공인 TLS·OAuth 구성. 신규 Managed Host는 [관리 전용 등록](/ko/guides/enrollment)을 통해 `set enrollment bulk`, 개수 **1**, SSH 사용자명 **빈칸**으로 설치합니다. 읽기 전용만 필요하면 전용 non-owner AI Identity를 OAuth 연결하고 `host-info,process-read`만 특정 호스트에 허용하세요. 첫 OAuth Owner는 이미 `mcp-owner-full-access`를 가질 수 있으므로 기존 넓은 Rule의 영향 없이 실제 조회 ALLOW와 명령 실행 DENY를 확인해야 합니다. 의도적으로 전체 권한이 필요하면 [MCP Full 시나리오](/ko/use-cases/ai-full-access)를 사용하세요.
+
+1. [Linux Server](/ko/getting-started/server-installation)를 **single443 모드**로 설치하고 [Claude/ChatGPT MCP 등록](/ko/guides/mcp-clients)에 따라 공인 인증서·외부 DNS·MCP HTTPS Origin을 구성합니다. Direct 모드의 Relay TCP/443은 공개 MCP HTTPS가 아닙니다.
+2. **Managed Host** 제어에는 [Agent 등록](/ko/guides/enrollment)과 유효한 관리 연결이 필요하지만 공개 SSH 서비스는 필요 없습니다. **server:self**는 Agent 없이 가능하지만 **별도 AI Access Rule**이 반드시 필요합니다.
+3. Server에 전용 **AI Identity**, OAuth 승인, Permission Object와 **WHITELIST AI Access Rule**을 구성합니다. [최소 권한과 전체 권한](/ko/guides/ai-access)을 확인하고 최초 Owner의 기존 광범위 Rule도 점검합니다. OAuth 인증만으로 Server 제어 권한이 생기지 않습니다.
+4. Claude·ChatGPT에서 공개 MCP URL을 등록해 **해당 요청의 OAuth만 승인**한 후 실제 허용 도구 호출과 범위 밖 DENY, 감사 로그, 대상 OS 실행 계정 권한을 검증합니다.
+
+**Server 셸 기본 확인:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show ai-identities
+sudo drlink show ai-access
+sudo drlink system diagnostics mcp
+~~~
+
+
 **완성 결과:** 실제 인증된 AI 클라이언트가 **branch-a**의 호스트/프로세스 정보를 조회할 수 있지만 임의 명령 실행과 다른 대상에 대한 권한은 없습니다.
 
 <Note>

@@ -5,6 +5,30 @@ description: "Claude·ChatGPT로 파일 왕복·Git·stdin·출력 조회·중�
 
 # Claude·ChatGPT로 Server 파일·Git·비동기 작업 실행
 
+## 첫 사용 전 — 설치부터 확인
+
+**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 시 **single443** 선택 → [MCP 클라이언트 등록](/ko/guides/mcp-clients)에서 DNS/인증서·OAuth 완료 → 전용 AI Identity에 `server:self` 전용 Permission Object와 경로 Rule 부여. Server 자체 MCP에는 **Managed Host Agent나 공개 SSH 서비스가 필요 없습니다.** 프로덕션 저장소가 아닌 승인된 임시 작업 디렉터리에서 시작하고 OS 실행 계정의 실제 권한을 확인합니다. 완전 제어가 목적이면 분리된 [MCP 전체 권한 가이드](/ko/use-cases/ai-full-access)를 따르세요.
+
+## 처음 설치부터 시작하기 — AI / MCP
+
+**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 시 **single443** 선택 → [MCP 클라이언트 등록](/ko/guides/mcp-clients)에서 DNS/인증서·OAuth 완료 → 전용 AI Identity에 `server:self` 전용 Permission Object와 경로 Rule 부여. Server 자체 MCP에는 **Managed Host Agent나 공개 SSH 서비스가 필요 없습니다.** 프로덕션 저장소가 아닌 승인된 임시 작업 디렉터리에서 시작하고 OS 실행 계정의 실제 권한을 확인합니다. 완전 제어가 목적이면 분리된 [MCP 전체 권한 가이드](/ko/use-cases/ai-full-access)를 따르세요.
+
+1. [Linux Server](/ko/getting-started/server-installation)를 **single443 모드**로 설치하고 [Claude/ChatGPT MCP 등록](/ko/guides/mcp-clients)에 따라 공인 인증서·외부 DNS·MCP HTTPS Origin을 구성합니다. Direct 모드의 Relay TCP/443은 공개 MCP HTTPS가 아닙니다.
+2. **Managed Host** 제어에는 [Agent 등록](/ko/guides/enrollment)과 유효한 관리 연결이 필요하지만 공개 SSH 서비스는 필요 없습니다. **server:self**는 Agent 없이 가능하지만 **별도 AI Access Rule**이 반드시 필요합니다.
+3. Server에 전용 **AI Identity**, OAuth 승인, Permission Object와 **WHITELIST AI Access Rule**을 구성합니다. [최소 권한과 전체 권한](/ko/guides/ai-access)을 확인하고 최초 Owner의 기존 광범위 Rule도 점검합니다. OAuth 인증만으로 Server 제어 권한이 생기지 않습니다.
+4. Claude·ChatGPT에서 공개 MCP URL을 등록해 **해당 요청의 OAuth만 승인**한 후 실제 허용 도구 호출과 범위 밖 DENY, 감사 로그, 대상 OS 실행 계정 권한을 검증합니다.
+
+**Server 셸 기본 확인:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show ai-identities
+sudo drlink show ai-access
+sudo drlink system diagnostics mcp
+~~~
+
+
 **결과:** 전용 실습 디렉터리에서 파일 생성/읽기/삭제, 로컬 Git commit, stdin/EOF·출력·중지를 수행합니다. [MCP 연결](/ko/guides/mcp-clients)을 먼저 완료하세요. 이 실습은 **server:self**의 Server 관리 권한을 사용하며 일반 Agent 대상 작업과 구분됩니다.
 
 ## 1단계 — 제품 상태와 MCP 연결 확인
@@ -12,7 +36,7 @@ description: "Claude·ChatGPT로 파일 왕복·Git·stdin·출력 조회·중�
 [서버 설치](/ko/getting-started/server-installation)와 [Claude·ChatGPT 연결](/ko/guides/mcp-clients)을 완료한 Server에서 시작합니다. Server 셸에서 다음 명령으로 현재 상태를 확인하세요.
 
 ~~~bash
-sudo drlink system status
+sudo drlink show status
 sudo drlink system diagnostics mcp
 sudo drlink show ai-identities
 ~~~

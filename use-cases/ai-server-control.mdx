@@ -5,6 +5,30 @@ description: "Reproduce file, Git, stdin, output and stop workflows from either 
 
 # Control Server files, Git and jobs from Claude or ChatGPT
 
+## Before Step 1 — new installation checklist
+
+**First-time order:** Install the [Server](/getting-started/server-installation) in **single443**, configure DNS/certificate and register the Claude/ChatGPT remote client through [MCP setup](/guides/mcp-clients). Create an authenticated dedicated AI Identity and explicitly authorize **server:self** with the required Permission Object and file scopes; Managed Host enrollment and published SSH are **not needed** for Server-only MCP. Start with a disposable permitted directory and no production repository. The configured Server OS executor—not OAuth—limits actual file/command/Git effects. For intentionally unrestricted Server privileges follow [full MCP access](/use-cases/ai-full-access), not this scoped lab.
+
+## First-time setup — AI / MCP
+
+**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation) in **single443**, configure DNS/certificate and register the Claude/ChatGPT remote client through [MCP setup](/guides/mcp-clients). Create an authenticated dedicated AI Identity and explicitly authorize **server:self** with the required Permission Object and file scopes; Managed Host enrollment and published SSH are **not needed** for Server-only MCP. Start with a disposable permitted directory and no production repository. The configured Server OS executor—not OAuth—limits actual file/command/Git effects. For intentionally unrestricted Server privileges follow [full MCP access](/use-cases/ai-full-access), not this scoped lab.
+
+1. Install the [Linux Server](/getting-started/server-installation) in **single443** mode; provide a publicly trusted HTTPS certificate and external MCP DNS/origin as documented in [Claude/ChatGPT MCP setup](/guides/mcp-clients). Direct-mode TCP/443 relay is **not** a public MCP endpoint.
+2. Decide your target: **Managed Host** requires [Agent enrollment](/guides/enrollment) and an active management connection but **no published SSH service**; **server:self** needs no Agent, but requires its **own explicit AI Access Rule**.
+3. On the Server, create/bind a distinct **AI Identity**, its OAuth approval and the appropriate **Permission Object + WHITELIST AI Access Rule**. Follow [least vs full privileges](/guides/ai-access); inspect other matching Rules, especially the first-owner full grant. Authentication alone does not grant Server authority.
+4. Register the public MCP URL in Claude or ChatGPT, approve **only the intended pending OAuth request**, then perform a real allowed tool call and a deliberately denied out-of-scope call. Review audit and the target OS execution-account permissions. Tool discovery and a policy-test ALLOW are insufficient by themselves.
+
+**Server shell baseline:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show ai-identities
+sudo drlink show ai-access
+sudo drlink system diagnostics mcp
+~~~
+
+
 **Outcome:** create/read/delete a file, commit locally, exchange stdin/EOF, read output and stop a disposable job. First complete [MCP setup](/guides/mcp-clients). This uses **server:self** Server management permission, separately from Agent operations.
 
 ## Step 1 — verify the product and MCP connection
@@ -12,7 +36,7 @@ description: "Reproduce file, Git, stdin, output and stop workflows from either 
 Start after [Server installation](/getting-started/server-installation) and [Claude/ChatGPT connection](/guides/mcp-clients). On the Server shell:
 
 ~~~bash
-sudo drlink system status
+sudo drlink show status
 sudo drlink system diagnostics mcp
 sudo drlink show ai-identities
 ~~~

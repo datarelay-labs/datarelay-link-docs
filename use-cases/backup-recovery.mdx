@@ -5,6 +5,26 @@ description: "Protect Server identities, policies and service reservations, then
 
 # Back up and recover the DRLink Server safely
 
+## Before Step 1 — new installation checklist
+
+**First-time order:** Install the [Server](/getting-started/server-installation), enroll/test at least one Agent or configure an approved Internet Access destination **if you need a post-restore traffic proof**, and verify `show status` plus diagnostics. Plan protected storage for the backup outside the Server, including the sensitive PKI, credentials, policy and identity state. A **backup** is routine; a **restore** can replace live Server state and requires an authorized recovery window. After restoring, prove the original Managed Host IDs, service reservations, AI/Remote/Internet ACLs and live allowed/denied traffic, not just that the CLI starts.
+
+## First-time setup — operations
+
+**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation), enroll/test at least one Agent or configure an approved Internet Access destination **if you need a post-restore traffic proof**, and verify `show status` plus diagnostics. Plan protected storage for the backup outside the Server, including the sensitive PKI, credentials, policy and identity state. A **backup** is routine; a **restore** can replace live Server state and requires an authorized recovery window. After restoring, prove the original Managed Host IDs, service reservations, AI/Remote/Internet ACLs and live allowed/denied traffic, not just that the CLI starts.
+
+Install the [Linux Server](/getting-started/server-installation) and verify its real role and health first. For operations involving Managed Hosts, complete [Zero-Touch or bulk enrollment](/guides/enrollment) and verify current inventory; **do not** recreate automatic Zero-Touch SSH/RDP services. For backup/restore or Server-only configuration, enrollment may not be needed. This operation does not require MCP or broad Internet Access unless the specific task says so.
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show managed-hosts
+sudo drlink system diagnostics
+~~~
+
+Follow the scenario's **Server vs Agent vs workstation** labels, take a backup before disruptive changes, and verify both configuration and actual effects (including negative checks where relevant). Remote Access is default ALLOW, whereas Internet Access and AI Access are default DENY.
+
+
 **Outcome:** An operator creates a Server backup, validates it, restores when necessary and verifies inventory, identity continuity, access policy and real application reachability.
 
 <Warning>

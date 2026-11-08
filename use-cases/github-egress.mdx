@@ -5,6 +5,29 @@ description: "Make proxy-aware Git and API traffic work with narrow Internet Acc
 
 # Use GitHub Git and API through restricted Internet Access
 
+## Before Step 1 — new installation checklist
+
+**First-time order:** Install the [Server](/getting-started/server-installation), confirm the Internet Access proxy listener is reachable from the protected host and egress DNS/Internet reachability exists **from the Server**. No Agent is needed for ordinary proxy-aware Git/curl. Allow only the proxy's external firewall port from the source network, register the source IP/CIDR visible **after NAT**, and define exact GitHub/API-related FQDN+TCP port objects under [Internet Access WHITELIST](/guides/internet-access). Git operations may contact additional redirect/content hosts; inspect actual request logs and approve each needed destination individually. Confirm both authorized real Git/curl and denied unrelated traffic.
+
+## First-time setup — controlled outbound access
+
+**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation), confirm the Internet Access proxy listener is reachable from the protected host and egress DNS/Internet reachability exists **from the Server**. No Agent is needed for ordinary proxy-aware Git/curl. Allow only the proxy's external firewall port from the source network, register the source IP/CIDR visible **after NAT**, and define exact GitHub/API-related FQDN+TCP port objects under [Internet Access WHITELIST](/guides/internet-access). Git operations may contact additional redirect/content hosts; inspect actual request logs and approve each needed destination individually. Confirm both authorized real Git/curl and denied unrelated traffic.
+
+1. Install and verify the **Linux Server** with [Server installation](/getting-started/server-installation). Check the Internet Access listener's real interface/port in diagnostics and configure [firewall/NAT](/deployment/firewall-nat) so the **protected host → Server proxy endpoint** is reachable. Keep direct Internet egress blocked by your own network firewall.
+2. **No DRLink Agent, Managed Host enrollment or Remote Service is required on the protected HTTP(S) application host.** The Server uses a source IP/CIDR Network Object (the address **seen by the proxy after NAT**), destination FQDN Network Objects and TCP Service Objects for the requested ports.
+3. Create exact [Internet Access WHITELIST rules](/guides/internet-access), enable enforcement and test allowed and denied selectors. Internet Access is **DENY by default**, including when enforcement is disabled; it does not permit unrestricted Internet use.
+4. On the protected host, configure the application **HTTP_PROXY/HTTPS_PROXY** or application-specific proxy option for your actual Server proxy endpoint. Verify real HTTPS CONNECT or HTTP requests, the unapproved destination DENY and Server audit. A successful direct Internet call or policy-test alone does not qualify.
+
+**Server shell baseline:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show internet-access
+sudo drlink system diagnostics
+~~~
+
+
 **Outcome:** A build or administration host can fetch Git metadata and call a required HTTPS API via DRLink, but cannot browse unrelated destinations through the proxy.
 
 **Example:** protected host 10.20.30.16 → proxy 10.20.30.5:6080 → **github.com:443** and **api.github.com:443** only. Adapt to your application and observed NAT source.

@@ -5,6 +5,14 @@ description: "인증서부터 OAuth 승인·실제 도구 호출까지."
 
 # Claude와 ChatGPT를 DataRelay Link에 연결하기
 
+## 최초 등록 순서
+
+- Linux Server를 **single443 모드**로 설치하고 DNS, 공인 HTTPS 인증서, 외부 TCP/443, AUTO_ACME HTTP-01을 쓸 때 필요한 TCP/80을 구성합니다. 외부 MCP Discovery를 먼저 확인합니다.
+- **Managed Host**면 Agent를 등록합니다(AI 호출만 한다면 Remote Service 불필요). **server:self**는 Agent 없이 가능하지만 Server 전용 AI Access Rule을 별도로 만들어야 합니다.
+- AI Identity를 만들고 [최소 권한/최대 권한](/ko/guides/ai-access)을 선택해 Permission Object·WHITELIST Rule을 설정한 뒤, 해당 클라이언트의 실제 OAuth 요청만 승인합니다.
+- Claude·ChatGPT에서 MCP URL을 등록하고 **실제 허용/차단 도구 호출**로 확인합니다. 최초 Owner의 7가지 Managed Host 권한도 Server 셸의 자동 권한을 뜻하지 않습니다. [최대 권한 시나리오](/ko/use-cases/ai-full-access)를 참조하세요.
+
+
 **Claude와 ChatGPT의 실제 원격 MCP 연결·도구 호출 테스트를 완료했습니다.** Claude는 20개 도구 검색과 명령·파일 생성/읽기/삭제 6개 작업, ChatGPT는 명령·파일·Git 및 비동기 작업을 확인했습니다. [클라이언트 호환성](/ko/reference/mcp-validation)을 확인한 뒤 설치된 Server에서 아래 절차를 따르세요.
 
 ## 1단계 — 공개 HTTPS와 Server 확인

@@ -5,6 +5,14 @@ description: "Public TLS, OAuth consent and real tool calls from both clients."
 
 # Connect Claude and ChatGPT to DataRelay Link
 
+## First-time registration checklist
+
+- Install the **Linux Server** in single443 mode; finish DNS, public HTTPS certificate, firewall TCP/443 (and TCP/80 if AUTO_ACME HTTP-01 issuance needs it). Verify the public MCP discovery endpoints before adding a client.
+- Decide **Managed Host** (enroll the Agent first, with no Remote Service required for AI) versus **server:self** (no Agent; separate Server-local AI Access Rule).
+- Create an AI Identity, choose **least privilege** or expressly approved **full control**, apply the correct Permission Object/WHITELIST Rule, then complete the pending OAuth approval for that exact client/identity.
+- Register the URL in Claude or ChatGPT and verify **real allowed and denied** tool calls. The product's OAuth owner bootstrap may have all seven Managed Host capabilities but **not automatic server:self shell permission**. See [Full-control playbook](/use-cases/ai-full-access).
+
+
 **Real remote MCP connection and tool calls have been tested with both Claude and ChatGPT.** Claude discovered 20 tools and completed six command/file tasks; ChatGPT exercised commands, files, Git and asynchronous jobs. See [client compatibility](/reference/mcp-validation). Follow the steps below on your installed Server.
 
 ## Step 1 — verify the public origin

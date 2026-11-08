@@ -10,10 +10,20 @@ root=Path(__file__).resolve().parents[1]
 nav=json.loads((root/'docs.json').read_text())
 langs={z['language']:z for z in nav['navigation']['languages']}
 assert set(langs)=={'en','ko'}
-names=['index','remote-ssh','lan-relay','private-web','office-allowlist','fixed-tcp-database','ubuntu-updates','github-egress','ai-readonly','ai-server-control','bulk-onboarding','configuration-bundle','backup-recovery']
+names=['index','remote-ssh','lan-relay','private-web','office-allowlist','fixed-tcp-database','ubuntu-updates','github-egress','ai-readonly','ai-full-access','ai-server-control','bulk-onboarding','configuration-bundle','backup-recovery']
 pages=[*sorted((root/'use-cases').glob('*.mdx')),*sorted((root/'ko/use-cases').glob('*.mdx'))]
-assert len(pages)==26, len(pages)
+assert len(pages)==2*len(names), len(pages)
 errors=[]
+# The full MCP authorization scenario must exist in both languages and spell out
+# all seven distinct capabilities, the separately authorized Server self-target,
+# allowed calls, negative checks and revocation.
+for prefix in ('', 'ko/'):
+    full=(root/(prefix+'use-cases/ai-full-access.mdx')).read_text()
+    for cap in ('host-info','process-read','file-read','file-write','file-upload','file-download','command-exec'):
+        assert cap in full, ('Full MCP capability missing',prefix,cap)
+    for item in ('server:self','mcp-owner-full-access','unset ai-access','test ai-access','OAuth'):
+        assert item in full, ('Full MCP procedure missing',prefix,item)
+
 for lang in ['en','ko']:
     n=langs[lang]
     expected=[('ko/' if lang=='ko' else '')+'use-cases/'+name for name in names]
@@ -59,6 +69,15 @@ for page in root.rglob('*.mdx'):
                     errors.append('MCP example is not an object: '+str(page))
             except ValueError as exc:
                 errors.append('Invalid MCP JSON example '+str(page)+': '+str(exc))
+
+# Each operational scenario must include a specific first-use dependency sequence,
+# not just generic install boilerplate.
+for lang,first in (('en','**Scenario-specific first-use order:**'),('ko','**시나리오별 최초 사용 순서:**')):
+    pref='' if lang=='en' else 'ko/'
+    for name in names:
+        if name in ('index','ai-full-access'): continue
+        if first not in (root/(pref+'use-cases/'+name+'.mdx')).read_text():
+            errors.append('Missing scenario-specific setup: '+pref+name)
 
 # Published product instructions must not depend on engineering rollout details.
 for page in root.rglob('*.mdx'):
@@ -152,7 +171,7 @@ if errors:
     print('FAILED VALIDATION:',len(errors))
     print('\n'.join(errors[:80]));sys.exit(2)
 print('PASS',len(all_nav),'navigation page targets')
-print('PASS',len(pages),'bilingual scenarios; 13 pages per language (12 workflows + landing)')
+print('PASS',len(pages),'bilingual scenarios; 14 pages per language (13 workflows + landing)')
 print('PASS',linkcount,'internal markdown links from scenario + modified landing and policy pages')
 print('PASS','MDX frontmatter, code fences, >=4 stages, CLI version surface and fail-closed policy semantics')
 print('PASS',len(image_ids),'provenance-linked real CLI PNGs and',sum(len(v) for v in language_image_sets.values()),'captioned references with English/Korean parity')
