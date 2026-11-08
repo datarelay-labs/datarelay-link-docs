@@ -5,13 +5,9 @@ description: "설정 YAML을 먼저 검증하고 변경점을 확인한 다음 �
 
 # ConfigurationBundle 검증·Diff·적용하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·`system diagnostics`와 백업으로 원상태를 기록합니다. [ConfigurationBundle 참고](/ko/drlink/configuration-bundle)를 읽고 Object → Rule 참조 순서를 준수하세요. [Remote Access](/ko/guides/remote-access), [Internet Access](/ko/guides/internet-access), [AI Access](/ko/guides/ai-access)의 기본 동작은 다릅니다. 미리보기는 승인이나 실제 연결 성공이 아닙니다. 검토한 `sourceRevision`에 대해서만 적용하고 실제 허용·차단 트래픽을 다시 확인하세요.
-
 ## 처음 설치부터 시작하기 — 운영
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·`system diagnostics`와 백업으로 원상태를 기록합니다. [ConfigurationBundle 참고](/ko/drlink/configuration-bundle)를 읽고 Object → Rule 참조 순서를 준수하세요. [Remote Access](/ko/guides/remote-access), [Internet Access](/ko/guides/internet-access), [AI Access](/ko/guides/ai-access)의 기본 동작은 다릅니다. 미리보기는 승인이나 실제 연결 성공이 아닙니다. 검토한 `sourceRevision`에 대해서만 적용하고 실제 허용·차단 트래픽을 다시 확인하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·`system diagnostics`와 백업으로 원상태를 기록합니다. [ConfigurationBundle 참고](/ko/drlink/configuration-bundle)를 읽고 Object → Rule 참조 순서를 준수하세요. [Remote Access](/ko/guides/remote-access), [Internet Access](/ko/guides/internet-access), [AI Access](/ko/guides/ai-access)의 기본 동작은 다릅니다. 미리보기는 승인이나 실제 연결 성공이 아닙니다. 검토한 `sourceRevision`에 대해서만 적용하고 실제 허용·차단 트래픽을 다시 확인하세요.
 
 [Linux Server 설치](/ko/getting-started/server-installation)를 완료하고 역할·서비스 상태를 확인합니다. Managed Host가 필요한 작업은 [Zero-Touch 또는 Bulk 등록](/ko/guides/enrollment) 후 실제 inventory를 확인합니다. Zero-Touch SSH/RDP가 자동으로 만든 서비스를 **다시 생성하지 않습니다**. Server 백업/설정만 하는 경우 Agent가 필요하지 않을 수 있고 MCP·광범위 Internet Access도 필수 전제가 아닙니다.
 

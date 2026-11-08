@@ -5,13 +5,9 @@ description: "PKI·Managed Host·예약 포트·접근 정책을 보존하고 �
 
 # Data Relay Link Server 백업·복원·검증하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·진단을 확인하고 복구 후 실제 트래픽 검증을 위해 Agent 한 대 또는 승인된 Internet Access 목적지를 준비합니다. 백업에는 PKI·인증 정보·정책·호스트 Identity가 포함되므로 Server 외부의 보호된 저장소에 보관해야 합니다. **백업**과 달리 **복원**은 현재 Server 상태를 교체할 수 있어 별도 승인된 복구 시간이 필요합니다. 복원 후 기존 Managed Host ID, 포트 예약, AI/Remote/Internet 정책 및 실제 허용/차단 통신을 점검하세요.
-
 ## 처음 설치부터 시작하기 — 운영
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·진단을 확인하고 복구 후 실제 트래픽 검증을 위해 Agent 한 대 또는 승인된 Internet Access 목적지를 준비합니다. 백업에는 PKI·인증 정보·정책·호스트 Identity가 포함되므로 Server 외부의 보호된 저장소에 보관해야 합니다. **백업**과 달리 **복원**은 현재 Server 상태를 교체할 수 있어 별도 승인된 복구 시간이 필요합니다. 복원 후 기존 Managed Host ID, 포트 예약, AI/Remote/Internet 정책 및 실제 허용/차단 통신을 점검하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) 후 `show status`·진단을 확인하고 복구 후 실제 트래픽 검증을 위해 Agent 한 대 또는 승인된 Internet Access 목적지를 준비합니다. 백업에는 PKI·인증 정보·정책·호스트 Identity가 포함되므로 Server 외부의 보호된 저장소에 보관해야 합니다. **백업**과 달리 **복원**은 현재 Server 상태를 교체할 수 있어 별도 승인된 복구 시간이 필요합니다. 복원 후 기존 Managed Host ID, 포트 예약, AI/Remote/Internet 정책 및 실제 허용/차단 통신을 점검하세요.
 
 [Linux Server 설치](/ko/getting-started/server-installation)를 완료하고 역할·서비스 상태를 확인합니다. Managed Host가 필요한 작업은 [Zero-Touch 또는 Bulk 등록](/ko/guides/enrollment) 후 실제 inventory를 확인합니다. Zero-Touch SSH/RDP가 자동으로 만든 서비스를 **다시 생성하지 않습니다**. Server 백업/설정만 하는 경우 Agent가 필요하지 않을 수 있고 MCP·광범위 Internet Access도 필수 전제가 아닙니다.
 

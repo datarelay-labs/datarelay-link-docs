@@ -5,13 +5,9 @@ description: "Validate, diff, apply and export a reviewed v2.4 Server configurat
 
 # Roll out reviewed policy with a ConfigurationBundle
 
-## Before Step 1 — new installation checklist
-
-**First-time order:** Install the [Server](/getting-started/server-installation) and obtain a clean baseline with `show status`, `system diagnostics` and a protected backup. Read the [ConfigurationBundle reference](/drlink/configuration-bundle) before authoring a desired-state bundle. Define source/destination/port Objects before their policy Rule, and distinguish [Remote Access](/guides/remote-access) from [Internet Access](/guides/internet-access) and [AI Access](/guides/ai-access). A bundle preview is **not** approval or real traffic success; apply only the reviewed `sourceRevision` and verify the relevant actual connection and deny behavior.
-
 ## First-time setup — operations
 
-**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation) and obtain a clean baseline with `show status`, `system diagnostics` and a protected backup. Read the [ConfigurationBundle reference](/drlink/configuration-bundle) before authoring a desired-state bundle. Define source/destination/port Objects before their policy Rule, and distinguish [Remote Access](/guides/remote-access) from [Internet Access](/guides/internet-access) and [AI Access](/guides/ai-access). A bundle preview is **not** approval or real traffic success; apply only the reviewed `sourceRevision` and verify the relevant actual connection and deny behavior.
+**Scenario-specific first-use order:** Install the [Server](/getting-started/server-installation) and obtain a clean baseline with `show status`, `system diagnostics` and a protected backup. Read the [ConfigurationBundle reference](/drlink/configuration-bundle) before authoring a desired-state bundle. Define source/destination/port Objects before their policy Rule, and distinguish [Remote Access](/guides/remote-access) from [Internet Access](/guides/internet-access) and [AI Access](/guides/ai-access). A bundle preview is **not** approval or real traffic success; apply only the reviewed `sourceRevision` and verify the relevant actual connection and deny behavior.
 
 Install the [Linux Server](/getting-started/server-installation) and verify its real role and health first. For operations involving Managed Hosts, complete [Zero-Touch or bulk enrollment](/guides/enrollment) and verify current inventory; **do not** recreate automatic Zero-Touch SSH/RDP services. For backup/restore or Server-only configuration, enrollment may not be needed. This operation does not require MCP or broad Internet Access unless the specific task says so.
 

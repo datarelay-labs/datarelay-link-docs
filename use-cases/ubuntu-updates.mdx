@@ -5,13 +5,9 @@ description: "Permit only required Ubuntu repository FQDNs through the agentless
 
 # Run Ubuntu updates through an approved outbound proxy
 
-## Before Step 1 — new installation checklist
-
-**First-time order:** Install the [Server](/getting-started/server-installation), configure and verify its Internet Access proxy listener, and allow the protected Ubuntu host to reach **only that proxy port** through the external firewall. **No Agent enrollment, SSH Service Object or MCP identity is required** for this agentless HTTP(S) use case. Check the host's real APT mirror FQDNs and HTTP/HTTPS ports, create an exact source Network Object (accounting for NAT) and destination/port Service Objects, then enable [Internet Access WHITELIST](/guides/internet-access). Verify a real proxied APT update and the refusal of an unlisted domain.
-
 ## First-time setup — controlled outbound access
 
-**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation), configure and verify its Internet Access proxy listener, and allow the protected Ubuntu host to reach **only that proxy port** through the external firewall. **No Agent enrollment, SSH Service Object or MCP identity is required** for this agentless HTTP(S) use case. Check the host's real APT mirror FQDNs and HTTP/HTTPS ports, create an exact source Network Object (accounting for NAT) and destination/port Service Objects, then enable [Internet Access WHITELIST](/guides/internet-access). Verify a real proxied APT update and the refusal of an unlisted domain.
+**Scenario-specific first-use order:** Install the [Server](/getting-started/server-installation), configure and verify its Internet Access proxy listener, and allow the protected Ubuntu host to reach **only that proxy port** through the external firewall. **No Agent enrollment, SSH Service Object or MCP identity is required** for this agentless HTTP(S) use case. Check the host's real APT mirror FQDNs and HTTP/HTTPS ports, create an exact source Network Object (accounting for NAT) and destination/port Service Objects, then enable [Internet Access WHITELIST](/guides/internet-access). Verify a real proxied APT update and the refusal of an unlisted domain.
 
 1. Install and verify the **Linux Server** with [Server installation](/getting-started/server-installation). Check the Internet Access listener's real interface/port in diagnostics and configure [firewall/NAT](/deployment/firewall-nat) so the **protected host → Server proxy endpoint** is reachable. Keep direct Internet egress blocked by your own network firewall.
 2. **No DRLink Agent, Managed Host enrollment or Remote Service is required on the protected HTTP(S) application host.** The Server uses a source IP/CIDR Network Object (the address **seen by the proxy after NAT**), destination FQDN Network Objects and TCP Service Objects for the requested ports.

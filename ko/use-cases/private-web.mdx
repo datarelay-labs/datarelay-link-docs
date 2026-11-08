@@ -5,13 +5,9 @@ description: "내부 장비의 HTTPS 관리 포트 하나를 TLS passthrough로 
 
 # 내부 HTTPS 관리자 화면을 외부에서 안전하게 열기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → 내부 HTTPS 대상에 접근 가능한 [Gateway Agent 등록](/ko/guides/enrollment) → 대상의 TLS 인증서·브라우저 호스트명 검증. 신규 Agent 등록에서 `Choose Remote Services`를 선택하면 HTTPS 서비스가 자동 생성됩니다. 해당 서비스를 수동 중복 생성하지 마세요. Remote Access는 초기 정책 없음 상태가 ALLOW이므로 공개 전에 [허용 출발지 WHITELIST](/ko/use-cases/office-allowlist)를 설정하고, 할당된 공개 포트만 방화벽에 열어 실제 브라우저 접근과 미승인 출발지 차단을 확인하세요.
-
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) → 내부 HTTPS 대상에 접근 가능한 [Gateway Agent 등록](/ko/guides/enrollment) → 대상의 TLS 인증서·브라우저 호스트명 검증. 신규 Agent 등록에서 `Choose Remote Services`를 선택하면 HTTPS 서비스가 자동 생성됩니다. 해당 서비스를 수동 중복 생성하지 마세요. Remote Access는 초기 정책 없음 상태가 ALLOW이므로 공개 전에 [허용 출발지 WHITELIST](/ko/use-cases/office-allowlist)를 설정하고, 할당된 공개 포트만 방화벽에 열어 실제 브라우저 접근과 미승인 출발지 차단을 확인하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → 내부 HTTPS 대상에 접근 가능한 [Gateway Agent 등록](/ko/guides/enrollment) → 대상의 TLS 인증서·브라우저 호스트명 검증. 신규 Agent 등록에서 `Choose Remote Services`를 선택하면 HTTPS 서비스가 자동 생성됩니다. 해당 서비스를 수동 중복 생성하지 마세요. Remote Access는 초기 정책 없음 상태가 ALLOW이므로 공개 전에 [허용 출발지 WHITELIST](/ko/use-cases/office-allowlist)를 설정하고, 할당된 공개 포트만 방화벽에 열어 실제 브라우저 접근과 미승인 출발지 차단을 확인하세요.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.
