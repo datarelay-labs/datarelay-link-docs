@@ -183,6 +183,7 @@
             "group": "시작하기",
             "pages": [
               "ko/index",
+              "ko/getting-started/overview",
               "ko/getting-started/concepts",
               "ko/getting-started/oci-free-tier-server",
               "ko/getting-started/oci-network-vm",
@@ -294,6 +295,7 @@
               "ko/reference/network-ports",
               "ko/reference/release-status",
               "ko/reference/glossary",
+              "ko/reference/limitations",
               "ko/reference/license"
             ],
             "icon": "shield-halved"

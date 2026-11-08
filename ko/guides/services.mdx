@@ -16,18 +16,34 @@ Agent Host
 → DataRelay Link endpoint
 ```
 
-Agent Host에서 생성합니다.
+## Service Object와 Remote Service
+
+Service Object는 TCP/22 같은 프로토콜과 포트를 정의합니다. Remote Service는 이 정의를 실제 목적지에 연결하고 공개 엔드포인트를 할당받는 객체입니다. Agent Host에서 Wizard를 열려면:
+
+```text
+set remote-service <NAME>
+```
+
+또는 다음과 같이 목적지와 서비스를 직접 지정하고 확인합니다.
 
 ```text
 set remote-service ssh-access destination this-host service ssh enabled
 show remote-service ssh-access
 ```
 
-this-host 대신 Agent가 접근 가능한 다른 Host를 지정하면 현재 Agent Host가 Relay Host가 됩니다.
+## 지원 유형과 목적지
 
-Remote Service는 TCP와 Fixed TCP Service Object를 지원하고 UDP와 Service Group은 거부합니다.
+Remote Service는 TCP와 Fixed TCP Service Object를 지원하고 UDP와 Service Group은 거부합니다. `destination this-host`는 Agent Host 자신을 의미하며, 접근 가능한 다른 LAN Host를 지정하면 현재 Agent Host가 Relay Host가 됩니다.
 
-상태는 HEALTHY, DEGRADED, DISABLED입니다. 일시적인 연결 또는 sync 문제는 유효한 Remote Service 설정을 자동 삭제하지 않습니다.
+## 실행 상태
+
+```text
+HEALTHY
+DEGRADED
+DISABLED
+```
+
+일시적인 연결 또는 동기화 문제는 유효한 Remote Service 설정을 자동 삭제하지 않습니다.
 
 ## 자동 구성과 추가 구성
 

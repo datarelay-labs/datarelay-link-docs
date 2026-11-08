@@ -118,7 +118,8 @@ test internet-access source apt-source destination ubuntu-security service apt-h
 **동일 Ubuntu 보호 호스트:**
 
 ~~~bash
-curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" --head https://example.org/
+curl --noproxy '' --verbose --proxy "http://10.20.30.5:6080" \
+  --head https://example.org/
 ~~~
 
 **기대:** 허용하지 않은 도메인은 프록시 정책에 의해 **DENY**. Server에서 `system audit`로 실제 출발지/목적지/차단 사유를 확인합니다. 단순 DNS/TCP timeout은 정책 DENY 증거가 아닙니다.

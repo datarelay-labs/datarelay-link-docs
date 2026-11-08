@@ -55,6 +55,15 @@ The key distinction is simple:
 
 For the complete object model, policy behavior, and role boundaries, read [Concepts & Mental Model](/getting-started/concepts).
 
+## Policy defaults — three separate access controls
+
+- **Remote Access:** No Policy/No Rules initially means **ALLOW**. In BLACKLIST, matching rules DENY and unmatched traffic ALLOW; in WHITELIST, matching rules ALLOW and unmatched traffic DENY. Disabled enforcement means **ALLOW ALL**.
+- **Internet Access:** **WHITELIST only**. No matching enabled rule, no policy, or disabled enforcement means **DENY ALL**. BLACKLIST is not available.
+- **AI Access:** **WHITELIST only**. Without an authenticated AI Identity and matching grant, access is **DENY**; disabled enforcement also means **DENY ALL**.
+- Rules have no priority ordering or individual allow/deny action. Resetting a policy removes Mode/Rules and restores that plane's initial behavior. **Never disable Remote Access enforcement to lock down a published service.**
+
+For first installation through final connection tests, follow [Choose your first workflow](/getting-started/choose-workflow).
+
 ## Choose your path
 
 <CardGroup cols={2}>
@@ -92,6 +101,8 @@ For the complete object model, policy behavior, and role boundaries, read [Conce
 DataRelay Link relays explicitly configured services and approved destinations. It is not a full VPN, transparent network overlay, automatic cloud firewall/DNS manager, or large fleet-management platform.
 
 External firewall/NAT rules, cloud security groups, DNS-provider records, OS accounts, and application certificates remain operator responsibilities unless a separately documented feature says otherwise.
+
+For supported product boundaries and protocol limitations, see [Known Limits](/reference/limitations).
 
 <Note>
   DataRelay Link is **Source Available**, not Open Source. See [License](/reference/license).

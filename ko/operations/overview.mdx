@@ -30,6 +30,14 @@ system info
 system diagnostics
 ```
 
-리소스 하나만 바꿀 때는 직접 CLI를 사용합니다. 서로 의존하는 여러 설정을 바꿀 때는 ConfigurationBundle의 `test → diff → apply` 순서를 사용합니다.
+## 설정 변경
+
+리소스 하나만 바꿀 때는 직접 CLI를 사용합니다. 서로 의존하는 여러 설정을 바꿀 때는 ConfigurationBundle을 사용합니다.
+
+```text
+test configuration <FILE|->
+system diff configuration <FILE|->
+system apply configuration <FILE|->
+```
 
 복구가 필요해도 기준 상태를 직접 수정하지 마십시오. revision을 확인하고 제품의 백업/복구 절차를 사용합니다.

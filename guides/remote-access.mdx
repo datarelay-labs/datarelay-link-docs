@@ -41,6 +41,8 @@ Example:
 ~~~text
 set network-object office-admin type ip value 203.0.113.10
 set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+set remote-access enabled
+test remote-access source office-admin destination ubuntu-prod service ssh
 ~~~
 
 Disabling enforcement preserves Mode and Rules but makes policy effective ALLOW ALL. Policy Reset removes Mode and Rules and returns to the initial no-policy ALLOW state.
