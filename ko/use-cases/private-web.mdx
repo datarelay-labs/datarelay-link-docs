@@ -85,7 +85,7 @@ https://console.example.net:<예약된-공인-포트>/
 DNS 테스트 시 URL 호스트명과 TLS 검증을 유지하려면 값 교체 후:
 
 ~~~bash
-curl --resolve console.example.net:<예약된-공인-포트>:<DRLink-공인-IP> https://console.example.net:<예약된-공인-포트>/
+curl --resolve console.example.net:<reserved-public-port>:<drlink-public-ip> https://console.example.net:<reserved-public-port>/
 ~~~
 
 **성공 기준:** 인증서 오류 없이 원래 장비의 로그인 화면이 열리고, 기존 장비 계정으로 로그인합니다. DRLink가 장비 관리 계정을 생성하지는 않습니다.
@@ -101,7 +101,7 @@ curl --resolve console.example.net:<예약된-공인-포트>:<DRLink-공인-IP> 
 
 ~~~text
 show remote-access
-show managed-host <Relay-Managed-Host> remote-services
+show managed-host <relay-host> remote-services
 system audit
 ~~~
 

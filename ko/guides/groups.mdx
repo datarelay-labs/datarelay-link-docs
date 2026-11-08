@@ -23,9 +23,10 @@ type은 TCP, UDP, Fixed TCP입니다. 일반 Wizard는 SSH, HTTP, HTTPS, RDP, Cu
 
 UDP는 명시적 설정으로 존재할 수 있지만 Remote Service와 Internet Access v2.4에서는 거부됩니다.
 
-Server에서 웹 Service Object와 Group을 함께 정의하는 예입니다.
+Server에서 SSH, HTTP, HTTPS Service Object와 웹 Group을 정의하는 예입니다.
 
 ```text
+set service-object ssh type tcp port 22
 set service-object http type tcp port 80
 set service-object https type tcp port 443
 set service-group web-services members http,https

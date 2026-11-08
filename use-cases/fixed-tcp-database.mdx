@@ -70,6 +70,7 @@ Verify the enrolled gateway's Managed Host name (example **branch-gateway**). A 
 set remote-access dba-to-db mode whitelist source dba-public destination branch-gateway service oracle-db enabled
 set remote-access enabled
 test remote-access source dba-public destination branch-gateway service oracle-db
+show remote-access
 ~~~
 
 Expected: **ALLOW** for the approved source. Review all matching Rules and the `show remote-access` state for unintended sources.

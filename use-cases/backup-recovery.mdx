@@ -120,6 +120,8 @@ Check that immutable Managed Host identities, Remote Service IDs and public endp
 - **Policy changed unexpectedly:** compare current revision and backup baseline before authorizing another mutation. Never reset Remote Access policy merely to restore connectivity, because initial Remote Access is ALLOW.
 - **Service appears HEALTHY without real traffic:** verify the application's endpoint separately. Runtime/heartbeat status alone does not prove the destination is reachable.
 
+After restore, use [Remote SSH](/use-cases/remote-ssh) or [APT via proxy](/use-cases/ubuntu-updates) to prove one **real authorized connection** and one **explicit policy DENY**. A healthy heartbeat alone is not proof of application traffic.
+
 See [backup/restore reference](/operations/backup-restore) and [troubleshooting](/troubleshooting/overview) for further recovery boundaries.
 
 ## Current behavior check — 2026-10-28

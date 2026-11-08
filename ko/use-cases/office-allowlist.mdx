@@ -108,7 +108,7 @@ test remote-access source unapproved-test destination branch-a service ssh
 승인 사무실 **외부 PC**에서 Agent가 출력한 예약 포트로 접속합니다.
 
 ~~~bash
-ssh -p <예약-공인-포트> <실제-OS-계정>@<DRLink-공인-호스트>
+ssh -p <reserved-public-port> <actual-os-user>@<drlink-public-host>
 ~~~
 
 그다음 **별도 비허용 네트워크**에서 동일 접속을 시도하고 `system audit`에서 정책 DENY를 확인합니다. 시간 초과나 외부 방화벽 차단만으로 DRLink 정책 차단이 증명되지는 않습니다.

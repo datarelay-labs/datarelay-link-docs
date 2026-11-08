@@ -99,7 +99,7 @@ show remote-service lan-web
 **외부 지원 PC:**
 
 ~~~bash
-ssh -p <SSH-공인-포트> <실제-SSH-계정>@<DRLink-공인-주소>
+ssh -p <ssh-public-port> <actual-ssh-user>@<drlink-public-host>
 ~~~
 
 HTTPS는 외부 접근용 DNS와 **애플리케이션 인증서가 일치하도록** 설정한 다음 브라우저에서 확인합니다.
@@ -115,7 +115,7 @@ https://<인증서에-일치하는-공인-DNS>:<웹-공인-포트>/
 **Server REPL:**
 
 ~~~text
-show managed-host <게이트웨이-Managed-Host-이름> remote-services
+show managed-host <gateway-managed-host-name> remote-services
 show remote-access
 system audit
 ~~~

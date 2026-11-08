@@ -96,7 +96,7 @@ show remote-service branch-oracle
 허용된 외부 DBA PC에서 TCP 리스너 확인:
 
 ~~~bash
-nc -vz <DRLink-공인-주소> <할당된-Fixed-TCP-공인-포트>
+nc -vz <drlink-public-host> <allocated-fixed-tcp-public-port>
 ~~~
 
 그다음 실제 **DB 벤더 클라이언트**에서 이 호스트/포트와 올바른 DB 계정으로 로그인·조회합니다. **nc 성공은 TCP 핸드셰이크만 검증**하므로 실제 DB 쿼리 성공까지 확인해야 합니다. 비허용 공인 IP에서는 접속 거부 및 DRLink 감사 기록을 확인하세요.

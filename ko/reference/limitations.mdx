@@ -1,0 +1,20 @@
+---
+title: "알려진 제한 사항"
+description: "현재 DataRelay Link가 지원하는 범위와 지원하지 않는 동작을 구분합니다."
+---
+
+# 알려진 제한 사항
+
+DataRelay Link는 모든 네트워크·보안 플랫폼을 대체하기보다 특정 보안 연결 문제를 해결하는 데 초점을 둡니다.
+
+- 목표 규모는 대략 수 대에서 수십 대 수준의 Managed Host입니다.
+- VPN Mesh 또는 전체 네트워크 Overlay 제품이 아닙니다.
+- 완전한 SWG/SASE/TLS 검사 제품이 아닙니다.
+- 고객의 클라우드 방화벽, 외부 NAT/DNAT 또는 DNS 공급자 레코드를 자동으로 변경하지 않습니다.
+- Remote Service는 TCP 및 Fixed TCP Service Object를 지원하며, 이 용도에서는 UDP와 Service Group을 거부합니다.
+- Internet Access v2.4는 TCP/HTTP/HTTPS CONNECT 중심이며 UDP는 허용하지 않습니다.
+- Internet Access의 목적지는 Managed Host일 수 없고, Managed Host가 속한 Network Group을 통해 간접 지정하는 것도 불가능합니다.
+- 한 호스트에서 Server와 Agent 역할을 동시에 실행하는 구성은 현재 지원 범위 밖입니다.
+- Server ConfigurationBundle과 Agent ConfigurationBundle은 **각각 독립적으로** 원자적으로 적용됩니다. Server와 여러 Agent에 걸친 분산 트랜잭션은 제공하지 않습니다.
+- MCP/AI Access는 대상 OS의 권한이나 Agent Identity를 우회하지 않습니다.
+- 특정 버전에 대한 안정성·지원 선언은 해당 릴리스의 검증 증거가 필요합니다.

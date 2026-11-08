@@ -5,6 +5,8 @@ description: "등록, 터널, 서비스, DNS 문제를 순서대로 진단하는
 
 # 문제 해결
 
+실제 오류가 발생한 계층부터 진단하세요.
+
 ## 1. Server / Agent health
 
 Server:
@@ -55,4 +57,6 @@ Remote Service health만 보고 authorization을 추정하지 않습니다.
 
 AI 인증/identity → permission policy → target Agent/OS permission 순으로 확인합니다. MCP는 이 계층을 우회하지 않습니다.
 
-필요하면 sanitized support bundle을 사용하고 ticket, OAuth/bearer secret, private key는 노출하지 않습니다.
+## 6. 증거 보존
+
+지원되는 환경에서는 `system support-bundle`로 필요한 증거를 수집합니다. 티켓, OAuth/bearer 토큰, 개인키, 비밀 설정 원문은 노출하지 마세요.

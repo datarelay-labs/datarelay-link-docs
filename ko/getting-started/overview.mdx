@@ -1,0 +1,48 @@
+---
+title: "DataRelay Link란?"
+description: "DataRelay Link가 해결하는 연결 문제와 기본 동작 방식을 설명합니다."
+sidebarTitle: "DataRelay Link란?"
+---
+
+# DataRelay Link란?
+
+DataRelay Link는 전체 네트워크를 개방하거나 VPN으로 연결하지 않고, **선택한 통신 경로만 허용**할 수 있도록 돕는 경량 보안 연결 게이트웨이입니다.
+
+## 세 가지 Access 영역
+
+| 영역 | 방향 | 목적 |
+| --- | --- | --- |
+| Remote Access | 외부 → 내부 | Agent가 제공하는 Remote Service 사용 권한 제어 |
+| Internet Access | 내부 → 외부 | 승인된 외부 목적지로 나가는 연결 허용 |
+| AI Access | AI → 관리 대상 | 인증된 AI Identity에 명시적인 권한 할당 |
+
+## 연결과 권한 설정은 서로 다릅니다
+
+```text
+Remote Service
+→ 실제 통신 경로와 고정된 공개 엔드포인트
+
+Access Policy
+→ 연결에 대한 허용·차단 판단
+```
+
+Rule을 생성했다고 터널이나 접속 엔드포인트가 만들어지는 것은 아닙니다.
+
+## 두 가지 CLI 실행 위치
+
+**DRLink Server**에서는 Managed Host 등록, Network/Service/Permission Object와 Group, AI Identity, Access Policy, 감사, 백업·복원 및 Server ConfigurationBundle을 관리합니다.
+
+**Agent Host**에서는 Agent 수명주기, 자신이 소유한 Remote Service, 로컬 진단 및 Agent ConfigurationBundle을 관리합니다.
+
+Remote Service 설정을 바꾸려면 **그 서비스를 소유한 Agent Host**에서 실행해야 합니다.
+
+## 시작할 문서
+
+- [제품 개념](/ko/getting-started/concepts)
+- [빠른 시작](/ko/getting-started/quickstart)
+- [CLI 가이드](/ko/drlink/overview)
+- [아키텍처](/ko/reference/architecture)
+
+## Zero-Touch로 첫 연결 구성
+
+신규 호스트라면 Zero-Touch에서 SSH/RDP 또는 필요한 서비스·목적지를 선택하고 생성된 일회성 명령을 대상 호스트에서 한 번 실행하세요. 선택된 Service Object, Remote Service, 공개 엔드포인트는 자동 생성됩니다. Agent의 `show remote-services`로 결과를 확인하세요. 수동 생성은 **기존 Agent에 추가 서비스를 등록할 때**만 사용합니다.
