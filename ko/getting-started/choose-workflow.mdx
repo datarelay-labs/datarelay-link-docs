@@ -1,0 +1,34 @@
+---
+title: "처음 시작할 작업 선택"
+description: "Server 신규 설치부터 인바운드, 아웃바운드, MCP AI 제어까지 전체 경로."
+---
+
+# Server 신규 설치에서 첫 성공 연결까지
+
+목적에 맞는 **하나의 경로**를 선택하세요. 원격 접근, 외부 인터넷 허용, AI 제어는 필요한 Object와 방화벽 규칙이 다릅니다. Server 명령은 Server에서, Agent 명령은 등록한 대상에서 실행합니다.
+
+| 목적 | 처음부터 순서대로 필요한 작업 | 실습 |
+| --- | --- | --- |
+| 외부에서 내부 SSH/HTTPS/TCP 접근 | [Server 설치](/ko/getting-started/server-installation) → [방화벽/NAT](/ko/deployment/firewall-nat) → [Agent 등록](/ko/guides/enrollment) → [Remote Access ACL](/ko/guides/remote-access) → Agent Remote Service(Zero-Touch 자동 생성 시 중복 금지) → 실연결/차단 | [SSH](/ko/use-cases/remote-ssh), [LAN gateway](/ko/use-cases/lan-relay), [내부 HTTPS](/ko/use-cases/private-web) |
+| 사무실에서만 접근 | 위 Remote Access 경로 + 출발지 Network Object와 **WHITELIST**. Remote Access No Policy/disabled는 **ALLOW**입니다. | [사무실 ACL](/ko/use-cases/office-allowlist) |
+| 내부 앱에서 승인된 인터넷 목적지로만 연결 | [Server 설치](/ko/getting-started/server-installation) → 프록시 Listener/외부 방화벽 확인 → 출발지 IP/CIDR·목적지 FQDN·TCP Service Object → [Internet Access WHITELIST](/ko/guides/internet-access) → 앱 HTTP(S) Proxy → ALLOW/DENY·감사. **HTTP(S)는 Agent 불필요** | [APT](/ko/use-cases/ubuntu-updates), [Git/API](/ko/use-cases/github-egress) |
+| Claude/ChatGPT에 읽기 전용 Managed Host 권한 | [single443 Server 설치](/ko/getting-started/server-installation) → 공인 DNS/TLS 및 [MCP 등록](/ko/guides/mcp-clients) → [관리 Agent 등록](/ko/guides/enrollment) → OAuth Identity → 최소 Permission Object·AI Access Rule → 실도구 호출 | [MCP 읽기 전용](/ko/use-cases/ai-readonly) |
+| AI에게 최대 권한 부여 | 동일 MCP/Agent 준비 → 전용 OAuth Identity → Managed Host 7개 기능 및 광범위한 path → 필요할 때만 **별도 server:self Rule** → 실허용/차단 → 실습 Rule 회수 | [MCP 전체 권한](/ko/use-cases/ai-full-access) |
+
+## 먼저 Server 확인
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+Managed Host 등록은 Server에서 Zero-Touch 명령을 만들고 대상 Agent에서 한 번 실행합니다. **SSH-only Zero-Touch는 Service Object, Remote Service, 공개 endpoint를 자동 생성**합니다. AI 용도만이라면 SSH를 열지 말고 관리 전용 등록을 선택하세요.
+
+## 구분해야 할 세 가지 권한
+
+- **Remote Access:** 외부 → 내부 서비스, No Policy/disabled는 **ALLOW**. WHITELIST로 제한합니다.
+- **Internet Access:** 내부 → 승인된 FQDN:TCP, No Policy/disabled는 **DENY**. 프록시가 보는 출발지와 목적지를 제한합니다.
+- **AI Access:** OAuth 인증 Identity → Managed Host 또는 server:self, No Policy/disabled는 **DENY**. OAuth와 OS 권한은 별도입니다.
+
+다른 TCP/DB·그룹·ConfigurationBundle·복구 실습은 [전체 시나리오](/ko/use-cases/index)에서 선택하세요.

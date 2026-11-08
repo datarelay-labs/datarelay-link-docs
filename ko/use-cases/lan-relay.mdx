@@ -5,6 +5,31 @@ description: "Agent 한 대에서 내부 LAN의 SSH와 HTTPS 서비스 두 개�
 
 # Agent 한 대로 내부 LAN 서비스 여러 개 연결하기
 
+## 첫 사용 전 — 설치부터 확인
+
+**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 [외부 방화벽](/ko/deployment/firewall-nat) 준비 → LAN Gateway에서 두 대상 서비스에 실제 접속되는지 확인 → 신규 Agent 등록 시 [Zero-Touch](/ko/guides/zero-touch)의 `Choose Remote Services`를 선택합니다. 이때 선택된 서비스는 **자동 생성**되므로 아래 수동 생성 단계는 **기존 Agent에 새로운 서비스가 추가되는 경우에만** 사용하세요. 각 공개 서비스의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 외부 허용/차단 실제 연결을 검증합니다.
+
+## 처음 설치부터 시작하기 — Remote Access
+
+**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 [외부 방화벽](/ko/deployment/firewall-nat) 준비 → LAN Gateway에서 두 대상 서비스에 실제 접속되는지 확인 → 신규 Agent 등록 시 [Zero-Touch](/ko/guides/zero-touch)의 `Choose Remote Services`를 선택합니다. 이때 선택된 서비스는 **자동 생성**되므로 아래 수동 생성 단계는 **기존 Agent에 새로운 서비스가 추가되는 경우에만** 사용하세요. 각 공개 서비스의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 외부 허용/차단 실제 연결을 검증합니다.
+
+1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
+2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.
+3. **인바운드 ACL을 명시적으로 설정**합니다. Remote Access는 No Policy 또는 enforcement disabled일 때 **ALLOW ALL**입니다. 실제 외부 출발지 Network Object와 Managed Host·Service Object를 지정한 WHITELIST를 [사무실 IP 제한 실습](/ko/use-cases/office-allowlist)처럼 설정하고 허용·차단을 모두 확인합니다.
+4. **Server 셸**에서 설치 상태를 확인한 뒤 아래 개별 시나리오를 진행합니다.
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show managed-hosts
+sudo drlink show remote-access
+~~~
+
+5. 실제 할당된 공개 endpoint를 이용하여 허용된 외부 PC에서 SSH/HTTPS/TCP를 연결하고, 미허용 출발지에서는 DENY되는지 감사 기록까지 확인합니다. 정책 ALLOW만으로 실통신 성공은 아닙니다.
+
+<Note>Remote Access에는 대상 또는 LAN gateway의 Agent가 필요합니다. MCP AI 권한이나 Internet Access 정책은 인바운드 Remote Service를 대신 생성하지 않습니다.</Note>
+
+
 **완성 결과:** 내부 시스템마다 Agent를 설치하지 않고, 연결 가능한 LAN에 있는 **하나의 Agent Host**로 내부 SSH 서버와 HTTPS 서버를 각각 독립적으로 공개합니다.
 
 예제: 게이트웨이 Agent 10.20.0.10 → 내부 SSH 10.20.0.21:22 / HTTPS 10.20.0.22:443.

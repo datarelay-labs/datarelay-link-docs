@@ -6,6 +6,8 @@ sidebarTitle: "Use Cases"
 
 # Choose your use case
 
+<Note>New installation? Follow [Choose your first workflow](/getting-started/choose-workflow) for the correct order of Server installation, enrollment, MCP, ACL and real ALLOW/DENY checks.</Note>
+
 These are **operator playbooks**, not feature lists. Each page states which machine runs each command, what the result should be, what to test, and how to recover.
 
 <Note>
@@ -31,9 +33,13 @@ These are **operator playbooks**, not feature lists. Each page states which mach
 
 ## AI and operations
 
+For all seven AI capabilities and optional Server-self operations, use [full-control MCP playbook](/use-cases/ai-full-access). Review this separately from read-only access.
+
+
 | Your task | Follow this playbook |
 | --- | --- |
 | Give verified AI a tightly scoped read-only toolset | [Read-only AI / MCP access](/use-cases/ai-readonly) |
+| Give an approved AI identity all seven MCP capabilities | [Full AI / MCP access](/use-cases/ai-full-access) |
 | Enroll a small group of branch/partner hosts | [Batch enrollment and inventory groups](/use-cases/bulk-onboarding) |
 | Apply repeatable configuration safely | [ConfigurationBundle preview and apply](/use-cases/configuration-bundle) |
 | Safeguard identity and restore after a failure | [Backup, restore and recovery](/use-cases/backup-recovery) |

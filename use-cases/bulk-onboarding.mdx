@@ -5,6 +5,26 @@ description: "Issue multiple one-time Agent enrollments and manage inventory wit
 
 # Enroll and organize several remote hosts
 
+## Before Step 1 — new installation checklist
+
+**First-time order:** Install the [Server](/getting-started/server-installation), verify [enrollment/control firewall paths](/deployment/firewall-nat), and choose a supported Agent installer for each target OS. Decide **per host** whether it should expose a service: Zero-Touch SSH-only/`Choose Remote Services` automatically creates selected services; management-only use requires `set enrollment bulk`, count as needed, **blank SSH username**. Do not publish or recreate any services solely to register a Managed Host. Keep one-time enrollment credentials secret, confirm each installed Agent identity on the Server, then apply service-specific [Remote Access ACL](/guides/remote-access) or [AI Access](/guides/ai-access) only if those operations are intended.
+
+## First-time setup — operations
+
+**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation), verify [enrollment/control firewall paths](/deployment/firewall-nat), and choose a supported Agent installer for each target OS. Decide **per host** whether it should expose a service: Zero-Touch SSH-only/`Choose Remote Services` automatically creates selected services; management-only use requires `set enrollment bulk`, count as needed, **blank SSH username**. Do not publish or recreate any services solely to register a Managed Host. Keep one-time enrollment credentials secret, confirm each installed Agent identity on the Server, then apply service-specific [Remote Access ACL](/guides/remote-access) or [AI Access](/guides/ai-access) only if those operations are intended.
+
+Install the [Linux Server](/getting-started/server-installation) and verify its real role and health first. For operations involving Managed Hosts, complete [Zero-Touch or bulk enrollment](/guides/enrollment) and verify current inventory; **do not** recreate automatic Zero-Touch SSH/RDP services. For backup/restore or Server-only configuration, enrollment may not be needed. This operation does not require MCP or broad Internet Access unless the specific task says so.
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink show managed-hosts
+sudo drlink system diagnostics
+~~~
+
+Follow the scenario's **Server vs Agent vs workstation** labels, take a backup before disruptive changes, and verify both configuration and actual effects (including negative checks where relevant). Remote Access is default ALLOW, whereas Internet Access and AI Access are default DENY.
+
+
 **Outcome:** A small operator team enrolls two branch PCs/servers securely and collects them in one Managed Host Group without changing their service permissions or network identity.
 
 ## Step 1 — prepare each site

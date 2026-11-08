@@ -35,6 +35,48 @@ test ai-access source auditor-ai destination branch-a permission file-read path 
 
 The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require paths. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
 
+## Full-control profile — explicitly approved, high risk
+
+**Use only on systems you own and authorize.** Full means all **seven Managed Host MCP capability names** (host-info, process-read, file-read, file-write, file-upload, file-download and command-exec). It is **not** a blanket bypass of OS permissions or the AI client's approval flow. Every full-control grant should be time-bound, audited and assigned to a dedicated authenticated identity. The initially approved owner may already have the built-in **mcp-owner-full-access** rule for enrolled Managed Hosts; inspect it before adding another rule.
+
+1. Complete [Server install](/getting-started/server-installation), [MCP HTTPS/OAuth setup](/guides/mcp-clients), and [Managed Host enrollment](/guides/enrollment) for an Agent target. Create the identity (or use your already OAuth-bound dedicated owner identity) in **Server REPL**:
+
+~~~text
+set ai-identity operator-ai
+system credential configure ai-identity operator-ai authentication oauth
+show ai-identities
+show managed-hosts
+show ai-access
+~~~
+
+2. Once the identity is **authenticated via the approved OAuth request**, assign all seven capabilities **only to your named Managed Host**. Replace branch-a with an actual enrolled name. The path scope below is deliberately very broad: the product's operator-owner bootstrap also uses /*; do not use it for least-privilege accounts.
+
+~~~text
+set permission-object mcp-full-host permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
+set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission mcp-full-host paths '/*' enabled
+set ai-access enabled
+show ai-access
+test ai-access source operator-ai destination branch-a permission command-exec
+test ai-access source operator-ai destination branch-a permission file-read path /tmp/drlink-mcp-check.txt
+~~~
+
+The first two tests should be **ALLOW** when the correct objects, identity and Rule are active. The test checks authorization, not whether the file exists or the OS allows it. Test an unrelated Managed Host as **DENY** unless another grant already covers it. Inspect **show ai-access-log identity operator-ai** after a real tool call.
+
+3. **Server itself is a different target.** Only when Server-local administrative control is explicitly required, add a separate **server:self** rule. This exposes general shell/Git/job capabilities through the Server's configured OS execution user; **cwd and path patterns do not sandbox command-exec**. Do not grant this to an audit/read-only identity.
+
+~~~text
+set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission mcp-full-host paths '/*' enabled
+test ai-access source operator-ai destination server:self permission command-exec
+test ai-access source operator-ai destination server:self permission file-read path /tmp/drlink-mcp-check.txt
+show ai-access
+~~~
+
+4. In Claude or ChatGPT, call **list_hosts** then **get_system_info** for the allowed Agent. If server:self is also approved, call **get_server** and a harmless **server_exec** in an approved disposable work directory. Check the real result, target OS account, audit and a denied operation from a separate least-privilege identity. Never treat tool discovery, OAuth success, or a CLI policy test as end-to-end proof.
+
+To **remove** these grants, review impact and then on the Server run **unset ai-access operator-full-server** and/or **unset ai-access operator-full-host**, preserving unrelated Rules and any existing owner enrollment. Credential revoke/rotation is a separate action that disconnects that identity.
+
+For a guided full-control scenario, follow [AI full-control playbook](/use-cases/ai-full-access). For restricted read-only access, follow [read-only AI](/use-cases/ai-readonly).
+
 ## Two target types
 
 | Target | Execution path | Example |

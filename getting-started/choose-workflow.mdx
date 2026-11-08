@@ -1,0 +1,34 @@
+---
+title: "Choose Your First Workflow"
+description: "End-to-end first-use map for remote access, approved Internet egress and AI MCP control."
+---
+
+# From an empty server to your first working connection
+
+Choose **one** objective. The necessary objects and firewall rules are different for each connectivity direction. Run Server commands on the Server and Agent commands on the enrolled host.
+
+| Your objective | Required components, in order | Hands-on scenario |
+| --- | --- | --- |
+| Remote SSH/HTTPS/TCP to a private host | [Install Server](/getting-started/server-installation) → [firewall/NAT](/deployment/firewall-nat) → [enroll Agent](/guides/enrollment) → [inbound ACL](/guides/remote-access) → Agent's Remote Service (unless Zero-Touch already created it) → real connection/negative test | [SSH](/use-cases/remote-ssh), [LAN gateway](/use-cases/lan-relay), [private HTTPS](/use-cases/private-web) |
+| Restrict access to an office source | The above Remote Access flow **plus** source Network Object and **WHITELIST** before exposing access. No policy/disabled Remote Access means **ALLOW**. | [Office ACL](/use-cases/office-allowlist) |
+| Allow an internal application out to Internet | [Install Server](/getting-started/server-installation) → check proxy listener and network firewall → source IP/CIDR, destination FQDN, service TCP port → [Internet Access WHITELIST](/guides/internet-access) → application HTTP(S) proxy → real ALLOW/DENY/audit. **No Agent needed** for HTTP(S). | [APT](/use-cases/ubuntu-updates), [GitHub/API](/use-cases/github-egress) |
+| Give Claude/ChatGPT read-only Managed Host access | [Install single443 Server](/getting-started/server-installation) → public DNS/TLS and [MCP client registration](/guides/mcp-clients) → [enroll management Agent](/guides/enrollment) → OAuth identity → least-permission Object/AI Access Rule → actual MCP calls/audit | [Read-only MCP](/use-cases/ai-readonly) |
+| Give AI maximum rights | Same MCP/Agent setup → dedicated OAuth identity → all seven Managed Host capabilities, very broad file path scope → **separate server:self Rule only if required** → actual allowed/denied calls → remove temporary grants | [Full-control MCP](/use-cases/ai-full-access) |
+
+## First verify the Server
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+For any **Managed Host** scenario, follow the Server's actual wizard and run the generated one-time enrollment command on the target. **SSH-only Zero-Touch already creates the SSH Object, Service and public endpoint.** For MCP-only use, choose a management-only enrollment instead of exposing SSH.
+
+## Three independent authorizations
+
+- **Remote Access:** outside → internal Remote Service; *No Policy/disabled enforcement = ALLOW*. Restrict with WHITELIST.
+- **Internet Access:** inside → approved external FQDN:TCP port using proxy; *No Policy/disabled = DENY*. Restrict by observed source and destination.
+- **AI Access:** authenticated AI Identity → Managed Host or server:self operation; *No Policy/disabled = DENY*. OAuth does not replace AI Access authorization or target OS permissions.
+
+Use [all scenarios](/use-cases/index) for advanced TCP/database, groups, ConfigurationBundle and recovery workflows.
