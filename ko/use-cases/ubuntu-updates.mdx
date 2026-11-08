@@ -5,13 +5,9 @@ description: "표준 프록시만으로 승인된 Ubuntu 저장소에 APT 업데
 
 # 인터넷이 차단된 Ubuntu에서 APT 업데이트하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation)와 Internet Access 프록시 리스너 확인 → 보호된 Ubuntu에서 **프록시 포트만** Server 쪽 방화벽으로 허용. 표준 HTTP(S) 프록시를 사용하는 이 시나리오는 **Agent 등록, SSH Service Object, MCP Identity가 필요 없습니다.** 실제 APT 저장소 FQDN·HTTP/HTTPS 포트와 NAT 후 보이는 출발지 주소를 확인하고 Network/Service Object를 정의한 후 [Internet Access WHITELIST](/ko/guides/internet-access)를 활성화합니다. 실제 프록시 APT 요청 성공 및 미승인 도메인 차단을 검증합니다.
-
 ## 처음 설치부터 시작하기 — 내부에서 외부로 허용
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation)와 Internet Access 프록시 리스너 확인 → 보호된 Ubuntu에서 **프록시 포트만** Server 쪽 방화벽으로 허용. 표준 HTTP(S) 프록시를 사용하는 이 시나리오는 **Agent 등록, SSH Service Object, MCP Identity가 필요 없습니다.** 실제 APT 저장소 FQDN·HTTP/HTTPS 포트와 NAT 후 보이는 출발지 주소를 확인하고 Network/Service Object를 정의한 후 [Internet Access WHITELIST](/ko/guides/internet-access)를 활성화합니다. 실제 프록시 APT 요청 성공 및 미승인 도메인 차단을 검증합니다.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation)와 Internet Access 프록시 리스너 확인 → 보호된 Ubuntu에서 **프록시 포트만** Server 쪽 방화벽으로 허용. 표준 HTTP(S) 프록시를 사용하는 이 시나리오는 **Agent 등록, SSH Service Object, MCP Identity가 필요 없습니다.** 실제 APT 저장소 FQDN·HTTP/HTTPS 포트와 NAT 후 보이는 출발지 주소를 확인하고 Network/Service Object를 정의한 후 [Internet Access WHITELIST](/ko/guides/internet-access)를 활성화합니다. 실제 프록시 APT 요청 성공 및 미승인 도메인 차단을 검증합니다.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 완료하고 실제 Internet Access 프록시의 수신 IP/포트를 진단합니다. [방화벽·NAT](/ko/deployment/firewall-nat)에서 **보호 호스트 → Server 프록시 포트**를 허용하고, 보호 호스트의 직접 인터넷 접속은 외부 방화벽에서 계속 제한합니다.
 2. 일반 HTTP(S) 프록시 방식에는 보호 호스트의 **Agent 등록이나 Remote Service 생성이 필요 없습니다**. Server에서 프록시가 관찰하는 출발지 IP/CIDR(특히 NAT 이후 주소), 목적지 FQDN 및 TCP 포트 Service Object를 만듭니다.

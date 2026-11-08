@@ -5,13 +5,9 @@ description: "기존 DB의 TCP 포트를 별도 Fixed TCP Remote Service로 연�
 
 # Fixed TCP로 내부 레거시 데이터베이스 접근하기
 
-## 첫 사용 전 — 설치부터 확인
-
-**신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 **Fixed TCP 전용 공개 포트 풀**·[NAT/방화벽](/ko/deployment/firewall-nat) 확인 → DB가 있는 LAN에 접근 가능한 [Agent 등록](/ko/guides/enrollment) → Gateway에서 DB 리스너·계정·TLS 확인. 아래는 기존 Agent에 **새 DB 서비스**를 추가하는 수동 절차입니다. 등록 시 이미 생성한 동등한 서비스를 중복 만들지 마세요. 서비스 공개 전에 DBA 출발지의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 실제 DB 클라이언트로 연결을 검증합니다.
-
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** **신규 사용자 순서:** [Server 설치](/ko/getting-started/server-installation) 및 **Fixed TCP 전용 공개 포트 풀**·[NAT/방화벽](/ko/deployment/firewall-nat) 확인 → DB가 있는 LAN에 접근 가능한 [Agent 등록](/ko/guides/enrollment) → Gateway에서 DB 리스너·계정·TLS 확인. 아래는 기존 Agent에 **새 DB 서비스**를 추가하는 수동 절차입니다. 등록 시 이미 생성한 동등한 서비스를 중복 만들지 마세요. 서비스 공개 전에 DBA 출발지의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 실제 DB 클라이언트로 연결을 검증합니다.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) 및 **Fixed TCP 전용 공개 포트 풀**·[NAT/방화벽](/ko/deployment/firewall-nat) 확인 → DB가 있는 LAN에 접근 가능한 [Agent 등록](/ko/guides/enrollment) → Gateway에서 DB 리스너·계정·TLS 확인. 아래는 기존 Agent에 **새 DB 서비스**를 추가하는 수동 절차입니다. 등록 시 이미 생성한 동등한 서비스를 중복 만들지 마세요. 서비스 공개 전에 DBA 출발지의 [Remote Access WHITELIST](/ko/guides/remote-access)를 설정하고 실제 DB 클라이언트로 연결을 검증합니다.
 
 1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.

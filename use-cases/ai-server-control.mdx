@@ -5,13 +5,9 @@ description: "Reproduce file, Git, stdin, output and stop workflows from either 
 
 # Control Server files, Git and jobs from Claude or ChatGPT
 
-## Before Step 1 — new installation checklist
-
-**First-time order:** Install the [Server](/getting-started/server-installation) in **single443**, configure DNS/certificate and register the Claude/ChatGPT remote client through [MCP setup](/guides/mcp-clients). Create an authenticated dedicated AI Identity and explicitly authorize **server:self** with the required Permission Object and file scopes; Managed Host enrollment and published SSH are **not needed** for Server-only MCP. Start with a disposable permitted directory and no production repository. The configured Server OS executor—not OAuth—limits actual file/command/Git effects. For intentionally unrestricted Server privileges follow [full MCP access](/use-cases/ai-full-access), not this scoped lab.
-
 ## First-time setup — AI / MCP
 
-**Scenario-specific first-use order:** **First-time order:** Install the [Server](/getting-started/server-installation) in **single443**, configure DNS/certificate and register the Claude/ChatGPT remote client through [MCP setup](/guides/mcp-clients). Create an authenticated dedicated AI Identity and explicitly authorize **server:self** with the required Permission Object and file scopes; Managed Host enrollment and published SSH are **not needed** for Server-only MCP. Start with a disposable permitted directory and no production repository. The configured Server OS executor—not OAuth—limits actual file/command/Git effects. For intentionally unrestricted Server privileges follow [full MCP access](/use-cases/ai-full-access), not this scoped lab.
+**Scenario-specific first-use order:** Install the [Server](/getting-started/server-installation) in **single443**, configure DNS/certificate and register the Claude/ChatGPT remote client through [MCP setup](/guides/mcp-clients). Create an authenticated dedicated AI Identity and explicitly authorize **server:self** with the required Permission Object and file scopes; Managed Host enrollment and published SSH are **not needed** for Server-only MCP. Start with a disposable permitted directory and no production repository. The configured Server OS executor—not OAuth—limits actual file/command/Git effects. For intentionally unrestricted Server privileges follow [full MCP access](/use-cases/ai-full-access), not this scoped lab.
 
 1. Install the [Linux Server](/getting-started/server-installation) in **single443** mode; provide a publicly trusted HTTPS certificate and external MCP DNS/origin as documented in [Claude/ChatGPT MCP setup](/guides/mcp-clients). Direct-mode TCP/443 relay is **not** a public MCP endpoint.
 2. Decide your target: **Managed Host** requires [Agent enrollment](/guides/enrollment) and an active management connection but **no published SSH service**; **server:self** needs no Agent, but requires its **own explicit AI Access Rule**.
