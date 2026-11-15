@@ -121,7 +121,7 @@ Confirm that the ingress rules were applied.
   In **single-443** mode, do not create public OCI ingress or DNAT for **6099** or **7000**. They are internal loopback backends. Also do not blindly copy a broad `All Protocols` rule from a generic OCI tutorial.
 </Warning>
 
-If you do not want the whole `6000-6098` range exposed, allow only the service ports that are actually assigned, and constrain source CIDRs where possible.
+For production, expose **only assigned Remote Service ports to approved source CIDRs**. A broad `0.0.0.0/0` lab rule is not a production baseline. Remote Access initially permits unmatched requests until an enforced WHITELIST is configured. Test before opening public ports. See [Remote Access](/guides/remote-access).
 
 ## 3. Create the Ubuntu compute instance
 

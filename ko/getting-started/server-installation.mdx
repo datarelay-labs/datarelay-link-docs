@@ -16,10 +16,14 @@ description: "Server 설치와 설치 후 확인, 다음 연결 설정."
 
 ## 1. Server 설치 프로그램 실행
 
-공식 Server 설치 프로그램을 다운로드하고 실행합니다.
+**승인된 불변 소스 커밋 SHA** 또는 검증된 릴리스 아티팩트만 사용하세요. 변경되는 `main`·검증되지 않은 `latest`에서 설치하지 마세요. 아래 자리표시자를 실제 승인 SHA로 교체하고, 제공된 해시가 있다면 배포물도 검증하세요.
 
 ~~~bash
-curl -fsSL https://raw.githubusercontent.com/datarelay-labs/datarelay-link/main/dist/bootstrap-server.sh -o bootstrap-server.sh
+# 릴리스 담당자로부터 승인된 불변 40자리 Git 커밋 SHA를 확인하세요.
+SOURCE_SHA="REPLACE_WITH_APPROVED_40_CHARACTER_COMMIT_SHA"
+printf '%s' "$SOURCE_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Invalid SHA"; exit 1; }
+curl -fsSL "https://raw.githubusercontent.com/datarelay-labs/datarelay-link/$SOURCE_SHA/dist/bootstrap-server.sh" -o bootstrap-server.sh
+sha256sum bootstrap-server.sh  # 별도로 승인된 배포물 해시가 있다면 대조하세요.
 sudo bash ./bootstrap-server.sh
 ~~~
 
@@ -33,7 +37,7 @@ sudo drlink show status
 sudo drlink system diagnostics
 ~~~
 
-역할이 **DRLink Server**이고 서비스 상태에 오류가 없는지 확인합니다. 문제가 있으면 진단 결과와 [문제 해결](/ko/operations/troubleshooting)을 확인하세요.
+역할이 **DRLink Server**인지, **실제 설치 소스/버전**과 서비스 상태가 정상인지 확인합니다. 설치 명령 종료만으로 정식 릴리스 검증이 완료된 것은 아닙니다. 문제가 있으면 진단 결과와 [문제 해결](/ko/operations/troubleshooting)을 확인하세요.
 
 ## 3. 필요한 연결 설정
 

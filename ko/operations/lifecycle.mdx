@@ -52,3 +52,72 @@ system uninstall
 Agent의 중지, 재개, 재시작, 업데이트 같은 작업은 Agent Host에서 수행합니다.
 
 일반 업데이트와 재시작은 identity와 설정을 보존해야 합니다. uninstall과 Server 측 객체·정책 정리는 별도 작업입니다.
+
+## 전체 삭제: Agent, Server 및 OCI 실습 환경
+
+**삭제 전 목록 확인이 먼저입니다.** 아래 절차는 서로 다른 장비의 상태에 영향을 주며, 복구 불가능한 조작은 **실제 환경 소유자의 별도 승인** 후 실행합니다. 필요한 데이터와 증적을 백업하고, 사용자·Identity·정책 참조·Remote Service·Reserved Public IPv4를 확인하세요. [백업·복원](/ko/operations/backup-restore) 및 [전체 통합 가이드](/ko/getting-started/full-lifecycle)를 참고합니다.
+
+### 1. Server에서 삭제 대상 및 참조 확인 (조회 전용)
+
+**Server REPL:**
+
+~~~text
+show managed-hosts
+show managed-host <HOST>
+show managed-host <HOST> remote-services
+show ai-identities
+show ai-access
+show remote-access
+show internet-access
+system diagnostics
+~~~
+
+삭제할 실습 Host, 관련 OAuth Identity/Rule, 공인 서비스 포트, 다른 Host가 함께 쓰는 Object를 정확히 구분합니다. **Remote Access disabled 또는 policy reset은 ALLOW ALL**이므로 접속 차단 용도로 사용하면 안 됩니다. 필요하면 외부 방화벽에서 제한하고, 정책은 공유 참조를 확인하면서 개별 Rule만 정리합니다.
+
+### 2. 대상 OAuth 권한 철회 및 정책 참조 정리
+
+해당 실습 Identity의 인증을 철회하면 Claude/ChatGPT 연결이 끊길 수 있습니다. 아래 명령은 **폐기 승인된 Identity와 실습용 Rule에만** 적용합니다.
+
+~~~text
+system credential revoke ai-identity <IDENTITY>
+unset ai-access <LAB_AI_RULE>
+unset remote-access <LAB_REMOTE_RULE>
+unset internet-access <LAB_INTERNET_RULE>
+~~~
+
+공용 Network/Permission/Service Object를 다른 Rule에서 쓰고 있다면 삭제하지 마세요. Rule 삭제만으로 OAuth 토큰이 반드시 철회되는 것도 아니고, OAuth 철회만으로 모든 Host 정책 참조가 삭제되는 것도 아닙니다. Owner에게 **mcp-owner-full-access**가 존재하는지도 확인합니다.
+
+### 3. Agent 패키지 제거와 Server 측 Host 폐기
+
+**Agent Host 로컬 CLI**, 필요한 데이터 보존과 영향 확인 후:
+
+~~~text
+system uninstall
+~~~
+
+이어서 **Server REPL**에서 Host 관련 참조를 재조회하고 명시적 확인을 통해 Host를 폐기합니다.
+
+~~~text
+show managed-host <HOST>
+show managed-host <HOST> remote-services
+unset managed-host <HOST>
+show managed-hosts
+~~~
+
+`unset managed-host <HOST>`는 단순 접속 종료가 아닌 **복구 불가능한 Server 신뢰 관계·인벤토리 폐기**입니다. 참조 검사를 통과하면 Host 소유 공인 포트 예약도 정리됩니다. 거부된다면 관련 Rule/참조를 찾아 정리하고, 다른 Host나 공용 Object는 건드리지 않습니다. **Agent uninstall만으로 Server 인벤토리가 없어지지 않습니다.**
+
+### 4. 전체 Server를 폐기하는 경우에만 제거
+
+남은 Agent, 연결·정책·필수 백업을 점검한 후 **Server CLI**에서만 실행합니다.
+
+~~~text
+system uninstall
+~~~
+
+한 Agent를 폐기한다고 Server까지 제거할 필요는 없습니다. DNS, TLS 자료와 인증 정보는 조직의 보존·폐기 규정에 따라 처리하세요.
+
+### 5. OCI 자원과 과금 정리
+
+**OCI Console의 정확한 Region·Compartment**에서 Reserved Public IPv4를 분리한 후 불필요하면 삭제하고, Compute VM을 종료할 때 **Boot Volume 삭제 여부를 명시적으로 선택**합니다. 이후 미사용 Block Volume, Snapshot/Backup, 보안 규칙, Subnet, Route, Gateway, VCN을 참조 관계에 맞춰 정리합니다. DNS 기록 및 잔여 요금도 확인합니다. **VM 삭제만으로 공인 IP·볼륨·백업이 모두 사라진다고 가정하지 마세요.**
+
+최종 확인: 폐기된 Host가 Server 목록에 없고, 과거 공인 포트·OAuth Identity는 더 이상 사용할 수 없으며, Server는 전체 폐기 계획일 때만 제거되어야 합니다. OCI 자원 목록과 비용도 증거로 확인하세요. **이 문서는 실제 운영환경의 삭제·권한 변경을 승인하지 않습니다.**

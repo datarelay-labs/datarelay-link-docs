@@ -121,7 +121,7 @@ DataRelay Link single-443 기준으로 TCP 443과 Remote Service 범위인 TCP 6
   **single-443에서는 6099와 7000을 OCI Public Ingress에 열지 않습니다.** 두 포트는 서버 내부 loopback backend입니다. 또한 다른 OCI 예제 화면의 `All Protocols` 규칙을 그대로 복사하지 말고 위 DataRelay Link용 최소 규칙을 사용하세요.
 </Warning>
 
-`6000-6098` 전체를 미리 열고 싶지 않다면 실제 배정된 서비스 포트만 열고 source CIDR도 제한할 수 있습니다.
+운영 환경에서는 **실제 배정된 Remote Service 포트만 승인된 출발지 CIDR에 허용**하세요. `0.0.0.0/0`은 제한된 실습 예시이며 운영 기본값이 아닙니다. Remote Access의 초기 미일치 요청은 ALLOW이므로 공인 포트를 개방하기 전에 WHITELIST를 적용·검증하세요. [Remote Access](/ko/guides/remote-access)를 참고하세요.
 
 ## 3. Ubuntu Compute Instance 생성
 

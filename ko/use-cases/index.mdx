@@ -60,7 +60,7 @@ sidebarTitle: "활용 사례"
 *그림 2. Agent Host의 실제 menu 화면: Remote Services는 1번, ConfigurationBundle은 3번을 선택합니다. 제품 CLI 출력 예시; 일부 주소·호스트는 가렸습니다.*
 
 
-1. [서버 설치](/ko/getting-started/server-installation), [배포 모드](/ko/deployment/modes), [방화벽/NAT](/ko/deployment/firewall-nat)을 먼저 완료하세요. Remote Access와 Managed Host 대상 AI Access에는 신뢰된 Agent가 필요하지만, HTTP(S) Internet Access의 보호 대상 호스트는 **Agent 없이 표준 프록시 설정만** 사용할 수 있습니다.
+1. [DRLink Server 설치](/ko/getting-started/server-installation)는 사전 조건입니다. Agent 기반 Remote Access는 내부 Agent에서 Server로 **아웃바운드 연결**하여 구성하며, **Agent 네트워크의 인바운드 방화벽 개방·NAT 포트포워딩은 불필요**합니다. Server 측 공개 엔드포인트 구성은 별도의 Server 배포 작업입니다. HTTP(S) Internet Access는 보호 호스트에 Agent 없이 표준 프록시를 사용할 수 있습니다.
 2. **DRLink Server의 일반 셸**에서 현재 상태를 확인합니다.
 
 ~~~bash

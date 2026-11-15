@@ -7,9 +7,9 @@ description: "Enroll one Linux host and reach only its SSH service through the D
 
 ## First-time setup — Remote Access
 
-**Scenario-specific first-use order:** Install the [Server](/getting-started/server-installation), choose a [deployment mode](/deployment/modes), and open the applicable [firewall/NAT paths](/deployment/firewall-nat). Verify `sudo drlink show status` reports Server. Check the target SSH listener and outbound Agent→Server path. Apply a [Remote Access WHITELIST](/use-cases/office-allowlist) **before** exposing SSH when the source must be restricted; without a Remote Access policy, inbound access defaults to ALLOW. Create an SSH-only Zero-Touch enrollment; it **automatically creates** the Service Object, Remote Service and endpoint, so do not create them again. Test both an authorized and an unauthorized external source after enrollment.
+**Scenario-specific first-use order:** Verify the existing [DRLink Server](/getting-started/server-installation) with `sudo drlink show status` → issue SSH-only Zero-Touch enrollment → run the generated command on the private Linux host (Agent→Server outbound connection) → inspect the automatically created SSH Remote Service → verify real SSH from an outside workstation. **No inbound firewall opening, NAT port forwarding, or public IP is required on the Agent host or its private network.** Remote Access defaults to ALLOW without a policy or with enforcement disabled. Restrict sources using a [WHITELIST](/use-cases/office-allowlist) and verify both permitted and denied real connections.
 
-1. **Install the Linux Server** using [Server installation](/getting-started/server-installation). Choose [Direct or single443](/deployment/modes) for your network; configure DNS, public relay/control access and the actual published endpoint pool in [Firewall & NAT](/deployment/firewall-nat). The product does not edit external firewalls.
+1. **Verify the already installed DRLink Server.** [Server installation](/getting-started/server-installation) is a prerequisite, not a repeated step during Agent enrollment. A private Agent only needs outbound connectivity to its Server, not inbound firewall openings or NAT port forwarding. Server-side public endpoint setup belongs to Server deployment.
 2. **Enroll the target as a Managed Host** from the **Server REPL** using the [enrollment guide](/guides/enrollment). Run the generated one-time bootstrap on the *target Agent Host*, not on the Server. For a first SSH-only enrollment, select **SSH only** in the Zero-Touch wizard; it automatically creates the Service Object, Remote Service and endpoint. **Do not recreate those objects**. For a LAN gateway or a new custom service, use management-only enrollment as appropriate, then define the Server Objects and add the new Remote Service on its owning Agent.
 3. **Apply the inbound Access Control policy deliberately.** Without a configured Remote Access policy, access is ALLOW; disabled enforcement also means ALLOW ALL. For restricted access, set a source Network Object and an explicit WHITELIST Rule for the actual Managed Host and Service Object as shown in [Office-only ACL](/use-cases/office-allowlist) *before relying on the endpoint*. Test an authorized and an unauthorized source.
 4. **Check both roles**, then follow the scenario steps below. Server shell:
@@ -32,8 +32,8 @@ sudo drlink show remote-access
 
 ## Prerequisites
 
-- [Install the Linux DRLink Server](/getting-started/server-installation) using the product installer and open the necessary externally managed firewall paths. The Server and Agent must be able to complete enrollment.
-- The internal machine has a working SSH daemon, an existing authorized OS account and outbound reachability to the DRLink Server. DRLink **does not create** SSH users/keys or enable sshd.
+- An operational [DRLink Server](/getting-started/server-installation) with its public Server-side connection address. Server deployment is a separate prerequisite.
+- The internal machine has a working SSH daemon, an existing authorized OS account and outbound reachability to the DRLink Server. **No inbound Agent firewall opening or port forwarding is needed.** DRLink does not create SSH users/keys or enable sshd.
 - Know the Server public hostname/address. Ask the security owner whether to [apply an inbound allowlist](/use-cases/office-allowlist) **before** creating an externally reachable service: Remote Access starts ALLOW when no policy exists.
 
 ## Step 1 — verify the Server
@@ -128,7 +128,7 @@ Check that only the intended service is published and that the Remote Access pol
 ## Troubleshooting and removal
 
 - **DEGRADED:** on the Agent run `system diagnostics`, then `system synchronize`, then `show remote-service <actual-service-name>`. Inspect target SSH on 127.0.0.1:22 and the Agent's outbound firewall.
-- **SSH timeout:** check public port mapping/security group and policy. The product does not open external firewalls.
+- **SSH timeout:** check the Server-side allocated public endpoint, Agent→Server outbound tunnel, Remote Access policy and target SSH listener. Do not add Agent-side inbound port forwarding.
 - **Permission denied:** troubleshoot the target OS SSH account/key, not DRLink enrollment.
 - **Remove access:** on the owning **Agent REPL**, run `unset remote-service <actual-service-name>` after reviewing the impact. Removal is not the same as disabling or pausing; endpoint reservation semantics differ. Do not retire the entire Managed Host to remove one SSH service.
 

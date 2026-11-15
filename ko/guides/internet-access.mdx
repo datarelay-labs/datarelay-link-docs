@@ -27,6 +27,34 @@ test internet-access source ubuntu-prod destination github service https
 
 **Internet Access는 WHITELIST 전용이며 기본 DENY입니다.** No Policy, 허용 Rule 불일치, Enforcement 비활성화 상태 모두 **DENY ALL**입니다. BLACKLIST는 지원하지 않습니다. Remote Access의 초기 상태/비활성화 의미와 혼동하지 마세요.
 
+## 보호된 호스트의 프록시 설정
+
+Server의 `system diagnostics`에서 **실제 Internet Access 리스너 IP·포트**를 확인합니다. 실습의 `6080`도, 다른 설치에서 사용하는 `6102`도 모든 환경의 고정값은 아닙니다. HTTP(S) 프록시 앱을 쓰는 보호 호스트에는 Agent가 필요 없습니다.
+
+**보호 Linux 호스트 셸, 임시 설정:** 서브셸에서 실행한 후 서브셸 종료로 환경을 복원합니다.
+
+~~~bash
+PROXY_URL="http://<SERVER_REACHABLE_IP>:<ACTUAL_PROXY_PORT>"
+export http_proxy="$PROXY_URL" https_proxy="$PROXY_URL"
+export HTTP_PROXY="$PROXY_URL" HTTPS_PROXY="$PROXY_URL"
+export no_proxy="localhost,127.0.0.1" NO_PROXY="localhost,127.0.0.1"
+# 허용 도메인 실통신을 확인하고 Server 감사 로그를 대조합니다.
+~~~
+
+Ubuntu APT에 **영구 설정이 필요한 경우에만** 기존 파일 유무를 검토하고 별도의 설정 파일을 만듭니다.
+
+~~~bash
+PROXY_URL="http://<SERVER_REACHABLE_IP>:<ACTUAL_PROXY_PORT>"
+test ! -e /etc/apt/apt.conf.d/90drlink-proxy || { echo "Existing file: review first"; exit 1; }
+printf 'Acquire::http::Proxy "%s";
+Acquire::https::Proxy "%s";
+' "$PROXY_URL" "$PROXY_URL"   | sudo tee /etc/apt/apt.conf.d/90drlink-proxy >/dev/null
+# 해당 전용 설정을 폐기하는 경우에만:
+# sudo rm /etc/apt/apt.conf.d/90drlink-proxy
+~~~
+
+Git은 일회성 `git -c http.proxy="$PROXY_URL" ...`를 사용할 수 있습니다. systemd 서비스는 별도로 검토한 drop-in에 `Environment="HTTPS_PROXY=..."`, 필요한 HTTP_PROXY/NO_PROXY를 설정하고 계획된 재시작을 해야 합니다. 로그인 셸 환경 변수만으로 이미 실행 중인 서비스가 변경되지는 않습니다. **허용된 실통신·미허용 목적지의 명시적 정책 DENY·Server 감사**를 확인하세요. timeout은 차단 증거가 아닙니다.
+
 HTTP/HTTPS 보호 호스트에는 DRLink Agent를 설치할 필요가 없고, 표준 애플리케이션 프록시 설정만 사용합니다. NAT 뒤의 Managed Host 출발지 정책은 프록시가 실제 관찰하는 IP와 일치하지 않으면 DENY되므로, NAT가 있다면 관측된 IP/CIDR Network Object를 사용합니다. 정책 ALLOW만으로 실제 연결이 성공했다고 판단할 수 없습니다.
 
 [Ubuntu APT 업데이트 따라 하기](/ko/use-cases/ubuntu-updates)와 [Git/API 프록시 따라 하기](/ko/use-cases/github-egress)에서 실통신, 정책 허용·차단 및 감사 로그를 검증할 수 있습니다.

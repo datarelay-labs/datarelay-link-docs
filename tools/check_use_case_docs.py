@@ -79,6 +79,26 @@ for lang,first in (('en','**Scenario-specific first-use order:**'),('ko','**시�
         if first not in (root/(pref+'use-cases/'+name+'.mdx')).read_text():
             errors.append('Missing scenario-specific setup: '+pref+name)
 
+# Agent deployment is outbound-only. Do not make Server-side NAT/firewall setup
+# a required step inside the Agent Remote Access scenario workflow.
+for prefix in ('', 'ko/'):
+    path = root/(prefix+'use-cases/remote-ssh.mdx')
+    txt = path.read_text()
+    first_order = next(line for line in txt.splitlines()
+                       if line.startswith('**Scenario-specific first-use order:**')
+                       or line.startswith('**시나리오별 최초 사용 순서:**'))
+    if '/deployment/firewall-nat' in first_order:
+        errors.append('Remote SSH first-use order wrongly requires firewall/NAT: '+str(path))
+    if 'Agent→Server' not in first_order:
+        errors.append('Remote SSH missing outbound Agent direction: '+str(path))
+    if ('No inbound' if not prefix else '인바운드') not in first_order:
+        errors.append('Remote SSH missing Agent inbound/NAT distinction: '+str(path))
+    for case in ('remote-ssh','office-allowlist','private-web','lan-relay','fixed-tcp-database'):
+        page = root/(prefix+'use-cases/'+case+'.mdx')
+        first_step = next(line for line in page.read_text().splitlines() if line.startswith('1. '))
+        if '/deployment/firewall-nat' in first_step:
+            errors.append('Agent use case wrongly requires firewall/NAT setup: '+str(page))
+
 # Published product instructions must not depend on engineering rollout details.
 for page in root.rglob('*.mdx'):
     text = page.read_text()

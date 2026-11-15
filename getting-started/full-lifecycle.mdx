@@ -1,0 +1,116 @@
+---
+title: "OCI to teardown: complete first-use guide"
+description: "Follow the complete OCI deployment, Server and Agent setup, remote SSH/HTTPS, outbound proxy, MCP authorization, verification, and safe teardown process."
+sidebarTitle: "Full lifecycle"
+icon: "list-checks"
+---
+
+# OCI to teardown: the complete DataRelay Link journey
+
+This guide connects the existing hands-on pages into one end-to-end path. Start with an empty Oracle Cloud tenancy, finish with a verified Remote Service, controlled outbound Internet and an authorized AI client, then retire the lab safely. **Commands marked Server REPL belong inside `sudo drlink` on the Server; Agent REPL commands run on the protected Agent Host.** Never treat a documentation example as proof that your own installation passed.
+
+## 1. Prepare OCI and identify your Server
+
+Follow [OCI Always Free preparation](/getting-started/oci-free-tier-server) and [VCN, Ubuntu VM, Reserved Public IPv4](/getting-started/oci-network-vm). Verify current Always Free eligibility and charges in OCI before creating resources; capacity, eligible shapes and boot-volume allocations vary.
+
+- Build the VCN, Internet Gateway, route and public subnet, create the VM and associate the Reserved Public IPv4.
+- Restrict the administrative SSH port to your known administrator public IP. Keep private and loopback services private.
+- For public MCP use **single443** and real DNS/HTTPS. Port 443 is public; internal single443 ports 6099 and 7000 are **not** public OCI ingress. Open only the **assigned** Remote Service port(s) in 6000-6098 to necessary sources, after policy preparation. The installed Internet Access listener is a separate, installer-owned endpoint.
+
+See [Firewall and NAT](/deployment/firewall-nat) for the selected deployment mode. Do not open the entire 6000-6098 pool unless the actual use case requires it.
+
+## 2. Install and verify the Server
+
+Follow [Server installation](/getting-started/server-installation) from an **approved immutable source SHA or qualified release artifact**. Do not run a mutable-`main` installer. Choose the correct deployment mode and public identity in the installer.
+
+**Server shell:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+Record the installed version/source, role, actual listeners, hostname and any blocking diagnostic. Installation completion is not release qualification. The Server holds inventory and policy; it does not create the Agent's OS user accounts or external firewall.
+
+## 3. Enroll an Agent without duplicating services
+
+**Server REPL:**
+
+~~~text
+set enrollment zero-touch
+show managed-hosts
+~~~
+
+For outside-to-inside SSH, select **Linux → SSH only** in the wizard and run its **one-time** enrollment command on the target Linux Host. This automatically creates the corresponding Service Object, Remote Service and reserved endpoint. **Do not recreate these manually.** An empty SSH username in SSH-only mode is *not* management-only.
+
+For an AI-only host with **no public SSH/RDP service**, use `set enrollment bulk` with count **1** and blank SSH username; follow [Enrollment](/guides/enrollment) and [Zero-Touch](/guides/zero-touch).
+
+**Agent REPL after enrollment:**
+
+~~~text
+show status
+show agent
+show remote-services
+~~~
+
+Use the actual service name from the list with `show remote-service <actual-service-name>`. The Server and Agent are separate roles; confirm the Agent is genuinely connected.
+
+## 4. Make external SSH/HTTPS access safe
+
+**Remote Access has a default ALLOW state** when no policy is configured or enforcement is disabled. Configure the **WHITELIST before opening the service port** in OCI. Never assume disabling Remote Access blocks clients.
+
+**Server REPL example, replacing all names/addresses with your actual objects:**
+
+~~~text
+show remote-access
+set network-object office-admin type ip value 203.0.113.10
+set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+set remote-access enabled
+test remote-access source office-admin destination ubuntu-prod service ssh
+show remote-access
+~~~
+
+Also test a nonmatching source Object and expect **DENY**. Then limit OCI NSG/Security List and OS firewall to approved sources and **the assigned public endpoint port**. Prove a real authorized SSH connection and a real rejected-source attempt. For HTTPS, follow [Private web service](/use-cases/private-web); Zero-Touch-created SSH must not be redundantly added.
+
+See [Remote Access](/guides/remote-access), [Office allowlist](/use-cases/office-allowlist) and [SSH hands-on](/use-cases/remote-ssh).
+
+## 5. Allow selected outbound Internet destinations
+
+Internet Access is a **separate WHITELIST-only, default-DENY** plane, including disabled enforcement. The basic HTTP(S) proxy use case needs **no DRLink Agent** on the protected application host.
+
+1. On the Server, read `system diagnostics` and `show internet-access` to identify the **actual installed proxy listener and port**. Do not treat example port **6080** as the default (some deployments use **6102**).
+2. Permit only the protected source to reach this listener in its external network firewall. Determine the **source IP/CIDR the Server observes after NAT**.
+3. On the Server, create source Network Object, each required destination FQDN Network Object and TCP Service Object for each port; enable matching Internet Access WHITELIST rules.
+4. Configure **HTTP_PROXY/HTTPS_PROXY** or application-specific APT/Git proxy on the protected host. Preserve `NO_PROXY` for local services but remove bypass of the public test target in a scoped test.
+5. Confirm actual approved APT/Git/curl traffic, unlisted-domain **policy DENY** and Server audit. A `test internet-access` ALLOW or an ordinary timeout does not prove success or DENY.
+
+Copy the tested commands from [Ubuntu APT updates](/use-cases/ubuntu-updates), [GitHub/API egress](/use-cases/github-egress) and [Internet Access](/guides/internet-access). Do not permanently change production proxy settings merely for a test.
+
+## 6. Connect Claude or ChatGPT through MCP
+
+Use a **single443 Server** with publicly trusted certificate and DNS; MCP is **https://your-fqdn/mcp**, not the Direct-mode relay on TCP/443. Follow [MCP client setup](/guides/mcp-clients).
+
+- Create distinct OAuth AI identities for Claude and ChatGPT; verify and approve only the intended pending OAuth request.
+- For a read-only Managed Host, permit only `host-info,process-read`, and optionally a separate path-bound `file-read`. The first approved owner may already have `mcp-owner-full-access`; **adding a read-only rule never removes a broader owner grant**. Use a distinct non-owner identity to prove least privilege.
+- A full-control Managed Host grant includes seven capabilities: `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`. It is high risk and subject to the target OS account.
+- `server:self` is separate from Managed Hosts. It requires an explicit AI Access grant **and** an enabled local execution profile/OS account; file scope/cwd does not sandbox shell commands.
+- Prove real external-client OAuth, tool discovery, an allowed operation, an out-of-scope DENY, and audit. Protocol tests alone do not certify client compatibility or a stable release.
+
+Use [Read-only AI](/use-cases/ai-readonly), [Full-control AI](/use-cases/ai-full-access), [AI Access](/guides/ai-access) and [MCP validation scope](/reference/mcp-validation).
+
+## 7. Capture evidence and recover safely
+
+Record the source/version identity, public and proxy listener ports, Agent inventory, policy mode, positive and negative **real traffic** outcomes, and Server audit evidence. Distinguish external network firewall failures from policy DENY and from target OS permission errors. Before changing installer-owned listener settings or performing upgrades, review [Backup and restore](/operations/backup-restore) and [Diagnostics](/operations/diagnostics).
+
+## 8. Retire the entire lab
+
+Review the [complete teardown checklist](/operations/lifecycle) **before** uninstalling. Removing an Agent package does not retire the Server's managed-host trust record; deleting an OCI VM may leave a **Reserved Public IPv4**, boot/block volumes or backups behind.
+
+1. Save required backup/evidence and identify remaining users/connections.
+2. Review and revoke the lab's AI credentials, then remove lab AI/Remote/Internet Rules and references without touching unrelated resources.
+3. On each disposable **Agent** run `system uninstall` through the supported local CLI. On the **Server** verify references and retire the named Host with `unset managed-host <HOST>` and its explicit confirmation.
+4. Only when no Hosts and lab services remain, perform the Server-side `system uninstall` if you intend to retire the Server itself.
+5. In OCI, detach/release the **Reserved Public IPv4**, terminate the compute instance, decide explicitly whether to delete its boot volume, then check remaining VCN/networking, backups, volumes, DNS and invoices.
+
+All delete/revoke/uninstall operations are potentially disruptive or irreversible and **must be explicitly approved by the environment owner**. This page documents the sequence, not an authorization to execute it.

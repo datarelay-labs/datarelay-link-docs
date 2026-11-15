@@ -32,6 +32,8 @@ TCP/6099        single-443에서 internal/loopback
 TCP/7000        single-443에서 internal/loopback
 ```
 
+운영 환경에서는 Agent 공인 서비스 포트를 열기 전에 Remote Access **WHITELIST를 적용·검증**하세요. No Policy 또는 enforcement disabled는 **ALLOW ALL**입니다. 할당된 포트만 열고 OCI ingress, OS 방화벽, DRLink 정책을 별도로 검증하세요. [Remote Access](/ko/guides/remote-access)를 참고하세요.
+
 Fixed TCP를 사용하면 실제로 설정된 전용 Fixed TCP endpoint pool만 추가로 노출합니다.
 
 ## 8. Server 확인

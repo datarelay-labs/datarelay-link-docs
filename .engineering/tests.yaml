@@ -35,9 +35,10 @@ scenarios:
       - release
     platforms:
       - linux
-    command: "python3 tools/check_product_workflows.py && python3 tools/check_use_case_docs.py && python3 tools/check_bilingual_parity.py"
+    command: "python3 tools/check_product_workflows.py && python3 tools/check_use_case_docs.py && python3 tools/check_bilingual_parity.py && python3 tools/check_lifecycle_docs.py"
     invariants:
       - Zero-Touch workflows never recreate automatically enrolled services
       - published internal links and bilingual scenarios resolve
       - English and Korean page navigation, command examples, linked topics, and images remain semantically paired
+      - OCI installer sources are immutable; inbound policy and Agent/Server/OCI retirement safety contracts remain visible
     release_gate: true

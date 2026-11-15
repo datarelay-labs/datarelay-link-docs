@@ -9,7 +9,7 @@ description: "Remote Access WHITELIST를 구성하고 승인/차단 출발지를
 
 **시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → [SSH Agent 등록](/ko/guides/enrollment) → Agent에서 실제 `show remote-services`로 Remote Service와 Service Object 이름 확인. Zero-Touch SSH-only가 생성한 객체를 중복 만들지 마세요. 사무실의 **NAT 후 공인 IP**와 독립적인 미승인 외부 테스트 출발지를 확보합니다. 정책이 없는 Remote Access는 **ALLOW**이며, enforcement 비활성화 또는 정책 초기화도 접근 제한이 아닙니다. 기존 Rule을 확인한 후 WHITELIST 설정, 실제 SSH와 감사 로그로 허용/차단을 검증하세요.
 
-1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
+1. **기존 DRLink Server의 상태를 확인합니다.** [Server 설치](/ko/getting-started/server-installation)는 사전 조건입니다. 내부 Agent는 Server로 아웃바운드 연결하므로 **Agent 네트워크의 인바운드 방화벽 개방이나 NAT 포트포워딩은 필요하지 않습니다.** Server 측 공개 엔드포인트 구성은 Server 설치·운영 단계에서 별도로 수행합니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.
 3. **인바운드 ACL을 명시적으로 설정**합니다. Remote Access는 No Policy 또는 enforcement disabled일 때 **ALLOW ALL**입니다. 실제 외부 출발지 Network Object와 Managed Host·Service Object를 지정한 WHITELIST를 [사무실 IP 제한 실습](/ko/use-cases/office-allowlist)처럼 설정하고 허용·차단을 모두 확인합니다.
 4. **Server 셸**에서 설치 상태를 확인한 뒤 아래 개별 시나리오를 진행합니다.

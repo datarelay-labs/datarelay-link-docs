@@ -29,6 +29,34 @@ test internet-access source ubuntu-prod destination github service https
 
 **Internet Access is WHITELIST-only and denies by default.** No Policy, no matching enabled Rule, and disabled Enforcement all mean **DENY ALL**. BLACKLIST is not supported. Remote Access uses different initial/disabled semantics; never transfer those assumptions to Internet Access.
 
+## Configure a proxy on the protected host
+
+Take the **actual Internet Access listener and port from `system diagnostics` on the Server**, not the `6080` lab example or a presumed `6102` default. The application can use the proxy without a DRLink Agent.
+
+**Protected Linux shell, temporary settings:** execute this in a subshell and exit that subshell to restore the previous environment.
+
+~~~bash
+PROXY_URL="http://<SERVER_REACHABLE_IP>:<ACTUAL_PROXY_PORT>"
+export http_proxy="$PROXY_URL" https_proxy="$PROXY_URL"
+export HTTP_PROXY="$PROXY_URL" HTTPS_PROXY="$PROXY_URL"
+export no_proxy="localhost,127.0.0.1" NO_PROXY="localhost,127.0.0.1"
+# Run an actual approved request through the proxy and check Server audit.
+~~~
+
+For persistent Ubuntu APT settings, review existing files first; this creates a **dedicated file** and does not overwrite another configuration:
+
+~~~bash
+PROXY_URL="http://<SERVER_REACHABLE_IP>:<ACTUAL_PROXY_PORT>"
+test ! -e /etc/apt/apt.conf.d/90drlink-proxy || { echo "Existing file: review first"; exit 1; }
+printf 'Acquire::http::Proxy "%s";
+Acquire::https::Proxy "%s";
+' "$PROXY_URL" "$PROXY_URL"   | sudo tee /etc/apt/apt.conf.d/90drlink-proxy >/dev/null
+# Only when removing this dedicated configuration:
+# sudo rm /etc/apt/apt.conf.d/90drlink-proxy
+~~~
+
+For Git use `git -c http.proxy="$PROXY_URL" ...` for a scoped call. A systemd service requires its own reviewed drop-in with `Environment="HTTPS_PROXY=..."` (and HTTP_PROXY/NO_PROXY as needed), followed by a planned restart. Interactive shell variables do not modify a running service. Validate actual approved traffic, explicit unmatched destination policy **DENY**, and audit; a timeout is not proof of DENY.
+
 For the base HTTP/HTTPS path, a protected application uses an ordinary HTTP(S) proxy setting **without a DRLink Agent**. A Managed Host selector can serve as a source only when its eligible address matches the proxy-visible source; after NAT, explicitly use the observed IP/CIDR Network Object instead. A policy-test ALLOW is not real application traffic.
 
 Follow [Ubuntu APT updates](/use-cases/ubuntu-updates) or [GitHub/HTTPS API access](/use-cases/github-egress) for complete proxy, ALLOW, DENY and audit verification.
