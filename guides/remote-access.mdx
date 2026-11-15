@@ -25,7 +25,7 @@ Rules are not ordered and do not have a per-rule ALLOW/DENY action.
 
 ## Security gate before exposing a public endpoint
 
-**Remote Access initially ALLOWS unmatched traffic.** Disabled enforcement and policy reset also result in ALLOW ALL, so `set remote-access disabled` and `unset remote-access policy` are **not** emergency blocks. Before opening any Agent SSH/HTTPS public port, inspect existing rules, enable a narrow **WHITELIST** using the real administrator IP/CIDR, and test both matching **ALLOW** and unmatched **DENY**. Independently restrict OCI NSG/Security List and OS firewall.
+**Remote Access initially ALLOWS unmatched traffic.** Disabled enforcement and policy reset also result in ALLOW ALL, so `set remote-access disabled` and `unset remote-access policy` are **not** emergency blocks. Before enabling access to an SSH/HTTPS public endpoint on the DRLink Server, inspect existing rules, enable a narrow **WHITELIST** using the real administrator IP/CIDR, and test both matching **ALLOW** and unmatched **DENY**. Independently restrict OCI NSG/Security List and OS firewall.
 
 Use verified existing Host/Service Object names instead of `ubuntu-prod`/`ssh`. The negative test must use a **different existing source Network Object** that does not match the allowed IP.
 

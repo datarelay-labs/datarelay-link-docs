@@ -7,9 +7,9 @@ description: "내부 장비의 HTTPS 관리 포트 하나를 TLS passthrough로 
 
 ## 처음 설치부터 시작하기 — Remote Access
 
-**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → 내부 HTTPS 대상에 접근 가능한 [Gateway Agent 등록](/ko/guides/enrollment) → 대상의 TLS 인증서·브라우저 호스트명 검증. 신규 Agent 등록에서 `Choose Remote Services`를 선택하면 HTTPS 서비스가 자동 생성됩니다. 해당 서비스를 수동 중복 생성하지 마세요. Remote Access는 초기 정책 없음 상태가 ALLOW이므로 공개 전에 [허용 출발지 WHITELIST](/ko/use-cases/office-allowlist)를 설정하고, 할당된 공개 포트만 방화벽에 열어 실제 브라우저 접근과 미승인 출발지 차단을 확인하세요.
+**시나리오별 최초 사용 순서:** [Server 설치](/ko/getting-started/server-installation) → 내부 HTTPS 대상에 접근 가능한 [Gateway Agent 등록](/ko/guides/enrollment) → 대상의 TLS 인증서·브라우저 호스트명 검증. 신규 Agent 등록에서 `Choose Remote Services`를 선택하면 HTTPS 서비스가 자동 생성됩니다. 해당 서비스를 수동 중복 생성하지 마세요. Remote Access는 초기 정책 없음 상태가 ALLOW이므로 공개 전에 [허용 출발지 WHITELIST](/ko/use-cases/office-allowlist)를 설정하고, 기존 Server의 할당된 공개 엔드포인트로 실제 브라우저 접근과 미승인 출발지 차단을 확인하세요. 내부 Agent에는 인바운드 포트포워딩이 필요하지 않습니다.
 
-1. [Server 설치](/ko/getting-started/server-installation)를 먼저 완료하고 [Direct/single443 모드](/ko/deployment/modes), [방화벽·NAT](/ko/deployment/firewall-nat)의 제어 연결과 실제 공개 서비스 포트를 허용합니다. 외부 방화벽은 제품이 자동 변경하지 않습니다.
+1. **기존 DRLink Server의 상태를 확인합니다.** [Server 설치](/ko/getting-started/server-installation)는 사전 조건입니다. 내부 Agent는 Server로 아웃바운드 연결하므로 **Agent 네트워크의 인바운드 방화벽 개방이나 NAT 포트포워딩은 필요하지 않습니다.** Server 측 공개 엔드포인트 구성은 Server 설치·운영 단계에서 별도로 수행합니다.
 2. **Server REPL에서 Managed Host를 등록**하고 생성된 Zero-Touch 명령을 대상 **Agent Host**에서 실행합니다. [등록 안내](/ko/guides/enrollment)를 따르세요. SSH only로 등록하면 Service Object, Remote Service, 공개 endpoint가 **자동 생성되므로 중복 생성하지 않습니다**. LAN gateway 또는 추가 Custom TCP 서비스는 필요에 맞게 관리 전용 등록 후 Server Object를 준비하고, 해당 Agent에서 새 Remote Service를 만듭니다.
 3. **인바운드 ACL을 명시적으로 설정**합니다. Remote Access는 No Policy 또는 enforcement disabled일 때 **ALLOW ALL**입니다. 실제 외부 출발지 Network Object와 Managed Host·Service Object를 지정한 WHITELIST를 [사무실 IP 제한 실습](/ko/use-cases/office-allowlist)처럼 설정하고 허용·차단을 모두 확인합니다.
 4. **Server 셸**에서 설치 상태를 확인한 뒤 아래 개별 시나리오를 진행합니다.
@@ -110,7 +110,7 @@ system audit
 ## 문제 해결/철회
 
 - **인증서 오류:** 앱/DNS/SNI/발급 대상 확인. TLS 검증을 끄는 것은 해결책이 아닙니다.
-- **Timeout:** 외부 방화벽/NAT, Agent 연결, 내부 8443 리스너 검사
+- **Timeout:** Server 측 공개 엔드포인트 접근성, Agent→Server 아웃바운드 연결, 내부 8443 리스너 검사
 - **예상치 못한 ALLOW:** 모든 Remote Access Rule 확인. `set remote-access disabled`는 DENY가 아닌 **ALLOW ALL**입니다.
 - **서비스 종료:** 소유 Agent에서 `unset remote-service firewall-ui` 실행 전 연결 중단을 검토합니다.
 

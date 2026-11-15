@@ -25,7 +25,7 @@ Rule에는 순서가 없고 Rule별 ALLOW/DENY action도 없습니다.
 
 ## 공인 서비스 포트를 개방하기 전 보안 절차
 
-**Remote Access는 초기 정책 없음, enforcement disabled 및 policy reset 상태에서 미일치 요청까지 ALLOW**합니다. `set remote-access disabled`나 `unset remote-access policy`는 **차단 명령이 아닙니다**. Agent의 SSH/HTTPS 공인 포트를 열기 전에 기존 Rule을 확인하고 실제 관리자 IP/CIDR만 허용하는 **WHITELIST**를 활성화하세요. 매칭 **ALLOW**, 미매칭 **DENY**를 함께 테스트하고 OCI NSG/Security List와 OS 방화벽에서도 별도로 제한해야 합니다.
+**Remote Access는 초기 정책 없음, enforcement disabled 및 policy reset 상태에서 미일치 요청까지 ALLOW**합니다. `set remote-access disabled`나 `unset remote-access policy`는 **차단 명령이 아닙니다**. DRLink Server의 SSH/HTTPS 공개 엔드포인트를 사용하기 전에 기존 Rule을 확인하고 실제 관리자 IP/CIDR만 허용하는 **WHITELIST**를 활성화하세요. 매칭 **ALLOW**, 미매칭 **DENY**를 함께 테스트하고 OCI NSG/Security List와 OS 방화벽에서도 별도로 제한해야 합니다.
 
 `ubuntu-prod` 및 `ssh`는 실제 등록된 Host/Service Object 이름으로 바꾸고, 미허용 테스트에는 승인된 관리자 IP와 매칭되지 않는 **별도의 기존 출발지 Network Object**를 사용합니다.
 

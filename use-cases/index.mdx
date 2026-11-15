@@ -61,7 +61,7 @@ For all seven AI capabilities and optional Server-self operations, use [full-con
 *Figure 2. Agent Host menu: choose 1 to manage its Remote Services; 3 opens ConfigurationBundle. CLI output example; sensitive addresses and hostnames are masked.*
 
 
-1. Complete [Server installation](/getting-started/server-installation), [deployment mode](/deployment/modes), and [firewall/NAT](/deployment/firewall-nat) using a supported product artifact. Enroll an Agent for Remote Access or Managed Host AI Access; Server-self MCP needs no Agent; agentless HTTP(S) Internet Access does not require one on the protected application host.
+1. [DRLink Server installation](/getting-started/server-installation) is a prerequisite. Agent-based Remote Access uses **outbound Agent→Server connectivity** and needs **no inbound firewall opening or NAT port forwarding on the Agent network**. Public endpoint configuration belongs to Server deployment. HTTP(S) Internet Access can use a standard proxy with no Agent on the protected host.
 2. Open a Server terminal and verify role, installed version and health:
 
 ~~~bash
