@@ -1,0 +1,117 @@
+---
+title: "OCI부터 전체 삭제까지: 첫 설치 통합 가이드"
+description: "OCI VM 구축부터 DataRelay Link Server, Agent, SSH/HTTPS, Internet Access, MCP 연결과 검증 및 안전한 전체 정리 절차까지 단계별로 안내합니다."
+sidebarTitle: "전체 사용 절차"
+icon: "list-checks"
+---
+
+# OCI 구축부터 삭제까지: DataRelay Link 통합 실습
+
+이 가이드는 분산된 실습을 하나의 순서로 연결합니다. OCI 신규 환경에서 Server 설치, Agent 등록, 외부 SSH/HTTPS 접속, 제한된 인터넷 접속, Claude·ChatGPT MCP까지 확인하고 필요한 경우 실습 자원을 정리합니다. **Server REPL 명령은 Server의 `sudo drlink`에서, Agent REPL 명령은 대상 Agent Host의 `sudo drlink`에서 실행**합니다. 문서의 예제가 자신의 환경에서 PASS했다는 뜻은 아닙니다.
+
+## 1. OCI 네트워크, VM, 공인 IP 준비
+
+[OCI Always Free 준비](/ko/getting-started/oci-free-tier-server)와 [VCN·Ubuntu VM·Reserved Public IPv4](/ko/getting-started/oci-network-vm)를 순서대로 진행합니다. 생성 전에 OCI Console에서 현재 Free/Eligible 여부, Shape·스토리지 과금 조건을 확인하세요.
+
+- VCN, Internet Gateway, Route, Public Subnet을 생성하고 VM에 Reserved Public IPv4를 연결합니다.
+- 관리 SSH 포트는 실제 관리자의 공인 IP로 제한합니다.
+- 공개 MCP를 사용하면 **single443**, DNS 및 공인 인증서가 필요합니다. 공인 TCP 443과 별도로 single443 내부 포트 **6099/7000은 외부에 열면 안 됩니다**. TCP 6000-6098 중 실제 할당된 Remote Service 포트만 필요한 출발지에 개방합니다.
+- Internet Access 프록시의 IP·포트는 설치 시 결정되는 별도 설정입니다.
+
+배포 모드별 규칙은 [방화벽·NAT](/ko/deployment/firewall-nat)를 확인합니다.
+
+## 2. Server 설치 및 상태 확인
+
+[Server 설치](/ko/getting-started/server-installation)를 따라 **승인된 고정 Git SHA 또는 검증된 릴리스 아티팩트**로 설치합니다. 변경되는 `main` 다운로드 명령을 그대로 실행하지 않습니다. 배포 모드와 공개 호스트명을 올바르게 선택합니다.
+
+**Server 셸:**
+
+~~~bash
+sudo drlink system version
+sudo drlink show status
+sudo drlink system diagnostics
+~~~
+
+실제 설치 버전·소스, Server 역할, 수신 포트와 진단 오류를 기록합니다. 설치 명령 종료만으로 안정 버전이 검증되지는 않습니다.
+
+## 3. Zero-Touch Agent 등록
+
+**Server REPL:**
+
+~~~text
+set enrollment zero-touch
+show managed-hosts
+~~~
+
+외부에서 내부 SSH 접속을 실습한다면 **Linux → SSH only**로 일회성 등록 명령을 발급하여 대상 Host에서 실행합니다. 선택한 SSH 서비스는 **Service Object, Remote Service, 공인 포트 예약이 자동 생성**되므로 수동으로 중복 생성하지 않습니다. SSH only에서 사용자 이름을 비워도 management-only가 되지 않습니다.
+
+SSH/RDP 공개가 필요 없는 MCP 전용 Host라면 **`set enrollment bulk`, count 1, SSH 사용자명 빈 값**으로 management-only 등록을 진행합니다. 세부 사항은 [등록](/ko/guides/enrollment)과 [Zero-Touch](/ko/guides/zero-touch)를 확인합니다.
+
+**Agent REPL:**
+
+~~~text
+show status
+show agent
+show remote-services
+~~~
+
+실제 이름은 `show remote-service <actual-service-name>`으로 확인하고, Server에서 Host가 연결되었는지도 점검합니다.
+
+## 4. 외부에서 내부 SSH/HTTPS 연결 및 ACL
+
+**Remote Access는 정책이 없거나 enforcement를 disabled로 하면 기본 ALLOW**입니다. 따라서 **공인 서비스 포트 개방 전 WHITELIST를 먼저 적용**하고 허용·차단을 테스트합니다. disabled/reset을 차단 수단으로 사용하지 않습니다.
+
+**Server REPL, 모든 예제 이름·주소는 실제 환경 값으로 교체:**
+
+~~~text
+show remote-access
+set network-object office-admin type ip value 203.0.113.10
+set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+set remote-access enabled
+test remote-access source office-admin destination ubuntu-prod service ssh
+show remote-access
+~~~
+
+다른 기존 출발지 Object로 미일치 **DENY**를 확인합니다. 이후 OCI NSG/Security List와 OS 방화벽에서 **실제 할당된 공인 포트**를 필요한 출발지에만 열고 SSH 실통신 성공·비허용 출발지 차단을 확인합니다. HTTPS도 별도 Service Object·인증서·애플리케이션 상태를 확인해야 합니다.
+
+[Remote Access](/ko/guides/remote-access), [사무실 접속 제한](/ko/use-cases/office-allowlist), [SSH 실습](/ko/use-cases/remote-ssh), [내부 HTTPS](/ko/use-cases/private-web)를 참고하세요.
+
+## 5. 내부 보호 호스트의 승인된 인터넷 연결
+
+Internet Access는 **WHITELIST 전용·기본 DENY**이며 enforcement가 disabled여도 DENY입니다. HTTP(S) 프록시를 사용하는 보호 호스트에는 **DRLink Agent가 필요 없습니다**.
+
+1. Server에서 `system diagnostics`와 `show internet-access`로 **실제 프록시 리스너 주소·포트**를 확인합니다. 실습의 **6080은 예시**이고 일부 설치는 **6102**를 사용하므로 고정값으로 가정하지 않습니다.
+2. 외부 방화벽에서 보호 호스트 → 해당 프록시 포트만 허용합니다. NAT 후 **Server가 실제 관측하는 출발지 IP/CIDR**을 확인합니다.
+3. 출발지 Network Object, 허용 목적지 FQDN Network Object, TCP 포트 Service Object 및 해당 Internet Access Rule을 구성하고 WHITELIST를 활성화합니다.
+4. 보호 호스트의 `HTTP_PROXY/HTTPS_PROXY` 또는 APT/Git 전용 프록시로 실제 트래픽을 전송합니다. `NO_PROXY`로 테스트 대상이 직접 인터넷을 우회하지 않도록 확인합니다.
+5. 실제 허용 APT/Git/curl 통신, 미허용 도메인에 대한 **명시적 정책 DENY**, Server 감사 로그를 대조합니다. 정책 테스트 ALLOW나 단순 timeout은 증명이 아닙니다.
+
+검증된 복사용 명령은 [APT 업데이트 실습](/ko/use-cases/ubuntu-updates), [GitHub/API 실습](/ko/use-cases/github-egress), [Internet Access](/ko/guides/internet-access)를 사용하세요. 실습 때문에 기존 운영 프록시 설정을 덮어쓰지 않습니다.
+
+## 6. Claude 및 ChatGPT MCP 연결
+
+**single443 Server + 공개 DNS + 신뢰된 HTTPS 인증서**를 사용합니다. MCP URL은 `https://설정한-FQDN/mcp`이고 Direct 모드의 443 Relay는 MCP HTTPS가 아닙니다. [MCP 연결](/ko/guides/mcp-clients)을 따르세요.
+
+- Claude와 ChatGPT에 **별도 OAuth AI Identity**를 권장합니다. 실제 클라이언트·Pending ID를 확인하고 OAuth를 승인합니다.
+- 읽기 전용 권한은 `host-info,process-read`, 필요한 경우 경로를 제한한 `file-read`만 부여합니다. **최초 OAuth Owner에 `mcp-owner-full-access`가 있을 수 있으므로**, 기존 전체 권한에 읽기 Rule을 추가해도 읽기 전용이 되지 않습니다. 별도 비Owner Identity로 검증하세요.
+- Managed Host 전체 제어 권한 7개는 `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`이며 위험도가 높고 실행 OS 계정 권한에도 제한됩니다.
+- `server:self`는 별도 AI Access Rule과 Server 로컬 실행 프로파일·OS 계정 설정이 필요합니다. 작업 디렉터리나 파일 경로 제한이 shell 실행을 격리하지는 않습니다.
+- 실제 외부 클라이언트에서 OAuth, Tool 조회, 허용 작업, 비허용 작업의 **DENY**, 감사 로그를 검증합니다. 프로토콜 테스트만으로 실제 클라이언트 호환성이나 안정 릴리스를 보증하지 않습니다.
+
+[읽기 전용 AI](/ko/use-cases/ai-readonly), [전체 제어 AI](/ko/use-cases/ai-full-access), [AI Access](/ko/guides/ai-access), [MCP 검증 범위](/ko/reference/mcp-validation)를 참고하세요.
+
+## 7. 증적 수집 및 복구
+
+설치 소스·버전, 공인 포트, 프록시 리스너, Agent 목록, 정책 모드, 실제 허용·차단 통신, Server 감사 결과를 보존합니다. 정책 DENY와 네트워크 timeout, OS 권한 오류를 구분합니다. 재설치·수정 전에는 [백업·복원](/ko/operations/backup-restore)과 [진단](/ko/operations/diagnostics)을 확인하세요.
+
+## 8. Agent·Server·OCI 자원 정리
+
+실제 삭제 전에 [전체 라이프사이클 및 삭제 체크리스트](/ko/operations/lifecycle)를 확인합니다. **Agent 패키지만 제거해도 Server 인벤토리·신뢰 관계가 자동 삭제되지는 않습니다.** OCI VM을 삭제한 후에도 Reserved Public IPv4, Boot Volume 및 백업이 남을 수 있습니다.
+
+1. 필요한 백업·증적을 보존하고 연결 중인 사용자를 확인합니다.
+2. 실습용 OAuth 권한과 AI/Remote/Internet Rule 및 참조를 검토·철회합니다. 다른 운영 리소스는 건드리지 않습니다.
+3. 폐기할 **Agent Host**에서 `system uninstall`을 실행합니다. **Server**에서 참조를 확인하고 `unset managed-host <HOST>`와 명시적 확인을 거쳐 등록 정보를 폐기합니다.
+4. 전체 Server 폐기까지 계획했다면 남은 리소스를 확인한 후 Server의 `system uninstall`을 진행합니다.
+5. OCI에서 **Reserved Public IPv4 해제**, VM 종료, Boot Volume 삭제 여부 결정, 잔여 VCN·네트워크·볼륨·백업·DNS·요금 확인까지 수행합니다.
+
+모든 권한 철회·삭제·uninstall은 서비스 중단 또는 복구 불가능한 결과를 초래할 수 있습니다. **실제 실행에는 해당 환경 소유자의 별도 승인이 필요합니다.** 문서는 실행 승인이 아닙니다.

@@ -34,6 +34,8 @@ TCP/6099        loopback/internal in single-443
 TCP/7000        loopback/internal in single-443
 ```
 
+In production, apply and verify a Remote Access **WHITELIST before opening public Agent ports**. No policy or disabled enforcement means **ALLOW ALL**. Open only assigned service ports, and check OCI ingress, OS firewall and DRLink policy separately. See [Remote Access](/guides/remote-access).
+
 If Fixed TCP is enabled, expose only the separately configured Fixed TCP endpoint pool actually required.
 
 ## 8. Verify the Server

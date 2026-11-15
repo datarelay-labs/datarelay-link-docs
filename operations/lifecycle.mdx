@@ -52,3 +52,72 @@ system uninstall
 Agent lifecycle commands belong on the Agent Host.
 
 Normal update or restart must preserve identity and configured state; uninstall behavior is separate from Server-side object and policy cleanup.
+
+## End-to-end retirement: Agent, Server and OCI lab
+
+**Inventory before deletion.** These commands affect different systems and must be run only after the environment owner approves the irreversible changes. Back up required data and record existing users, identities, endpoints, policy references and Reserved Public IPv4. See [Backup and restore](/operations/backup-restore) and [full first-use lifecycle](/getting-started/full-lifecycle).
+
+### 1. Server-side preflight (read-only)
+
+**Server REPL:**
+
+~~~text
+show managed-hosts
+show managed-host <HOST>
+show managed-host <HOST> remote-services
+show ai-identities
+show ai-access
+show remote-access
+show internet-access
+system diagnostics
+~~~
+
+Identify the exact disposable Host, every AI credential and Rule that references it, Remote Services and public endpoint reservations. Check for other production users and shared Objects. A policy reset is **not** a safe way to block inbound access: Remote Access reset/disabled = **ALLOW ALL**. Prefer reviewable scoped Rule removal and externally enforced firewall restrictions before retirement.
+
+### 2. Revoke only the retiring identity and remove references
+
+For an explicitly approved disposable identity, revoke its credential first. This can disconnect active Claude/ChatGPT clients. For **only** the named lab Rules, remove AI Access, Remote Access and Internet Access rules after reviewing their references and impact:
+
+~~~text
+system credential revoke ai-identity <IDENTITY>
+unset ai-access <LAB_AI_RULE>
+unset remote-access <LAB_REMOTE_RULE>
+unset internet-access <LAB_INTERNET_RULE>
+~~~
+
+Do not delete a shared Network/Permission/Service Object while other Rules reference it. Inspect the resulting policy and audit. An AI Rule deletion does not automatically revoke OAuth credentials, and a credential revoke does not remove all host policy references. For the operator owner, inspect **mcp-owner-full-access** before treating a scoped identity as fully revoked.
+
+### 3. Uninstall the Agent and retire its Server inventory
+
+On the **Agent Host's local CLI**, after saving data and reviewing impact:
+
+~~~text
+system uninstall
+~~~
+
+On the **Server CLI**, inspect references again, then retire the specific Host using the explicit confirmation prompt:
+
+~~~text
+show managed-host <HOST>
+show managed-host <HOST> remote-services
+unset managed-host <HOST>
+show managed-hosts
+~~~
+
+`unset managed-host <HOST>` is a reference-safe **irreversible retirement**, not a harmless disconnect; it removes the Server's Host trust/inventory and Host-owned endpoint reservations when allowed. If it refuses because references remain, investigate and remove only the relevant dependencies. **Agent uninstall alone leaves Server-side inventory/trust state.** Never use a mass policy reset or re-enrollment to bypass a reference failure.
+
+### 4. Uninstall the Server only when retiring the full deployment
+
+After all enrolled Hosts, connections and required data have been accounted for, take the documented Server backup and perform **on the Server**:
+
+~~~text
+system uninstall
+~~~
+
+This is a disruptive operation. Retiring one Agent **does not** require Server uninstall. Preserve necessary recovery material securely and clean up secrets, DNS and certificates according to the organization's retention policy.
+
+### 5. Finish OCI cleanup and validate costs
+
+In the **OCI Console** for the correct compartment/region: detach and delete the **Reserved Public IPv4** if it is no longer needed; terminate the VM and decide explicitly whether to delete the **boot volume** (do not assume termination deletes it); remove unused block volumes and backups/snapshots; then remove unused network rules, subnet, route, gateway and VCN in dependency order. Remove obsolete DNS records and check that no retained IP, storage, backups or chargeable resource remains.
+
+Final checks: no old public endpoint or OAuth identity is usable, the Host is absent from Server inventory, the Server is absent only if the whole deployment was retired, and OCI billing/resource lists match the intended result. Record actual evidence, not just successful command exits. **This checklist does not authorize any live deletion or credential change.**

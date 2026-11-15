@@ -16,10 +16,14 @@ description: "Install the Server, verify health and configure the next connectio
 
 ## 1. Run the Server installer
 
-Download and run the official Server installer:
+Use an **operator-approved immutable commit** or qualified release artifact, never a mutable `main` or unqualified `latest` installer. Replace the SHA placeholder with the approved 40-character commit. Do not execute the example unchanged:
 
 ~~~bash
-curl -fsSL https://raw.githubusercontent.com/datarelay-labs/datarelay-link/main/dist/bootstrap-server.sh -o bootstrap-server.sh
+# Obtain the operator-approved immutable 40-character Git commit SHA.
+SOURCE_SHA="REPLACE_WITH_APPROVED_40_CHARACTER_COMMIT_SHA"
+printf '%s' "$SOURCE_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Invalid SHA"; exit 1; }
+curl -fsSL "https://raw.githubusercontent.com/datarelay-labs/datarelay-link/$SOURCE_SHA/dist/bootstrap-server.sh" -o bootstrap-server.sh
+sha256sum bootstrap-server.sh  # Compare with an independently approved artifact digest, if supplied.
 sudo bash ./bootstrap-server.sh
 ~~~
 
@@ -33,7 +37,7 @@ sudo drlink show status
 sudo drlink system diagnostics
 ~~~
 
-Confirm role **DRLink Server** and healthy services. Resolve diagnostic errors using [troubleshooting](/troubleshooting/overview).
+Confirm role **DRLink Server**, the installed **source/version identity**, and healthy services. Installer exit alone does not prove that a release is stable. Resolve diagnostic errors using [troubleshooting](/troubleshooting/overview).
 
 ## 3. Configure the connection you need
 

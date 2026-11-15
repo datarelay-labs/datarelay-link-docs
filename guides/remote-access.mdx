@@ -23,6 +23,25 @@ WHITELIST:
 
 Rules are not ordered and do not have a per-rule ALLOW/DENY action.
 
+## Security gate before exposing a public endpoint
+
+**Remote Access initially ALLOWS unmatched traffic.** Disabled enforcement and policy reset also result in ALLOW ALL, so `set remote-access disabled` and `unset remote-access policy` are **not** emergency blocks. Before opening any Agent SSH/HTTPS public port, inspect existing rules, enable a narrow **WHITELIST** using the real administrator IP/CIDR, and test both matching **ALLOW** and unmatched **DENY**. Independently restrict OCI NSG/Security List and OS firewall.
+
+Use verified existing Host/Service Object names instead of `ubuntu-prod`/`ssh`. The negative test must use a **different existing source Network Object** that does not match the allowed IP.
+
+~~~text
+show remote-access
+set network-object office-admin type ip value 203.0.113.10
+set remote-access office-ssh mode whitelist source office-admin destination ubuntu-prod service ssh enabled
+set remote-access enabled
+test remote-access source office-admin destination ubuntu-prod service ssh
+test remote-access source <nonmatching-source-object> destination ubuntu-prod service ssh
+show remote-access
+~~~
+
+Only then open **the assigned public service port** to approved networks and perform a real authorized connection and denied-source test. A policy test alone does not prove actual network enforcement.
+
+
 ## Commands
 
 ~~~text
