@@ -11,8 +11,16 @@ def check(root, product_root=None):
     pages = sorted(root.rglob("*.mdx"))
     errors = []
     links = 0
+    retired_entry = re.compile(r'/i/<(?:handle|ticket|credential)>|22-character (?:handle|locator|filename)|(?:trusted public hostname or verified numeric|verified (?:numeric.IP/private.CA|Private CA fingerprint))|검증된 숫자 IP/Private CA|Private CA fingerprint와 인증서 IP SAN|generated one-time bootstrap|(?:command|launcher) (?:length|character) (?:limit|bound|budget)|drlink-bootstrap\.exe|sudo drlink enroll ', re.I)
+    entry_examples = (
+        'curl -kfsS https://remote.xdr.ooo/A3xK9m|sudo bash',
+        'iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9m|Out-String)',
+    )
     for page in pages:
         text = page.read_text()
+        for no, line in enumerate(text.splitlines(), 1):
+            if retired_entry.search(line):
+                errors.append(f"{page.relative_to(root)}:{no}: retired Zero-Touch entry guidance")
         if "doctor" in text.split("---", 2)[1].lower():
             errors.append(f"{page}: obsolete doctor command in page metadata")
         for target in re.findall(r'(?:href=["\']|\]\()(/[^\s"\')#]+)', text):
@@ -32,6 +40,16 @@ def check(root, product_root=None):
         if opened:
             errors.append(f"{page}: unclosed fence")
     for prefix in ("", "ko/"):
+        entry = (root / (prefix+"guides/zero-touch.mdx")).read_text()
+        labels = (("다운로드", "옵션", "프로토콜", "Server 주소", "Bootstrap 파일명", "실행", "6자리") if prefix else
+                  ("Downloader", "Options", "Protocol", "Server authority", "Bootstrap filename", "Execution", "six-character"))
+        for token in (*labels, *entry_examples):
+            if token not in entry:
+                errors.append(f"{prefix}guides/zero-touch: missing canonical entry field {token}")
+        # Code examples are an exact template, not a length budget or alternate launcher.
+        actual = [line for line in entry.splitlines() if line.startswith(("curl ", "iex(", "curl.exe ", "sudo drlink enroll "))]
+        if actual != list(entry_examples):
+            errors.append(f"{prefix}guides/zero-touch: unexpected entry example")
         for name in ("getting-started/quickstart", "getting-started/linux-client",
                      "getting-started/oci-drlink-install", "use-cases/remote-ssh"):
             text = (root / (prefix+name+".mdx")).read_text()
