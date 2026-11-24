@@ -161,7 +161,7 @@ set permission-group observers members read-only
 set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
 ~~~
 
-Bulk enrollment accepts count/CSV, header label,ssh_user,note; up to 10 unused codes, 1 hour default TTL and 24 hour maximum. A blank SSH user is valid. Zero-Touch generates a compact one-time launcher using a trusted public hostname or verified numeric-IP/private-CA path; DNS is optional. An unmet prerequisite fails before ticket issuance.
+Bulk enrollment accepts count/CSV, header label,ssh_user,note; up to 10 unused codes, 1 hour default TTL and 24 hour maximum. A blank SSH user is valid. For the next candidate, the [Zero-Touch command fields](/guides/zero-touch) define one OS-native invocation, Server HTTPS authority and six-character Bootstrap filename. Public/private HTTPS share the same form; enrollment authorization is separate.
 
 ## Access policies and path scopes
 

@@ -42,7 +42,7 @@ set enrollment zero-touch
 show managed-hosts
 ~~~
 
-For outside-to-inside SSH, select **Linux → SSH only** in the wizard and run its **one-time** enrollment command on the target Linux Host. This automatically creates the corresponding Service Object, Remote Service and reserved endpoint. **Do not recreate these manually.** An empty SSH username in SSH-only mode is *not* management-only.
+For outside-to-inside SSH, select **Linux → SSH only** in the wizard and run its enrollment command on the target Linux Host. This automatically creates the corresponding Service Object, Remote Service and reserved endpoint. **Do not recreate these manually.** An empty SSH username in SSH-only mode is *not* management-only.
 
 For an AI-only host with **no public SSH/RDP service**, use `set enrollment bulk` with count **1** and blank SSH username; follow [Enrollment](/guides/enrollment) and [Zero-Touch](/guides/zero-touch).
 

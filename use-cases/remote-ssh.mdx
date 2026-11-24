@@ -64,7 +64,7 @@ show enrollments
 
 Select **Linux**, enter the host name/description, choose **SSH only** and the actual SSH port (default **22**). The SSH username is optional hint metadata; blank still publishes SSH. Services selected through Zero-Touch **SSH only**, **RDP only** or **Choose Remote Services** automatically receive the required Service Object, Remote Service and public endpoint reservation during enrollment. Do not create the same service manually again. Inspect actual names with `show remote-services` on the Agent.
 
-Copy the generated **one-time** installation command from the enrollment result; run that **exact** command on the internal Linux host using its privileged terminal. Ticket URLs are credentials: do not paste them into tickets, screenshots or public logs. Do not substitute a made-up installer URL.
+Copy the generated installation command from the enrollment result; run that **exact** command on the internal Linux host using its privileged terminal. Keep issued enrollment material out of tickets, screenshots and public logs. Do not substitute a made-up installer URL.
 
 ## Step 3 — inspect the Agent and automatic service
 

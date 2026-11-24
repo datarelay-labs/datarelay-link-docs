@@ -21,13 +21,32 @@ set enrollment zero-touch
 사용 횟수               1회
 ```
 
-각 ticket은 고유하며 성공적으로 사용되면 원자적으로 consume됩니다. raw ticket/install URL은 발급 시점에만 표시하고 persistent state에는 verifier/hash와 lifecycle metadata를 보존합니다.
+등록 자격 증명은 고유하며 등록 성공 시 원자적으로 소비됩니다. 원본 자격 증명은 공개하지 않으며 Server에는 검증 정보와 상태를 보존합니다.
 
 Zero-Touch는 Agent를 등록합니다. OS 사용자, SSH 설정, cloud firewall, Access Policy Rule을 자동 생성하지 않습니다.
 
-## DNS 없이 사용하는 최신 경로
+## 명령 구성 항목 (다음 제품 후보 설계)
 
-DataRelay Link는 신뢰된 공개 HTTPS 호스트명 또는 Private CA fingerprint와 인증서 IP SAN을 검증한 숫자 IP 경로로 짧은 일회용 명령을 생성합니다. DNS는 필수가 아닙니다. 둘 다 준비되지 않았으면 서비스 마법사·티켓 발급 전에 오류를 냅니다. 생성된 명령을 그대로 사용하고 오래된 긴 bootstrap 예제를 수동으로 재구성하지 마세요. SSH 사용자명은 비워도 됩니다.
+고객에게 전달하는 명령은 아래 항목으로만 구성합니다. 공인·사설 HTTPS에 동일한 형식을 적용하며, DNS는 필수가 아닙니다. Server 주소와 파일명만 변경됩니다.
+
+| 항목 | Linux/macOS | Windows (관리자 PowerShell) |
+|---|---|---|
+| 다운로드 | `curl` | `curl.exe` |
+| 옵션 | `-kfsS` | `-kfsS` |
+| 프로토콜 | `https://` | `https://` |
+| Server 주소 | FQDN 또는 IP, 필요 시 설정된 포트 | 동일 |
+| Bootstrap 파일명 | `/` + 6자리 파일명 | 동일 |
+| 실행 | `\|sudo bash` | `iex(...\|Out-String)` |
+
+```bash
+curl -kfsS https://remote.xdr.ooo/A3xK9m|sudo bash
+```
+
+```powershell
+iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9m|Out-String)
+```
+
+위 예시는 다음 제품 후보의 설계 형식이며 실제 사용 가능한 발급 명령이 아닙니다. 설치 및 등록에 필요한 추가 파일, 설정, 검증과 복구는 Bootstrap에서 처리합니다. 동일 명령으로 설치를 재시도하되 중복 등록하지 않습니다. 6자리 파일명은 등록 자격 증명이 아닙니다. 최초 `-k` 다운로드는 서버 인증을 제공하지 않으며, 후속 연결과 별도의 등록 인증 및 실제 OS 검증은 제품 릴리즈 전 확인해야 합니다. SSH 사용자명은 비워도 됩니다.
 
 ## 자동 구성과 추가 구성
 
