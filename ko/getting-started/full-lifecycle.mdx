@@ -43,7 +43,7 @@ set enrollment zero-touch
 show managed-hosts
 ~~~
 
-외부에서 내부 SSH 접속을 실습한다면 **Linux → SSH only**로 일회성 등록 명령을 발급하여 대상 Host에서 실행합니다. 선택한 SSH 서비스는 **Service Object, Remote Service, 공인 포트 예약이 자동 생성**되므로 수동으로 중복 생성하지 않습니다. SSH only에서 사용자 이름을 비워도 management-only가 되지 않습니다.
+외부에서 내부 SSH 접속을 실습한다면 **Linux → SSH only**로 등록 명령을 발급하여 대상 Host에서 실행합니다. 선택한 SSH 서비스는 **Service Object, Remote Service, 공인 포트 예약이 자동 생성**되므로 수동으로 중복 생성하지 않습니다. SSH only에서 사용자 이름을 비워도 management-only가 되지 않습니다.
 
 SSH/RDP 공개가 필요 없는 MCP 전용 Host라면 **`set enrollment bulk`, count 1, SSH 사용자명 빈 값**으로 management-only 등록을 진행합니다. 세부 사항은 [등록](/ko/guides/enrollment)과 [Zero-Touch](/ko/guides/zero-touch)를 확인합니다.
 

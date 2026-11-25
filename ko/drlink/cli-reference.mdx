@@ -161,7 +161,7 @@ set permission-group observers members read-only
 set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
 ~~~
 
-일괄 등록 CSV 헤더는 label,ssh_user,note입니다. 미사용 코드 최대 10개, 기본 유효기간 1시간/최대 24시간이며 SSH 사용자명은 비워도 됩니다. Zero-Touch는 공인 HTTPS 호스트명 또는 검증된 숫자 IP/Private CA 경로의 짧은 일회용 명령을 만듭니다. DNS는 필수가 아니며 준비 조건이 없으면 발급 전에 오류를 냅니다.
+일괄 등록 CSV 헤더는 label,ssh_user,note입니다. 미사용 코드 최대 10개, 기본 유효기간 1시간/최대 24시간이며 SSH 사용자명은 비워도 됩니다. 다음 후보의 [Zero-Touch 명령 구성 항목](/ko/guides/zero-touch)은 OS 실행 형식, Server HTTPS 주소, 8자리 Bootstrap 파일명입니다. 공인·사설 HTTPS 형식은 동일하며 최초 유효 Agent가 자동 등록되며 추가 관리자 승인은 필요 없습니다.
 
 ## 접근 정책과 파일 경로 범위
 

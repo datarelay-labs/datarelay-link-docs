@@ -1,6 +1,6 @@
 ---
 title: "Zero-Touch Enrollment"
-description: "Generate a one-time client bootstrap command from the DataRelay Link server."
+description: "Generate a client bootstrap command from the DataRelay Link server."
 ---
 
 # Zero-Touch Enrollment
@@ -11,7 +11,7 @@ On the DRLink Server:
 set enrollment zero-touch
 ```
 
-DataRelay Link returns a one-time installation command for the intended host.
+DataRelay Link generates an installation command for the intended host.
 
 ## Security limits
 
@@ -23,7 +23,7 @@ maximum TTL                     24 hours
 use count                       1
 ```
 
-Each ticket is unique. Raw ticket/install URL material is shown only at issuance. Persistent Server state stores a verifier/hash plus lifecycle metadata, not a redisplayable raw ticket.
+Each enrollment credential is unique. Keep raw enrollment credentials confidential. Persistent Server state stores a verifier and lifecycle metadata.
 
 A successful enrollment atomically consumes the ticket. Reusing a consumed ticket is denied.
 
@@ -31,9 +31,28 @@ A successful enrollment atomically consumes the ticket. Reusing a consumed ticke
 
 Zero-Touch enrolls the Agent. It does not create OS users, change SSH configuration, modify cloud firewalls, or automatically create policy Rules.
 
-## Current DNS-optional enrollment
+## Command fields (next product candidate design)
 
-DataRelay Link generates a compact one-time launcher using a trusted public HTTPS hostname or a numeric-IP path with verified Private CA fingerprint and certificate IP SAN. DNS is optional. If neither path qualifies, it fails before service prompts/ticket issuance. Run the exact generated command; do not reconstruct historical long bootstrap payloads. SSH username may be blank.
+The customer receives a command with only these fields. Public and private HTTPS use the same form; DNS is optional. Only the Server authority and filename vary.
+
+| Item | Linux/macOS | Windows (administrator PowerShell) |
+|---|---|---|
+| Downloader | `curl` | `curl.exe` |
+| Options | `-kfsS` | `-kfsS` |
+| Protocol | `https://` | `https://` |
+| Server authority | FQDN or IP, configured port if required | Same |
+| Bootstrap filename | `/` + eight-character filename | Same |
+| Execution | `\|sudo bash` | `iex(...\|Out-String)` |
+
+```bash
+curl -kfsS https://remote.xdr.ooo/A3xK9mP2|sudo bash
+```
+
+```powershell
+iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9mP2|Out-String)
+```
+
+These are design examples for the next product candidate, not issued or currently executable enrollment commands. Bootstrap handles all additional files, configuration, verification and recovery. Retry the same command without duplicate enrollment. Issuing the command grants one automatic registration to the first valid Agent. No separate approval, fingerprint exchange or additional customer command is required. Share the one-time link privately; someone who obtains it can claim it first. The initial `-k` download does not authenticate the Server. Downstream TLS, artifact integrity and native OS qualification remain required before release. SSH username may be blank.
 
 ## Automatic setup and additional services
 
