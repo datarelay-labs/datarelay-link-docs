@@ -35,18 +35,18 @@ Zero-Touch는 Agent를 등록합니다. OS 사용자, SSH 설정, cloud firewall
 | 옵션 | `-kfsS` | `-kfsS` |
 | 프로토콜 | `https://` | `https://` |
 | Server 주소 | FQDN 또는 IP, 필요 시 설정된 포트 | 동일 |
-| Bootstrap 파일명 | `/` + 6자리 파일명 | 동일 |
+| Bootstrap 파일명 | `/` + 8자리 파일명 | 동일 |
 | 실행 | `\|sudo bash` | `iex(...\|Out-String)` |
 
 ```bash
-curl -kfsS https://remote.xdr.ooo/A3xK9m|sudo bash
+curl -kfsS https://remote.xdr.ooo/A3xK9mP2|sudo bash
 ```
 
 ```powershell
-iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9m|Out-String)
+iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9mP2|Out-String)
 ```
 
-위 예시는 다음 제품 후보의 설계 형식이며 실제 사용 가능한 발급 명령이 아닙니다. 설치 및 등록에 필요한 추가 파일, 설정, 검증과 복구는 Bootstrap에서 처리합니다. 동일 명령으로 설치를 재시도하되 중복 등록하지 않습니다. 6자리 파일명은 등록 자격 증명이 아닙니다. 최초 `-k` 다운로드는 서버 인증을 제공하지 않으며, 후속 연결과 별도의 등록 인증 및 실제 OS 검증은 제품 릴리즈 전 확인해야 합니다. SSH 사용자명은 비워도 됩니다.
+위 예시는 다음 제품 후보의 설계 형식이며 실제 사용 가능한 발급 명령이 아닙니다. 설치 및 등록에 필요한 추가 파일, 설정, 검증과 복구는 Bootstrap에서 처리합니다. 동일 명령으로 설치를 재시도하되 중복 등록하지 않습니다. 명령 발급 시 최초 유효 Agent의 자동 등록이 승인됩니다. 추가 승인, 지문 대조, 고객의 추가 명령 입력은 없습니다. 명령을 먼저 입수한 사람이 등록할 수 있으므로 일회용 링크를 비공개로 전달하세요. 최초 `-k` 다운로드는 서버 인증을 제공하지 않으며 후속 TLS, 설치 파일 무결성 및 실제 OS 검증은 릴리즈 전에 확인해야 합니다. SSH 사용자명은 비워도 됩니다.
 
 ## 자동 구성과 추가 구성
 

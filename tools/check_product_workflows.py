@@ -13,8 +13,8 @@ def check(root, product_root=None):
     links = 0
     retired_entry = re.compile(r'/i/<(?:handle|ticket|credential)>|22-character (?:handle|locator|filename)|(?:trusted public hostname or verified numeric|verified (?:numeric.IP/private.CA|Private CA fingerprint))|검증된 숫자 IP/Private CA|Private CA fingerprint와 인증서 IP SAN|generated one-time bootstrap|(?:command|launcher) (?:length|character) (?:limit|bound|budget)|drlink-bootstrap\.exe|sudo drlink enroll ', re.I)
     entry_examples = (
-        'curl -kfsS https://remote.xdr.ooo/A3xK9m|sudo bash',
-        'iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9m|Out-String)',
+        'curl -kfsS https://remote.xdr.ooo/A3xK9mP2|sudo bash',
+        'iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9mP2|Out-String)',
     )
     for page in pages:
         text = page.read_text()
@@ -41,11 +41,14 @@ def check(root, product_root=None):
             errors.append(f"{page}: unclosed fence")
     for prefix in ("", "ko/"):
         entry = (root / (prefix+"guides/zero-touch.mdx")).read_text()
-        labels = (("다운로드", "옵션", "프로토콜", "Server 주소", "Bootstrap 파일명", "실행", "6자리") if prefix else
-                  ("Downloader", "Options", "Protocol", "Server authority", "Bootstrap filename", "Execution", "six-character"))
+        labels = (("다운로드", "옵션", "프로토콜", "Server 주소", "Bootstrap 파일명", "실행", "8자리") if prefix else
+                  ("Downloader", "Options", "Protocol", "Server authority", "Bootstrap filename", "Execution", "eight-character"))
         for token in (*labels, *entry_examples):
             if token not in entry:
                 errors.append(f"{prefix}guides/zero-touch: missing canonical entry field {token}")
+        required_flow = ("자동 등록", "추가 승인") if prefix else ("automatic registration", "No separate approval")
+        if not all(token in entry for token in required_flow):
+            errors.append(f"{prefix}guides/zero-touch: missing automatic registration contract")
         # Code examples are an exact template, not a length budget or alternate launcher.
         actual = [line for line in entry.splitlines() if line.startswith(("curl ", "iex(", "curl.exe ", "sudo drlink enroll "))]
         if actual != list(entry_examples):
@@ -86,6 +89,9 @@ def check(root, product_root=None):
                 if fence not in ("text", "bash"):
                     continue
                 command = line.strip()
+                # POSIX shell file-existence guard, not a DRLink CLI command.
+                if fence == "bash" and command.startswith("test ! -e "):
+                    continue
                 if "drlink " in command:
                     command = command.split("drlink ", 1)[1]
                 if command.startswith("drlink> "):

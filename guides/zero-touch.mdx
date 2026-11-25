@@ -41,18 +41,18 @@ The customer receives a command with only these fields. Public and private HTTPS
 | Options | `-kfsS` | `-kfsS` |
 | Protocol | `https://` | `https://` |
 | Server authority | FQDN or IP, configured port if required | Same |
-| Bootstrap filename | `/` + six-character filename | Same |
+| Bootstrap filename | `/` + eight-character filename | Same |
 | Execution | `\|sudo bash` | `iex(...\|Out-String)` |
 
 ```bash
-curl -kfsS https://remote.xdr.ooo/A3xK9m|sudo bash
+curl -kfsS https://remote.xdr.ooo/A3xK9mP2|sudo bash
 ```
 
 ```powershell
-iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9m|Out-String)
+iex(curl.exe -kfsS https://remote.xdr.ooo/A3xK9mP2|Out-String)
 ```
 
-These are design examples for the next product candidate, not issued or currently executable enrollment commands. Bootstrap handles all additional files, configuration, verification and recovery. Retry the same command without duplicate enrollment. The filename is not an enrollment credential. The initial `-k` download does not authenticate the Server; downstream connections, separate enrollment authorization and actual OS qualification must be verified before product release. SSH username may be blank.
+These are design examples for the next product candidate, not issued or currently executable enrollment commands. Bootstrap handles all additional files, configuration, verification and recovery. Retry the same command without duplicate enrollment. Issuing the command grants one automatic registration to the first valid Agent. No separate approval, fingerprint exchange or additional customer command is required. Share the one-time link privately; someone who obtains it can claim it first. The initial `-k` download does not authenticate the Server. Downstream TLS, artifact integrity and native OS qualification remain required before release. SSH username may be blank.
 
 ## Automatic setup and additional services
 
