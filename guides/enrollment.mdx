@@ -16,7 +16,10 @@ set enrollment manual
 set enrollment bulk
 show enrollments
 show enrollment <ENROLLMENT>
+unset enrollment <ENROLLMENT>
 ```
+
+Use the 16-hexadecimal-character Enrollment ID from `show enrollments`. `unset enrollment <ENROLLMENT>` validates the ID and lifecycle state before asking for one explicit confirmation. It revokes an active enrollment or removes a terminal enrollment record. The default is No; cancellation or an invalid ID makes no change. Removing an enrollment record does not remove an already enrolled Managed Host or Agent.
 
 After enrollment:
 

@@ -16,7 +16,10 @@ set enrollment manual
 set enrollment bulk
 show enrollments
 show enrollment <ENROLLMENT>
+unset enrollment <ENROLLMENT>
 ```
+
+`show enrollments`에 표시되는 16자리 16진수 Enrollment ID를 사용하세요. `unset enrollment <ENROLLMENT>`는 유효한 ID와 상태를 먼저 확인한 뒤 한 번의 명시적 확인을 요청합니다. 활성 등록은 취소하고, 종료 상태의 등록 기록은 삭제합니다. 기본값은 No이며 취소하거나 ID가 유효하지 않으면 변경되지 않습니다. 등록 기록 삭제는 이미 등록된 Managed Host나 Agent의 삭제가 아닙니다.
 
 등록 후:
 
