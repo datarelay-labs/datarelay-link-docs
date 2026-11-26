@@ -33,7 +33,7 @@ test ai-access source auditor-ai destination branch-a permission file-read path 
 test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
 ~~~
 
-The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require absolute paths (`/**`, `/home/**`, `/home/**,/opt/**`). `show ai-identity <NAME>` lists the configured rules for that Identity. Editing a named Rule replaces its source/destination; create another Rule to add another grant. `unset ai-access <RULE>` removes one Rule; `unset ai-access policy` resets all Rules only after confirmation. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
+The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require absolute paths (`/**`, `/home/**`, `/home/**,/opt/**`). `show ai-identity <NAME>` lists the configured rules for that Identity. In the interactive CLI, press Tab after `set ai-access ` to list existing Rule names and create/edit guidance. Enter a new Rule name to create it or select an existing name to edit it. Editing a named Rule replaces its source/destination; create another Rule to add another grant. `unset ai-access <RULE>` removes one Rule; `unset ai-access policy` resets all Rules only after confirmation. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
 
 ## Full-control profile — explicitly approved, high risk
 

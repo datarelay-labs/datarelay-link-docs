@@ -25,7 +25,7 @@ system update product
 system update engine
 ```
 
-Use the built-in product update command. Review the proposed version and restart impact, preserve a Server backup, and verify services after completion.
+Use the built-in product update command. On Windows, run `drlink system update product` in an elevated PowerShell. On the field-convergence candidate, the installed Agent downloads the enrolled Server-qualified manifest and SHA256SUMS over pinned HTTPS, validates the release channel and immutable source, checks the bootstrap SHA256 before invoking upgrade mode, and preserves enrollment. `drlink system update product -Check` verifies metadata without applying software. Native Windows qualification is required before release. Review the proposed version and restart impact, preserve a Server backup, and verify services after completion.
 
 A normal upgrade must preserve Managed Host/Agent identity, enrollment trust, Remote Service identity, endpoint reservations, control-plane state, policies, and release provenance.
 

@@ -32,7 +32,7 @@ The table lists DataRelay Link MCP tool names, required arguments and permission
 
 ## Targets and OS account
 
-Use an endpoint returned by **list_hosts/get_host** for a Managed Host. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require explicit Server management permission.
+On the field-convergence candidate, use the exact name or full `client_id` returned by **list_hosts** as the Managed Host endpoint. Both identifiers use the same AI Access policy; prefixes and ambiguous matches are denied. Agent connectivity and AI executor readiness are separate; a Windows lifecycle heartbeat alone does not establish an AI executor. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require explicit Server management permission.
 
 Server-local shell, Git, service and package commands use the configured OS account and AI Access. **cwd is an initial-directory check, not a filesystem sandbox for a general shell.**
 
