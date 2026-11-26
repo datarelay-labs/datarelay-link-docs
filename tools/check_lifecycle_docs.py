@@ -30,8 +30,9 @@ REQUIRED = {
         "90drlink-proxy", "NAT",
     ),
     "guides/mcp-clients": (
-        "single443", "OAuth", "real owner/UI", "AI MCP Setup", "set ai-mcp", "Retry",
+        "single443", "OAuth", "real owner/UI", "AI MCP Setup", "set ai-mcp", "Retry", "NOT TESTED", "exit 1",
     ),
+    "guides/enrollment": ("unset enrollment <ENROLLMENT>", "16-hexadecimal-character", "one explicit confirmation", "default is No"),
     "guides/ai-access": (
         "managed-hosts:trusted", "managed-host-group:", "DENY", "server:self", "host-info,process-read",
         "command-exec",
@@ -56,7 +57,8 @@ KO_REQUIRED = {
     "getting-started/oci-network-vm": ("Reserved Public", "WHITELIST", "6099", "7000"),
     "guides/remote-access": ("ALLOW ALL", "WHITELIST", "test remote-access", "nonmatching-source-object"),
     "guides/internet-access": ("WHITELIST", "DENY", "system diagnostics", "NO_PROXY", "90drlink-proxy", "NAT"),
-    "guides/mcp-clients": ("single443", "OAuth", "Owner/UI", "AI MCP Setup", "set ai-mcp", "Retry"),
+    "guides/mcp-clients": ("single443", "OAuth", "Owner/UI", "AI MCP Setup", "set ai-mcp", "Retry", "NOT TESTED", "종료 코드 1"),
+    "guides/enrollment": ("unset enrollment <ENROLLMENT>", "16자리 16진수", "한 번의 명시적 확인", "기본값은 No"),
     "guides/ai-access": ("managed-hosts:trusted", "managed-host-group:", "DENY", "server:self", "host-info,process-read", "command-exec"),
     "operations/lifecycle": ("unset managed-host <HOST>", "system uninstall", "Reserved Public IPv4", "set ai-identity <IDENTITY> revoke", "ALLOW ALL"),
     "getting-started/full-lifecycle": ("Reserved Public", "set enrollment zero-touch", "WHITELIST", "Internet Access", "Claude", "ChatGPT", "system uninstall", "OCI"),
