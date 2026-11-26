@@ -87,7 +87,7 @@ for prefix in ('', 'ko/'):
     first_order = next(line for line in txt.splitlines()
                        if line.startswith('**Scenario-specific first-use order:**')
                        or line.startswith('**시나리오별 최초 사용 순서:**'))
-    if '/deployment/firewall-nat' in first_order:
+    if any(route in first_order for route in ('/deployment/firewall-nat', '/deployment/modes')):
         errors.append('Remote SSH first-use order wrongly requires firewall/NAT: '+str(path))
     if 'Agent→Server' not in first_order:
         errors.append('Remote SSH missing outbound Agent direction: '+str(path))
@@ -96,7 +96,7 @@ for prefix in ('', 'ko/'):
     for case in ('remote-ssh','office-allowlist','private-web','lan-relay','fixed-tcp-database'):
         page = root/(prefix+'use-cases/'+case+'.mdx')
         first_step = next(line for line in page.read_text().splitlines() if line.startswith('1. '))
-        if '/deployment/firewall-nat' in first_step:
+        if any(route in first_step for route in ('/deployment/firewall-nat', '/deployment/modes')):
             errors.append('Agent use case wrongly requires firewall/NAT setup: '+str(page))
 
 # Published product instructions must not depend on engineering rollout details.

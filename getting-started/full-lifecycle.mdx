@@ -17,7 +17,7 @@ Follow [OCI Always Free preparation, VCN, Ubuntu VM and Reserved Public IPv4](/g
 - Restrict the administrative SSH port to your known administrator public IP. Keep private and loopback services private.
 - For public MCP use **single443** and real DNS/HTTPS. Port 443 is public; internal single443 ports 6099 and 7000 are **not** public OCI ingress. Open only the **assigned** Remote Service port(s) in 6000-6098 to necessary sources, after policy preparation. The installed Internet Access listener is a separate, installer-owned endpoint.
 
-See [Firewall and NAT](/deployment/firewall-nat) for the selected deployment mode. Do not open the entire 6000-6098 pool unless the actual use case requires it.
+See [Firewall and NAT](/deployment/modes) for the selected deployment mode. Do not open the entire 6000-6098 pool unless the actual use case requires it.
 
 ## 2. Install and verify the Server
 

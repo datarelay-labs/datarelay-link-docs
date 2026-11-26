@@ -1,13 +1,15 @@
 ---
-title: "배포 모드"
-description: "Direct와 Enterprise single-443 중 어떤 방식을 선택할지 그림과 표로 비교합니다."
-sidebarTitle: "배포 모드"
+title: "배포 및 네트워크 설정"
+description: "Server 배포 모드, 네트워크 포트, 방화벽, NAT 및 DNS 설정을 안내합니다."
+sidebarTitle: "배포 및 네트워크"
 icon: "route"
 ---
 
-# 배포 모드
+# 배포 및 네트워크 설정
 
 DataRelay Link Server는 Direct와 Enterprise single-443 두 배포 모드를 지원합니다.
+
+<Note>처음 설치한다면 [작업별 최초 설정 경로](/ko/getting-started/choose-workflow)를 확인하세요.</Note>
 
 ## Direct
 
@@ -32,3 +34,23 @@ Remote Service endpoint는 설정된 endpoint pool에서 별도로 할당됩니�
 ## MCP를 사용하는 경우
 
 공개 원격 MCP는 **single443** 전용입니다. Direct의 TCP/443 Relay 제어는 HTTPS MCP가 아닙니다. [Claude / ChatGPT 연결 가이드](/ko/guides/mcp-clients)를 따르세요. 배포 모드를 바꾸면 연결이 끊길 수 있으므로 동일한 불변 소스의 installer와 검증한 백업으로 계획된 전환을 수행합니다.
+
+## 방화벽, NAT 및 포트
+
+실제로 설정한 endpoint pool과 필요한 포트만 노출합니다. Fixed TCP는 별도로 설정한 endpoint pool을 사용하며 Service Object의 destination port와 public endpoint port는 다릅니다. single443의 내부 allocator/Relay Engine backend는 loopback에만 유지합니다. Managed Host는 Server에 아웃바운드로 연결하므로 Agent 동작만을 위해 공인 IP나 inbound NAT가 필요하지 않습니다. 제품은 UFW/firewalld, 외부 라우터 또는 고객 방화벽의 NAT/DNAT 규칙을 자동 변경하지 않습니다.
+
+## DNS & Public Hostname
+
+DataRelay Link는 다음 이름을 구분합니다.
+
+| 이름 | 용도 |
+| --- | --- |
+| Product public identity | 설치 시 선택하는 Server control/management identity |
+| Remote Service alias | Remote Service endpoint용 optional friendly hostname |
+| Bootstrap hostname | Zero-Touch bootstrap entry용 optional hostname |
+
+설치에서 domain을 product public identity로 선택했다면 생성되는 Zero-Touch 및 product-facing URL에 일관되게 사용되어야 합니다.
+
+Remote Service alias를 바꿔도 Agent identity, policy selector, Server trust identity가 자동 변경되면 안 됩니다.
+
+DNS provider record는 DataRelay Link가 자동 생성하지 않습니다.

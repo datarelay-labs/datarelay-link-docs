@@ -1,11 +1,13 @@
 ---
-title: "Deployment Modes"
-description: "Choose between Direct and Enterprise single-443 deployments."
+title: "Deployment, Network & DNS"
+description: "Choose a Server deployment mode and configure its network ports, firewall, NAT and DNS."
 ---
 
-# Deployment Modes
+# Deployment, Network & DNS
 
 DataRelay Link supports two Server deployment modes.
+
+<Note>New installation? Follow [Choose your first workflow](/getting-started/choose-workflow) for the setup order and real ALLOW/DENY checks.</Note>
 
 ## Direct
 
@@ -34,3 +36,23 @@ Use single-443 when restrictive enterprise networks permit standard HTTPS/WSS on
 ## MCP deployment
 
 Public remote MCP requires **single443**. Direct Relay control on TCP/443 is not HTTPS MCP. Follow [Claude / ChatGPT setup](/guides/mcp-clients). A planned mode migration uses the same-version Server installer and validated backup because connections can be interrupted.
+
+## Firewall, NAT and ports
+
+Expose only the configured endpoint pools and required ports. Fixed TCP uses a separately configured endpoint pool; the Service Object destination port is not the public endpoint port. Keep single443 internal allocator/Relay Engine backends on loopback only. Managed Hosts initiate outbound connections and require neither a public IP nor inbound NAT solely for Agent operation. The product does not automatically change UFW/firewalld, external routers or customer firewall NAT/DNAT rules.
+
+## DNS & Public Hostname
+
+DataRelay Link distinguishes several names that older documentation mixed together.
+
+| Name | Purpose |
+| --- | --- |
+| Product public identity | Server control/management identity selected during installation |
+| Remote Service alias | Optional user-facing hostname for Remote Service endpoints |
+| Bootstrap hostname | Optional hostname used for Zero-Touch bootstrap entry |
+
+If installation selects a domain as the product public identity, generated Zero-Touch and other product-facing URLs must use that identity consistently.
+
+Changing a friendly Remote Service alias must not silently change Agent identity, policy selectors, or the Server trust identity.
+
+DataRelay Link does not create DNS-provider records. Create and validate required DNS records outside the product.

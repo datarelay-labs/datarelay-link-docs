@@ -138,9 +138,7 @@
           {
             "group": "Deployment",
             "pages": [
-              "deployment/modes",
-              "deployment/firewall-nat",
-              "deployment/dns-hostname"
+              "deployment/modes"
             ],
             "icon": "route"
           },
@@ -163,7 +161,6 @@
               "reference/architecture",
               "reference/alternatives",
               "reference/platforms",
-              "reference/network-ports",
               "reference/glossary",
               "reference/license"
             ],
@@ -259,9 +256,7 @@
           {
             "group": "배포",
             "pages": [
-              "ko/deployment/modes",
-              "ko/deployment/firewall-nat",
-              "ko/deployment/dns-hostname"
+              "ko/deployment/modes"
             ],
             "icon": "route"
           },
@@ -284,7 +279,6 @@
               "ko/reference/architecture",
               "ko/reference/alternatives",
               "ko/security/overview",
-              "ko/reference/network-ports",
               "ko/reference/glossary",
               "ko/reference/license"
             ],
@@ -352,6 +346,30 @@
     {
       "source": "/ko/getting-started/oci-free-tier-server",
       "destination": "/ko/getting-started/oci-network-vm"
+    },
+    {
+      "source": "/deployment/firewall-nat",
+      "destination": "/deployment/modes"
+    },
+    {
+      "source": "/deployment/dns-hostname",
+      "destination": "/deployment/modes"
+    },
+    {
+      "source": "/reference/network-ports",
+      "destination": "/deployment/modes"
+    },
+    {
+      "source": "/ko/deployment/firewall-nat",
+      "destination": "/ko/deployment/modes"
+    },
+    {
+      "source": "/ko/deployment/dns-hostname",
+      "destination": "/ko/deployment/modes"
+    },
+    {
+      "source": "/ko/reference/network-ports",
+      "destination": "/ko/deployment/modes"
     }
   ]
 }
