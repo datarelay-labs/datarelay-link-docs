@@ -95,7 +95,7 @@ test ai-access source operator-ai destination branch-a permission command-exec
 test ai-access source operator-ai destination branch-a permission file-read path /etc/hostname
 ~~~
 
-`/*`는 전체 파일 경로를 폭넓게 허용하기 위한 **의도적인 Full 설정**입니다. 실제 파일 접근은 OS 권한을 따릅니다. `command-exec`는 별도의 셸 실행 권한이므로 파일 경로 제한을 안전한 셸 격리 기능으로 오해하면 안 됩니다. 다른 Managed Host를 허용하려면 **해당 호스트별 Rule**을 추가하거나 대상 그룹을 명시적으로 검토합니다.
+`/**`는 전체 파일 경로를 폭넓게 허용하기 위한 **의도적인 Full 설정**입니다. 실제 파일 접근은 OS 권한을 따릅니다. `command-exec`는 별도의 셸 실행 권한이므로 파일 경로 제한을 안전한 셸 격리 기능으로 오해하면 안 됩니다. 다른 Managed Host를 허용하려면 **해당 호스트별 Rule**을 추가하거나 대상 그룹을 명시적으로 검토합니다.
 
 ## 5단계 — 선택적으로 Server 자체 전체 권한 부여
 
