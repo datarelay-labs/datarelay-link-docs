@@ -11,14 +11,14 @@ icon: "list-checks"
 
 ## 1. OCI 네트워크, VM, 공인 IP 준비
 
-[OCI Always Free 준비](/ko/getting-started/oci-free-tier-server)와 [VCN·Ubuntu VM·Reserved Public IPv4](/ko/getting-started/oci-network-vm)를 순서대로 진행합니다. 생성 전에 OCI Console에서 현재 Free/Eligible 여부, Shape·스토리지 과금 조건을 확인하세요.
+[OCI Always Free 준비 및 VCN·Ubuntu VM·Reserved Public IPv4](/ko/getting-started/oci-network-vm)를 진행합니다. 생성 전에 OCI Console에서 현재 Free/Eligible 여부, Shape·스토리지 과금 조건을 확인하세요.
 
 - VCN, Internet Gateway, Route, Public Subnet을 생성하고 VM에 Reserved Public IPv4를 연결합니다.
 - 관리 SSH 포트는 실제 관리자의 공인 IP로 제한합니다.
 - 공개 MCP를 사용하면 **single443**, DNS 및 공인 인증서가 필요합니다. 공인 TCP 443과 별도로 single443 내부 포트 **6099/7000은 외부에 열면 안 됩니다**. TCP 6000-6098 중 실제 할당된 Remote Service 포트만 필요한 출발지에 개방합니다.
 - Internet Access 프록시의 IP·포트는 설치 시 결정되는 별도 설정입니다.
 
-배포 모드별 규칙은 [방화벽·NAT](/ko/deployment/firewall-nat)를 확인합니다.
+배포 모드별 규칙은 [방화벽·NAT](/ko/deployment/modes)를 확인합니다.
 
 ## 2. Server 설치 및 상태 확인
 
@@ -93,7 +93,7 @@ Internet Access는 **WHITELIST 전용·기본 DENY**이며 enforcement가 disabl
 **single443 Server + 공개 DNS + 신뢰된 HTTPS 인증서**를 사용합니다. MCP URL은 `https://설정한-FQDN/mcp`이고 Direct 모드의 443 Relay는 MCP HTTPS가 아닙니다. [MCP 연결](/ko/guides/mcp-clients)을 따르세요.
 
 - Claude와 ChatGPT에 **별도 OAuth AI Identity**를 권장합니다. 실제 클라이언트·Pending ID를 확인하고 OAuth를 승인합니다.
-- 읽기 전용 권한은 `host-info,process-read`, 필요한 경우 경로를 제한한 `file-read`만 부여합니다. **최초 OAuth Owner에 `mcp-owner-full-access`가 있을 수 있으므로**, 기존 전체 권한에 읽기 Rule을 추가해도 읽기 전용이 되지 않습니다. 별도 비Owner Identity로 검증하세요.
+- 읽기 전용 권한은 `host-info,process-read`, 필요한 경우 경로를 제한한 `file-read`만 부여합니다. 최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. 별도 비Owner Identity로 검증하세요.
 - Managed Host 전체 제어 권한 7개는 `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`이며 위험도가 높고 실행 OS 계정 권한에도 제한됩니다.
 - `server:self`는 별도 AI Access Rule과 Server 로컬 실행 프로파일·OS 계정 설정이 필요합니다. 작업 디렉터리나 파일 경로 제한이 shell 실행을 격리하지는 않습니다.
 - 실제 외부 클라이언트에서 OAuth, Tool 조회, 허용 작업, 비허용 작업의 **DENY**, 감사 로그를 검증합니다. 프로토콜 테스트만으로 실제 클라이언트 호환성이나 안정 릴리스를 보증하지 않습니다.
@@ -102,7 +102,7 @@ Internet Access는 **WHITELIST 전용·기본 DENY**이며 enforcement가 disabl
 
 ## 7. 증적 수집 및 복구
 
-설치 소스·버전, 공인 포트, 프록시 리스너, Agent 목록, 정책 모드, 실제 허용·차단 통신, Server 감사 결과를 보존합니다. 정책 DENY와 네트워크 timeout, OS 권한 오류를 구분합니다. 재설치·수정 전에는 [백업·복원](/ko/operations/backup-restore)과 [진단](/ko/operations/diagnostics)을 확인하세요.
+설치 소스·버전, 공인 포트, 프록시 리스너, Agent 목록, 정책 모드, 실제 허용·차단 통신, Server 감사 결과를 보존합니다. 정책 DENY와 네트워크 timeout, OS 권한 오류를 구분합니다. 재설치·수정 전에는 [백업·복원](/ko/operations/backup-restore)과 [진단](/ko/operations/overview)을 확인하세요.
 
 ## 8. Agent·Server·OCI 자원 정리
 

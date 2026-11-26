@@ -11,7 +11,7 @@ OCI VM 구축부터 Server, Agent, SSH/HTTPS, 프록시, MCP, 전체 삭제까�
 
 | 목적 | 처음부터 순서대로 필요한 작업 | 실습 |
 | --- | --- | --- |
-| 외부에서 내부 SSH/HTTPS/TCP 접근 | [Server 설치](/ko/getting-started/server-installation) → [방화벽/NAT](/ko/deployment/firewall-nat) → [Agent 등록](/ko/guides/enrollment) → [Remote Access ACL](/ko/guides/remote-access) → Agent Remote Service(Zero-Touch 자동 생성 시 중복 금지) → 실연결/차단 | [SSH](/ko/use-cases/remote-ssh), [LAN gateway](/ko/use-cases/lan-relay), [내부 HTTPS](/ko/use-cases/private-web) |
+| 외부에서 내부 SSH/HTTPS/TCP 접근 | [Server 설치](/ko/getting-started/server-installation) → [방화벽/NAT](/ko/deployment/modes) → [Agent 등록](/ko/guides/enrollment) → [Remote Access ACL](/ko/guides/remote-access) → Agent Remote Service(Zero-Touch 자동 생성 시 중복 금지) → 실연결/차단 | [SSH](/ko/use-cases/remote-ssh), [LAN gateway](/ko/use-cases/lan-relay), [내부 HTTPS](/ko/use-cases/private-web) |
 | 사무실에서만 접근 | 위 Remote Access 경로 + 출발지 Network Object와 **WHITELIST**. Remote Access No Policy/disabled는 **ALLOW**입니다. | [사무실 ACL](/ko/use-cases/office-allowlist) |
 | 내부 앱에서 승인된 인터넷 목적지로만 연결 | [Server 설치](/ko/getting-started/server-installation) → 프록시 Listener/외부 방화벽 확인 → 출발지 IP/CIDR·목적지 FQDN·TCP Service Object → [Internet Access WHITELIST](/ko/guides/internet-access) → 앱 HTTP(S) Proxy → ALLOW/DENY·감사. **HTTP(S)는 Agent 불필요** | [APT](/ko/use-cases/ubuntu-updates), [Git/API](/ko/use-cases/github-egress) |
 | Claude/ChatGPT에 읽기 전용 Managed Host 권한 | [single443 Server 설치](/ko/getting-started/server-installation) → 공인 DNS/TLS 및 [MCP 등록](/ko/guides/mcp-clients) → [관리 Agent 등록](/ko/guides/enrollment) → OAuth Identity → 최소 Permission Object·AI Access Rule → 실도구 호출 | [MCP 읽기 전용](/ko/use-cases/ai-readonly) |

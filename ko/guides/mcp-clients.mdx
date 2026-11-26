@@ -1,16 +1,16 @@
 ---
-title: "Claude · ChatGPT MCP 연결"
+title: "AI MCP Setup"
 description: "인증서부터 OAuth 승인·실제 도구 호출까지."
 ---
 
-# Claude와 ChatGPT를 DataRelay Link에 연결하기
+# AI MCP Setup
 
 ## 최초 등록 순서
 
 - Linux Server를 **single443 모드**로 설치하고 DNS, 공인 HTTPS 인증서, 외부 TCP/443, AUTO_ACME HTTP-01을 쓸 때 필요한 TCP/80을 구성합니다. 외부 MCP Discovery를 먼저 확인합니다.
 - **Managed Host**면 Agent를 등록합니다(AI 호출만 한다면 Remote Service 불필요). **server:self**는 Agent 없이 가능하지만 Server 전용 AI Access Rule을 별도로 만들어야 합니다.
-- AI Identity를 만들고 [최소 권한/최대 권한](/ko/guides/ai-access)을 선택해 Permission Object·WHITELIST Rule을 설정한 뒤, 해당 클라이언트의 실제 OAuth 요청만 승인합니다.
-- Claude·ChatGPT에서 MCP URL을 등록하고 **실제 허용/차단 도구 호출**로 확인합니다. 최초 Owner의 7가지 Managed Host 권한도 Server 셸의 자동 권한을 뜻하지 않습니다. [최대 권한 시나리오](/ko/use-cases/ai-full-access)를 참조하세요.
+- AI MCP Setup에서 해당 클라이언트의 실제 OAuth 요청을 승인하고 Identity 인증을 완료한 뒤, [최소 권한/최대 권한](/ko/guides/ai-access)에 맞는 WHITELIST Rule을 별도로 검토합니다.
+- Claude·ChatGPT에서 MCP URL을 등록하고 **실제 허용/차단 도구 호출**로 확인합니다. 최초 OAuth 인증만으로 Managed Host나 Server 셸 권한이 생기지 않습니다. [최대 권한 시나리오](/ko/use-cases/ai-full-access)를 참조하세요.
 
 
 **원격 MCP 도구 테스트 기록이 있지만, 실제 Owner/UI OAuth 릴리스 인수는 별도로 검증해야 합니다.** Claude는 20개 도구 검색과 명령·파일 생성/읽기/삭제 6개 작업, ChatGPT는 명령·파일·Git 및 비동기 작업을 확인했습니다. [클라이언트 호환성](/ko/reference/mcp-validation)을 확인한 뒤 설치된 Server에서 아래 절차를 따르세요.
@@ -31,10 +31,12 @@ sudo drlink show ai-access
 
 인증서 설정을 이미 마쳤다면 재발급하지 않습니다. 처음 설정할 때만 Server REPL에서 실제 DNS/이메일로 아래를 실행하세요. AUTO_ACME HTTP-01은 발급 시 공개 TCP/80 접근이 필요합니다. 사용자 인증서는 user-certificate 모드와 certificate import를 사용합니다.
 
+`set ai-mcp` → MCP Server settings 또는 MCP Bridge settings / diagnostics에서 공통 엔드포인트와 TLS를 검토합니다.
+
 ~~~text
-set mcp-tls hostname mcp.example.net
-set mcp-tls mode auto-acme
-set mcp-tls contact-email admin@example.net
+set server mcp hostname mcp.example.net
+set server mcp mode auto-acme
+set server mcp contact-email admin@example.net
 system certificate preflight
 system certificate issue
 system certificate status
@@ -50,9 +52,9 @@ curl -i -X POST https://mcp.example.net/mcp   -H 'Content-Type: application/json
 
 ## 2단계 — AI Identity와 권한을 구분하기
 
-Server의 `set ai-identity chatgpt-lab` 또는 `set ai-identity claude-lab` 마법사로 사용할 identity를 준비합니다. 이름만 입력하거나 OAuth 로그인만 완료했다고 권한이 생기는 것은 아닙니다. 각 클라이언트는 별도의 identity로 연결하는 것이 좋습니다.
+Server에서 `set ai-mcp` → Connect or manage AI service를 선택하고 ChatGPT 또는 Claude의 개별 Identity 이름을 입력합니다. 이름만 입력하거나 OAuth 로그인만 완료했다고 권한이 생기는 것은 아닙니다. 각 클라이언트는 별도의 identity로 연결하는 것이 좋습니다.
 
-최초 승인한 소유자는 **mcp-owner-full-access**를 통해 등록된 Managed Host에 전체 MCP 기능을 받을 수 있습니다. 읽기 전용 계정이라면 기존 Rule을 모두 확인하고 [AI Access 권한 설정](/ko/guides/ai-access), [읽기 전용 시나리오](/ko/use-cases/ai-readonly) 또는 [MCP 전체 권한 시나리오](/ko/use-cases/ai-full-access)를 따르세요. **server:self** 관리 권한은 별도이며 [Server 제어 실습](/ko/use-cases/ai-server-control)에 설명합니다.
+최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. 읽기 전용 계정이라면 기존 Rule을 모두 확인하고 [AI Access 권한 설정](/ko/guides/ai-access), [읽기 전용 시나리오](/ko/use-cases/ai-readonly) 또는 [MCP 전체 권한 시나리오](/ko/use-cases/ai-full-access)를 따르세요. **server:self** 관리 권한은 별도이며 [Server 제어 실습](/ko/use-cases/ai-server-control)에 설명합니다.
 
 ## 3단계 — Claude에 추가
 
@@ -67,10 +69,10 @@ Claude의 **Customize → Connectors → + Add → Add custom connector**에서 
 브라우저가 표시하는 **새 pending ID**와 클라이언트를 확인하세요. 그 OAuth origin을 운영하는 Server 셸에서 페이지에 표시된 명령을 실행합니다. 아래 값은 예시이며 실제 pending ID와 identity로 바꾸세요.
 
 ~~~bash
-sudo drlink system credential approve-oauth <PENDING-ID> claude-lab
+sudo drlink set ai-identity claude-lab approve <PENDING-ID>
 ~~~
 
-ChatGPT 연결에는 해당 요청을 chatgpt-lab에 바인딩합니다. 이미 바인딩된 클라이언트라면 페이지 명령에 identity 인자가 없을 수 있습니다. 승인 후 브라우저로 돌아와 연결을 완료하세요. 거부할 요청은 `system credential deny-oauth <PENDING-ID>`로 처리합니다. **OAuth request not found**는 다른 Server 또는 만료된 ID를 먼저 확인합니다. 토큰을 대화창에 붙여넣지 마세요.
+ChatGPT 연결에는 해당 요청을 chatgpt-lab에 바인딩합니다. 승인 후 브라우저에서 Retry를 선택하여 연결을 완료하세요. 거부할 요청은 `set ai-identity <IDENTITY> deny <PENDING-ID>`로 처리합니다. **OAuth request not found**는 다른 Server 또는 만료된 ID를 먼저 확인합니다. 토큰을 대화창에 붙여넣지 마세요.
 
 ## 6단계 — 실제 도구와 허용·거부 확인
 
@@ -88,4 +90,4 @@ Server 자체 접근을 별도로 허용했다면 **get_server**가 server:self�
 
 DataRelay Link는 **20개**를 광고합니다. server_exec / server_job_poll / server_job_input / server_job_stop이 없으면 기존 클라이언트의 도구 스냅샷을 확인하세요. ChatGPT workspace 관리자의 지원되는 Actions Refresh 기능이 있으면 새 도구를 검토·활성화합니다. 개인 앱에는 이 메뉴가 없을 수 있으므로 제공되지 않는 Refresh를 반복해서 찾거나 OAuth를 재승인하지 마세요. 계정이 지원하는 새 테스트 연결로 스캔할 경우 기존 연결은 새 연결 검증까지 유지합니다.
 
-**401**이면 인증을, **AI Access DENY**이면 identity·대상·permission·paths를 확인하세요. OS permission 오류는 실행 계정의 권한을 점검합니다. 실행 기능에 문제가 있으면 `system diagnostics mcp`와 제품 업데이트 절차를 사용하세요. AI 클라이언트의 승인·보안 제한도 그대로 적용됩니다.
+**401**이면 인증을, **AI Access DENY**이면 identity·대상·permission·paths를 확인하세요. OS permission 오류는 실행 계정의 권한을 점검합니다. 실행 기능에 문제가 있으면 `system diagnostics mcp`와 제품 업데이트 절차를 사용하세요. MCP 전용 진단에서 성공한 검사 항목이 없으면 `PASS` 대신 `NOT TESTED`(종료 코드 1)를 표시합니다. AI 클라이언트의 승인·보안 제한도 그대로 적용됩니다.

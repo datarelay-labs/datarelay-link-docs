@@ -11,6 +11,8 @@ icon: "diagram-project"
 
 > A Managed Host runs a DRLink Agent that connects outward to a Server; the Agent creates only the Remote Services you need, and the Server applies Remote, Internet, and AI Access policy.
 
+DataRelay Link is a lightweight secure-connectivity gateway for selected connections without joining or opening an entire network. A Remote Service supplies connectivity and a stable endpoint; an Access Rule only authorizes use and never creates a tunnel or endpoint.
+
 ## Core nouns
 
 | Noun | Meaning |
@@ -70,3 +72,5 @@ Fixed TCP is a Service Object subtype. Its Service Object port is the destinatio
 | AI Access | WHITELIST only | DENY | DENY ALL |
 
 WHITELIST denies unmatched requests. BLACKLIST is supported only by Remote Access: matching enabled Rules deny, unmatched requests allow. Rules have no ordering or per-rule action. Policy reset removes Mode/Rules and returns each plane to its own initial state. AI authentication remains required independently.
+
+For a new Agent, choose SSH/RDP or the required services in [Zero-Touch](/guides/zero-touch), run the generated command once, and inspect automatically created services with `show remote-services`. Create only additional services manually. [Quick Start](/getting-started/quickstart) · [CLI Reference](/drlink/cli-reference) · [Architecture](/reference/architecture).

@@ -7,11 +7,11 @@ description: "Authenticate an AI Identity and allow only selected read-only oper
 
 ## First-time setup — AI / MCP
 
-**Scenario-specific first-use order:** Install a **single443 Server** via [Server installation](/getting-started/server-installation), set trusted DNS/TLS and public MCP/OAuth as in [MCP setup](/guides/mcp-clients). For a new Managed Host use [management-only enrollment](/guides/enrollment): `set enrollment bulk`, count **1**, blank SSH username, and execute the bootstrap on that host; no SSH Remote Service is necessary. Create a dedicated non-owner AI Identity, bind and approve the correct OAuth request, grant only `host-info,process-read` to that host and verify an actual read call plus a command-exec DENY. The first OAuth owner may already have a broader `mcp-owner-full-access` rule, so do not use it for this least-privilege proof. See the separate [full access](/use-cases/ai-full-access) alternative.
+**Scenario-specific first-use order:** Install a **single443 Server** via [Server installation](/getting-started/server-installation), set trusted DNS/TLS and public MCP/OAuth as in [MCP setup](/guides/mcp-clients). For a new Managed Host use [management-only enrollment](/guides/enrollment): `set enrollment bulk`, count **1**, blank SSH username, and execute the bootstrap on that host; no SSH Remote Service is necessary. Create a dedicated non-owner AI Identity, bind and approve the correct OAuth request, grant only `host-info,process-read` to that host and verify an actual read call plus a command-exec DENY. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. See the separate [full access](/use-cases/ai-full-access) alternative.
 
 1. Install the [Linux Server](/getting-started/server-installation) in **single443** mode; provide a publicly trusted HTTPS certificate and external MCP DNS/origin as documented in [Claude/ChatGPT MCP setup](/guides/mcp-clients). Direct-mode TCP/443 relay is **not** a public MCP endpoint.
 2. Decide your target: **Managed Host** requires [Agent enrollment](/guides/enrollment) and an active management connection but **no published SSH service**; **server:self** needs no Agent, but requires its **own explicit AI Access Rule**.
-3. On the Server, create/bind a distinct **AI Identity**, its OAuth approval and the appropriate **Permission Object + WHITELIST AI Access Rule**. Follow [least vs full privileges](/guides/ai-access); inspect other matching Rules, especially the first-owner full grant. Authentication alone does not grant Server authority.
+3. On the Server, create/bind a distinct **AI Identity**, its OAuth approval and the appropriate **Permission Object + WHITELIST AI Access Rule**. Follow [least vs full privileges](/guides/ai-access); inspect other matching Rules, including any previously configured broad grant. Authentication alone does not grant Server authority.
 4. Register the public MCP URL in Claude or ChatGPT, approve **only the intended pending OAuth request**, then perform a real allowed tool call and a deliberately denied out-of-scope call. Review audit and the target OS execution-account permissions. Tool discovery and a policy-test ALLOW are insufficient by themselves.
 
 **Server shell baseline:**
@@ -68,10 +68,10 @@ set permission-object exec-check permissions command-exec
 show permission-objects
 ~~~
 
-The `set ai-identity` wizard establishes the identity definition. For an interactive AI client, configure the supported OAuth Authorization Code authentication flow. Example CLI authentication-mode setting, subject to the actual client/Server contract:
+Use `set ai-mcp` → Connect or manage AI service to establish and verify the identity. For an interactive AI client, configure the supported OAuth Authorization Code authentication flow. Example CLI authentication-mode setting, subject to the actual client/Server contract:
 
 ~~~text
-system credential configure ai-identity auditor-ai authentication oauth
+set ai-identity auditor-ai authentication oauth
 ~~~
 
 A displayed identity name alone is never proof of authentication. Protect credentials; do not embed them in documentation or issue comments.
@@ -81,7 +81,7 @@ A displayed identity name alone is never proof of authentication. Protect creden
 **Server REPL:**
 
 ~~~text
-set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled
 show ai-access
 test ai-access source auditor-ai destination branch-a permission observer
@@ -100,9 +100,9 @@ Expected: **ALLOW** for **observer** and **DENY** for **exec-check**, provided n
 On an existing single443 Server, ensure a controlled DNS hostname, public HTTPS reachability and appropriate certificate authority validation. **Server REPL**, using your real hostname and contact email:
 
 ~~~text
-set mcp-tls hostname mcp.example.net
-set mcp-tls mode auto-acme
-set mcp-tls contact-email admin@example.net
+set server mcp hostname mcp.example.net
+set server mcp mode auto-acme
+set server mcp contact-email admin@example.net
 system certificate preflight
 ~~~
 
@@ -134,11 +134,11 @@ The end-to-end result is only validated once the **actual external AI client** c
 
 ## Recovery and least privilege
 
-A failure may be OAuth authentication, external TLS, client capability, Agent trust or policy. Diagnose each boundary individually. Avoid broad permissions, file access without rule-bound **paths**, and unnecessary command execution. Revoking a credential with `system credential revoke ai-identity auditor-ai` interrupts that identity; use only when the security owner intends it. To retire the rule, review effects before `unset ai-access auditor-host`; do not remove unrelated identities or MCP certificates.
+A failure may be OAuth authentication, external TLS, client capability, Agent trust or policy. Diagnose each boundary individually. Avoid broad permissions, file access without rule-bound **paths**, and unnecessary command execution. Revoking a credential with `set ai-identity auditor-ai revoke` interrupts that identity; use only when the security owner intends it. To retire the rule, review effects before `unset ai-access auditor-host`; do not remove unrelated identities or MCP certificates.
 
 ## Current behavior check — 2026-10-28
 
-Claude and ChatGPT real MCP tests are complete; follow the client-specific setup guide. Verify the complete effective policy, including the initial owner mcp-owner-full-access Rule. Adding observer does not remove an earlier command-exec grant. A distinct non-owner identity is required for this read-only exercise when the owner already has broader access.
+Claude and ChatGPT real MCP tests are complete; follow the client-specific setup guide. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. Adding observer does not remove an earlier command-exec grant. A distinct non-owner identity is required for this read-only exercise when the owner already has broader access.
 
 [Current CLI inventory](/drlink/cli-reference) · [MCP compatibility](/reference/mcp-validation)
 

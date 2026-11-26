@@ -17,7 +17,7 @@ system version
 system diagnostics
 system audit
 system revisions
-system backup
+show managed-hosts
 ```
 
 ## Agent Host
@@ -41,3 +41,5 @@ system apply configuration <FILE|->
 ```
 
 For recovery, use revisions and the product backup/restore process instead of manually editing runtime state.
+
+A policy ALLOW and real service connectivity are separate. Use policy test commands and Agent/Remote Service state respectively. Escalate with a sanitized support bundle, never raw enrollment tickets, bearer/OAuth secrets, private keys or secret-bearing databases. See [backup/restore](/operations/backup-restore) for the backup procedure.

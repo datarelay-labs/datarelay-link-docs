@@ -11,12 +11,12 @@ description: "Identity, 정책, 파일 범위와 Server 자체 제어."
 
 ## 최소 권한 설정
 
-Server REPL에서 실행합니다. branch-a는 등록된 Managed Host의 실제 이름입니다.
+Server REPL에서 AI MCP Setup의 Connect or manage AI service를 선택해 auditor-ai를 인증한 뒤 Rule을 설정합니다. branch-a는 실제 등록된 Managed Host 이름입니다.
 
 ~~~text
-set ai-identity auditor-ai
+set ai-mcp
 set permission-object observer permissions host-info,process-read
-set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled
 test ai-access source auditor-ai destination branch-a permission observer
 show ai-access-log identity auditor-ai
@@ -28,32 +28,32 @@ AI Access는 **WHITELIST 전용**입니다. 정책 없음·미일치·비활성 
 
 ~~~text
 set permission-object app-reader permissions file-read
-set ai-access app-read mode whitelist source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
+set ai-access app-read source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
 test ai-access source auditor-ai destination branch-a permission file-read path /var/log/myapp/health.log
 test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
 ~~~
 
-첫 번째는 파일 존재/OS 권한을 별도로 충족할 때 정책 ALLOW, 두 번째는 다른 Rule이 허용하지 않는 한 DENY입니다. 파일 권한에는 paths가 필요합니다. command-exec를 주면 OS 계정의 셸 권한으로 동작하므로 파일 경로만 제한한 읽기 전용 역할로 볼 수 없습니다.
+첫 번째는 파일 존재/OS 권한을 별도로 충족할 때 정책 ALLOW, 두 번째는 다른 Rule이 허용하지 않는 한 DENY입니다. 파일 권한에는 절대 경로(`/**`, `/home/**`, `/home/**,/opt/**`)가 필요합니다. `show ai-identity <NAME>`으로 해당 Identity의 Rule을 확인합니다. 같은 이름의 Rule 수정은 Source/Destination을 교체하며 추가 권한은 새 Rule로 만듭니다. `unset ai-access <RULE>`은 개별 삭제, `unset ai-access policy`는 확인 후 전체 Rule 초기화입니다. command-exec를 주면 OS 계정의 셸 권한으로 동작하므로 파일 경로만 제한한 읽기 전용 역할로 볼 수 없습니다.
 
 ## 최대 권한(Full Control) 부여 — 명시 승인된 환경에만
 
-**본인이 관리하고 허가한 시스템에만 적용하세요.** 최대 권한은 Managed Host MCP의 **7가지 기능**(host-info, process-read, file-read, file-write, file-upload, file-download, command-exec)을 모두 허용합니다. 대상 OS 계정 권한이나 AI 클라이언트의 승인 절차를 무시하는 기능은 아닙니다. 전용 인증 identity와 감사 기록, 사용 기간을 지정하세요. 최초 OAuth Owner에게 이미 **mcp-owner-full-access**가 적용되었을 수 있으므로 중복 생성 전에 확인합니다.
+**본인이 관리하고 허가한 시스템에만 적용하세요.** 최대 권한은 Managed Host MCP의 **7가지 기능**(host-info, process-read, file-read, file-write, file-upload, file-download, command-exec)을 모두 허용합니다. 대상 OS 계정 권한이나 AI 클라이언트의 승인 절차를 무시하는 기능은 아닙니다. 전용 인증 identity와 감사 기록, 사용 기간을 지정하세요. 최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요.
 
 1. [Server 설치](/ko/getting-started/server-installation), [MCP HTTPS/OAuth 연결](/ko/guides/mcp-clients), Agent 대상의 [Managed Host 등록](/ko/guides/enrollment)을 완료한 뒤 **Server REPL**에서 전용 AI Identity를 만들고 OAuth 인증을 승인합니다.
 
 ~~~text
 set ai-identity operator-ai
-system credential configure ai-identity operator-ai authentication oauth
+set ai-identity operator-ai authentication oauth
 show ai-identities
 show managed-hosts
 show ai-access
 ~~~
 
-2. 실제 OAuth 요청 승인·연결 후 **등록된 Managed Host 한 대**에 7가지 권한을 모두 부여합니다. branch-a를 실제 이름으로 바꾸세요. 아래 **/* 파일 범위는 매우 광범위**하며 최초 Owner 자동 부여 Rule에도 사용되는 범위입니다. 최소 권한 사용자에게 적용하지 마세요.
+2. 실제 OAuth 요청 승인·연결 후 **등록된 Managed Host 한 대**에 7가지 권한을 모두 부여합니다. branch-a를 실제 이름으로 바꾸세요. 아래 **`/**` 파일 범위는 매우 광범위**한 명시적 설정입니다. 최소 권한 사용자에게 적용하지 마세요.
 
 ~~~text
 set permission-object mcp-full-host permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
-set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission mcp-full-host paths '/*' enabled
+set ai-access operator-full-host source operator-ai destination branch-a permission mcp-full-host paths '/**' enabled
 set ai-access enabled
 show ai-access
 test ai-access source operator-ai destination branch-a permission command-exec
@@ -65,7 +65,7 @@ test ai-access source operator-ai destination branch-a permission file-read path
 3. **Server 자체(server:self)는 별도의 대상**입니다. 실제 Server 관리 권한이 필요할 때에만 아래 별도 Rule을 추가합니다. 이 경우 Server 실행 OS 계정의 일반 셸·Git·비동기 작업 권한을 제공하며, **cwd 및 paths는 command-exec를 샌드박스에 가두지 않습니다**. 읽기 전용 identity에는 부여하지 마세요.
 
 ~~~text
-set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission mcp-full-host paths '/*' enabled
+set ai-access operator-full-server source operator-ai destination server:self permission mcp-full-host paths '/**' enabled
 test ai-access source operator-ai destination server:self permission command-exec
 test ai-access source operator-ai destination server:self permission file-read path /tmp/drlink-mcp-check.txt
 show ai-access
@@ -77,25 +77,27 @@ show ai-access
 
 [전체 권한 시나리오](/ko/use-cases/ai-full-access) · [읽기 전용 시나리오](/ko/use-cases/ai-readonly)
 
-## 두 가지 대상
+## Destination 범위
 
 | 대상 | 경로 | 예시 |
 | --- | --- | --- |
 | Managed Host | Server → 신뢰된 Agent → 대상 OS | 내부 서버 정보·프로세스·로그 조회 |
 | server:self | Server 자체 작업 | 파일·셸·Git·비동기 작업 |
+| Managed Host Group | 현재 및 향후 신뢰된 그룹 멤버 | `managed-host-group:<name>` |
+| All trusted Managed Hosts | 현재 및 향후 신뢰된 전체 Agent, Server 제외 | `managed-hosts:trusted` |
 
 Server 자체 작업도 별도 AI Access와 제품 실행 계정의 OS 권한을 따릅니다. OAuth 인증만으로 관리자 권한이 생기지는 않습니다. 전체 관리 예제는 [Server 제어 실습](/ko/use-cases/ai-server-control)을 따르세요.
 
-## 최초 소유자와 OAuth 수명주기
+## AI 연결과 OAuth 수명주기
 
-최초 승인 OAuth 소유자에게 생성되는 **mcp-owner-full-access**는 Managed Host에 전체 7개 기능을 줄 수 있습니다. observer Rule 하나만 추가했다고 기존 넓은 Rule이 사라지지 않습니다. 최소 권한 사용자는 별도 identity로 구성하고 전체 정책을 점검하세요.
+최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. 최소 권한 사용자는 별도 identity로 구성하고 전체 정책을 점검하세요.
 
 ~~~text
-system credential configure ai-identity auditor-ai authentication oauth
-system credential approve-oauth <PENDING-ID> auditor-ai
-system credential deny-oauth <PENDING-ID>
-system credential rotate ai-identity auditor-ai
-system credential revoke ai-identity auditor-ai
+set ai-identity auditor-ai authentication oauth
+set ai-identity auditor-ai approve <PENDING-ID>
+set ai-identity <IDENTITY> deny <PENDING-ID>
+set ai-identity auditor-ai rotate
+set ai-identity auditor-ai revoke
 ~~~
 
 rotate/revoke는 연결에 영향을 줍니다. `show ai-access-log`, identity/destination/permission 필터로 실제 ALLOW·DENY를 확인합니다. 토큰·개인키·등록 티켓은 문서·지원 번들·프롬프트에 포함하지 마세요.

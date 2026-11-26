@@ -29,7 +29,7 @@ description: "Install, enroll, authenticate and explicitly authorize all seven M
 
 ## Step 1 — install and reach your Server
 
-On a supported Linux Server, complete [Server installation](/getting-started/server-installation) and choose **single443** for public MCP. Configure DNS, a trusted public TLS certificate and the external firewall as in [MCP client setup](/guides/mcp-clients) and [Firewall & NAT](/deployment/firewall-nat). An ACME HTTP-01 deployment also needs TCP/80 during certificate issuance.
+On a supported Linux Server, complete [Server installation](/getting-started/server-installation) and choose **single443** for public MCP. Configure DNS, a trusted public TLS certificate and the external firewall as in [MCP client setup](/guides/mcp-clients) and [Firewall & NAT](/deployment/modes). An ACME HTTP-01 deployment also needs TCP/80 during certificate issuance.
 
 **Server shell:**
 
@@ -67,17 +67,17 @@ Replace `branch-a` in the remaining steps with the actual enrolled Managed Host 
 
 ~~~text
 set ai-identity operator-ai
-system credential configure ai-identity operator-ai authentication oauth
+set ai-identity operator-ai authentication oauth
 show ai-identity operator-ai
 ~~~
 
 Then register `https://mcp.example.net/mcp` in [Claude or ChatGPT](/guides/mcp-clients). Match the pending OAuth request to your real client and the intended identity, then run on the **Server shell**, replacing the placeholder:
 
 ~~~bash
-sudo drlink system credential approve-oauth <PENDING-ID> operator-ai
+sudo drlink set ai-identity operator-ai approve <PENDING-ID>
 ~~~
 
-OAuth authentication by itself is **not** permission to control every host. A first approved owner might already receive the `mcp-owner-full-access` rule for enrolled Managed Hosts; **inspect all effective rules** before adding or describing permissions. Prefer a separate non-owner identity when testing least privilege.
+OAuth authentication by itself is **not** permission to control every host. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. Prefer a separate non-owner identity when testing least privilege.
 
 ## Step 4 — grant all seven Managed Host permissions
 
@@ -85,7 +85,7 @@ OAuth authentication by itself is **not** permission to control every host. A fi
 
 ~~~text
 set permission-object operator-full permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
-set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission operator-full paths '/*' enabled
+set ai-access operator-full-host source operator-ai destination branch-a permission operator-full paths '/**' enabled
 set ai-access enabled
 show permission-object operator-full
 show ai-access operator-full-host
@@ -102,7 +102,7 @@ To authorize more Managed Hosts, add **explicit rules for each approved host** (
 This step is **not** needed to control a Managed Host. To enable Server-local file operations, shell, Git and asynchronous jobs, add an explicit **server:self** rule for the same identity:
 
 ~~~text
-set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission operator-full paths '/*' enabled
+set ai-access operator-full-server source operator-ai destination server:self permission operator-full paths '/**' enabled
 show ai-access operator-full-server
 test ai-access source operator-ai destination server:self permission command-exec
 test ai-access source operator-ai destination server:self permission file-read path /etc/hostname

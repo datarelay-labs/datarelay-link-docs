@@ -11,13 +11,13 @@ This guide connects the existing hands-on pages into one end-to-end path. Start 
 
 ## 1. Prepare OCI and identify your Server
 
-Follow [OCI Always Free preparation](/getting-started/oci-free-tier-server) and [VCN, Ubuntu VM, Reserved Public IPv4](/getting-started/oci-network-vm). Verify current Always Free eligibility and charges in OCI before creating resources; capacity, eligible shapes and boot-volume allocations vary.
+Follow [OCI Always Free preparation, VCN, Ubuntu VM and Reserved Public IPv4](/getting-started/oci-network-vm). Verify current Always Free eligibility and charges in OCI before creating resources; capacity, eligible shapes and boot-volume allocations vary.
 
 - Build the VCN, Internet Gateway, route and public subnet, create the VM and associate the Reserved Public IPv4.
 - Restrict the administrative SSH port to your known administrator public IP. Keep private and loopback services private.
 - For public MCP use **single443** and real DNS/HTTPS. Port 443 is public; internal single443 ports 6099 and 7000 are **not** public OCI ingress. Open only the **assigned** Remote Service port(s) in 6000-6098 to necessary sources, after policy preparation. The installed Internet Access listener is a separate, installer-owned endpoint.
 
-See [Firewall and NAT](/deployment/firewall-nat) for the selected deployment mode. Do not open the entire 6000-6098 pool unless the actual use case requires it.
+See [Firewall and NAT](/deployment/modes) for the selected deployment mode. Do not open the entire 6000-6098 pool unless the actual use case requires it.
 
 ## 2. Install and verify the Server
 
@@ -92,7 +92,7 @@ Copy the tested commands from [Ubuntu APT updates](/use-cases/ubuntu-updates), [
 Use a **single443 Server** with publicly trusted certificate and DNS; MCP is **https://your-fqdn/mcp**, not the Direct-mode relay on TCP/443. Follow [MCP client setup](/guides/mcp-clients).
 
 - Create distinct OAuth AI identities for Claude and ChatGPT; verify and approve only the intended pending OAuth request.
-- For a read-only Managed Host, permit only `host-info,process-read`, and optionally a separate path-bound `file-read`. The first approved owner may already have `mcp-owner-full-access`; **adding a read-only rule never removes a broader owner grant**. Use a distinct non-owner identity to prove least privilege.
+- For a read-only Managed Host, permit only `host-info,process-read`, and optionally a separate path-bound `file-read`. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. Use a distinct non-owner identity to prove least privilege.
 - A full-control Managed Host grant includes seven capabilities: `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`. It is high risk and subject to the target OS account.
 - `server:self` is separate from Managed Hosts. It requires an explicit AI Access grant **and** an enabled local execution profile/OS account; file scope/cwd does not sandbox shell commands.
 - Prove real external-client OAuth, tool discovery, an allowed operation, an out-of-scope DENY, and audit. Protocol tests alone do not certify client compatibility or a stable release.
@@ -101,7 +101,7 @@ Use [Read-only AI](/use-cases/ai-readonly), [Full-control AI](/use-cases/ai-full
 
 ## 7. Capture evidence and recover safely
 
-Record the source/version identity, public and proxy listener ports, Agent inventory, policy mode, positive and negative **real traffic** outcomes, and Server audit evidence. Distinguish external network firewall failures from policy DENY and from target OS permission errors. Before changing installer-owned listener settings or performing upgrades, review [Backup and restore](/operations/backup-restore) and [Diagnostics](/operations/diagnostics).
+Record the source/version identity, public and proxy listener ports, Agent inventory, policy mode, positive and negative **real traffic** outcomes, and Server audit evidence. Distinguish external network firewall failures from policy DENY and from target OS permission errors. Before changing installer-owned listener settings or performing upgrades, review [Backup and restore](/operations/backup-restore) and [Diagnostics](/operations/maintenance).
 
 ## 8. Retire the entire lab
 

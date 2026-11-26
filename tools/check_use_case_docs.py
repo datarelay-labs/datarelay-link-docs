@@ -21,7 +21,7 @@ for prefix in ('', 'ko/'):
     full=(root/(prefix+'use-cases/ai-full-access.mdx')).read_text()
     for cap in ('host-info','process-read','file-read','file-write','file-upload','file-download','command-exec'):
         assert cap in full, ('Full MCP capability missing',prefix,cap)
-    for item in ('server:self','mcp-owner-full-access','unset ai-access','test ai-access','OAuth'):
+    for item in ('server:self','DENY','unset ai-access','test ai-access','OAuth'):
         assert item in full, ('Full MCP procedure missing',prefix,item)
 
 for lang in ['en','ko']:
@@ -87,7 +87,7 @@ for prefix in ('', 'ko/'):
     first_order = next(line for line in txt.splitlines()
                        if line.startswith('**Scenario-specific first-use order:**')
                        or line.startswith('**시나리오별 최초 사용 순서:**'))
-    if '/deployment/firewall-nat' in first_order:
+    if any(route in first_order for route in ('/deployment/firewall-nat', '/deployment/modes')):
         errors.append('Remote SSH first-use order wrongly requires firewall/NAT: '+str(path))
     if 'Agent→Server' not in first_order:
         errors.append('Remote SSH missing outbound Agent direction: '+str(path))
@@ -96,7 +96,7 @@ for prefix in ('', 'ko/'):
     for case in ('remote-ssh','office-allowlist','private-web','lan-relay','fixed-tcp-database'):
         page = root/(prefix+'use-cases/'+case+'.mdx')
         first_step = next(line for line in page.read_text().splitlines() if line.startswith('1. '))
-        if '/deployment/firewall-nat' in first_step:
+        if any(route in first_step for route in ('/deployment/firewall-nat', '/deployment/modes')):
             errors.append('Agent use case wrongly requires firewall/NAT setup: '+str(page))
 
 # Published product instructions must not depend on engineering rollout details.
