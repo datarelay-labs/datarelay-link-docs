@@ -49,10 +49,13 @@ Tab completion
 
 `show managed-host-groups`는 그룹과 멤버 수를 표시합니다. `show managed-host-group <GROUP>`은 그룹 정보와 실제 멤버의 전체 HOST ID, NAME, HOSTNAME을 표시하고 빈 그룹을 명시합니다. 멤버가 없는 그룹도 Tab으로 이름을 자동완성할 수 있습니다. Managed Host 선택 목록은 호스트별 한 행에 전체 Host ID를 표시합니다.
 
+`show managed-services`는 Server가 관리하는 전체 Remote Service 매핑을 외부 포트 순으로 표시합니다. Managed Host, 서비스 이름, 내부 목적지 주소/포트, 상태를 함께 확인할 수 있습니다. 비활성화 및 할당 대기 서비스는 포함하고 해제된 매핑은 제외하는 Server 전용 조회 명령입니다.
+
 ~~~text
 show status
 
 show managed-hosts
+show managed-services
 show managed-host <HOST>
 show managed-host <HOST> agent
 show managed-host <HOST> addresses

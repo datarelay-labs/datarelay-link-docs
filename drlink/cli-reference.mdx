@@ -49,10 +49,13 @@ Tab completion
 
 `show managed-host-groups` lists groups and member counts. `show managed-host-group <GROUP>` lists the group metadata and its actual members, including full HOST ID, NAME, and HOSTNAME; an empty group is explicitly identified. Tab completes current group names even when the group has no members. Managed Host selection displays one row per host, with the full Host ID.
 
+`show managed-services` lists all Server-managed Remote Service mappings, sorted by public port, with Managed Host, service name, target address/port and status. Disabled and pending mappings are included; released mappings are excluded. This is a read-only Server command.
+
 ~~~text
 show status
 
 show managed-hosts
+show managed-services
 show managed-host <HOST>
 show managed-host <HOST> agent
 show managed-host <HOST> addresses
