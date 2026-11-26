@@ -79,6 +79,8 @@ For a guided full-control scenario, follow [AI full-control playbook](/use-cases
 
 ## Destination scopes
 
+The guided Destination picker shows enrolled Managed Hosts (including offline hosts), Network Groups containing Managed Hosts, Managed Host Groups, Server-self, and the explicit all-trusted scope. Automatically generated `enrolled-target-*` and other routed LAN Network Objects are not AI execution targets and are omitted; their Remote Service references and existing policy records remain unchanged.
+
 | Target | Execution path | Example |
 | --- | --- | --- |
 | Managed Host | Server → trusted Agent → target OS | Internal host/process/log inspection |
