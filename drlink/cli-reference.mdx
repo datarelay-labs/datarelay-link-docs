@@ -127,6 +127,7 @@ set internet-access <RULE>
 set internet-access enabled
 set internet-access disabled
 
+set ai-mcp
 set ai-identity <IDENTITY>
 
 set permission-object <PERMISSION>
@@ -136,11 +137,11 @@ set ai-access <RULE>
 set ai-access enabled
 set ai-access disabled
 
-set mcp-tls hostname <FQDN>
-set mcp-tls mode <auto-acme|user-certificate>
-set mcp-tls contact-email <EMAIL>
-set mcp-tls acme-environment <production|staging>
-set mcp-tls acme-directory <URL>
+set server mcp hostname <FQDN>
+set server mcp mode <auto-acme|user-certificate>
+set server mcp contact-email <EMAIL>
+set server mcp acme-environment <production|staging>
+set server mcp acme-directory <URL>
 ~~~
 
 ~~~text
@@ -158,7 +159,7 @@ set service-group web-services members http,https
 set permission-object read-only permissions host-info,process-read,file-read
 set permission-group observers members read-only
 
-set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
+set ai-access allow-read source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**' enabled
 ~~~
 
 Bulk enrollment accepts count/CSV, header label,ssh_user,note; up to 10 unused codes, 1 hour default TTL and 24 hour maximum. A blank SSH user is valid. For the next candidate, the [Zero-Touch command fields](/guides/zero-touch) define one OS-native invocation, Server HTTPS authority and eight-character Bootstrap filename. Public/private HTTPS share the same form; registration is automatic upon first valid claim; no operator approval is needed.
@@ -174,8 +175,8 @@ set internet-access github-https mode whitelist source ubuntu-prod destination g
 ~~~
 
 ~~~text
-set ai-access claude-prod mode whitelist source claude destination production-servers permission read-only paths '/var/log/myapp/**' enabled
-set ai-access allow-read mode whitelist source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**,/opt/app/**' enabled
+set ai-access claude-prod source claude destination production-servers permission read-only paths '/var/log/myapp/**' enabled
+set ai-access allow-read source automation-ai destination ubuntu-prod permission read-only paths '/var/lib/vendor/**,/opt/app/**' enabled
 ~~~
 
 ~~~text
@@ -187,7 +188,7 @@ set ai-access enabled
 set ai-access disabled
 ~~~
 
-File permissions need rule-bound paths. Omitted paths on edit preserve scopes; paths none clears them. Command execution has the OS account's authority and is stronger than scoped file access. Review the initial OAuth owner's generated mcp-owner-full-access rule: the first approved owner can receive all seven Managed Host capabilities; use a separately scoped identity for read-only users.
+File permissions require absolute path scopes, e.g. `/**`, `/home/**`, `/home/**,/opt/**`. Omitted paths on edit preserve scopes. Command execution runs with OS account authority, not a path sandbox. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules.
 
 ## Server: remove resources
 
@@ -222,11 +223,11 @@ unset permission-group <GROUP>
 unset ai-access <RULE>
 unset ai-access policy
 
-unset mcp-tls
-unset mcp-tls purge
+unset server mcp
+unset server mcp purge
 ~~~
 
-Inspect references before deletion. Group membership removal is metadata; bare unset managed-host retires trust and endpoint reservations. Resource deletion and policy reset may require y/N confirmation. unset mcp-tls removes the public route but retains certificate material; purge additionally removes retained secrets after interactive confirmation.
+Inspect references before deletion. Group membership removal is metadata; bare unset managed-host retires trust and endpoint reservations. Resource deletion and policy reset may require y/N confirmation. unset server mcp removes the public route but retains certificate material; purge additionally removes retained secrets after interactive confirmation.
 
 ## Policy tests
 
@@ -266,11 +267,11 @@ system certificate renew
 system certificate status
 system certificate preflight
 
-system credential rotate ai-identity <IDENTITY>
-system credential revoke ai-identity <IDENTITY>
-system credential configure ai-identity <IDENTITY> authentication <static-bearer|oauth>
-system credential approve-oauth <PENDING-ID> [AI-IDENTITY]
-system credential deny-oauth <PENDING-ID>
+set ai-identity <IDENTITY> rotate
+set ai-identity <IDENTITY> revoke
+set ai-identity <IDENTITY> authentication <static-bearer|oauth>
+set ai-identity <IDENTITY> approve <PENDING-ID>
+set ai-identity <IDENTITY> deny <PENDING-ID>
 
 system update product
 system update engine

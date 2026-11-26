@@ -52,7 +52,7 @@ DataRelay Link의 get_server로 연결된 Server를 확인해줘.
 
 ~~~text
 set permission-object mcp-lab-ops permissions host-info,process-read,file-read,file-write,command-exec
-set ai-access mcp-lab-server mode whitelist source mcp-lab destination server:self permission mcp-lab-ops paths '/tmp/drlink-mcp-tutorial/**',/tmp enabled
+set ai-access mcp-lab-server source mcp-lab destination server:self permission mcp-lab-ops paths '/tmp/drlink-mcp-tutorial/**',/tmp enabled
 set ai-access enabled
 test ai-access source mcp-lab destination server:self permission command-exec path /tmp
 test ai-access source mcp-lab destination server:self permission file-read path /tmp/drlink-mcp-tutorial/note.txt

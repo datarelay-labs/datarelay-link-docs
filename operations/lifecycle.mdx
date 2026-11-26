@@ -79,13 +79,13 @@ Identify the exact disposable Host, every AI credential and Rule that references
 For an explicitly approved disposable identity, revoke its credential first. This can disconnect active Claude/ChatGPT clients. For **only** the named lab Rules, remove AI Access, Remote Access and Internet Access rules after reviewing their references and impact:
 
 ~~~text
-system credential revoke ai-identity <IDENTITY>
+set ai-identity <IDENTITY> revoke
 unset ai-access <LAB_AI_RULE>
 unset remote-access <LAB_REMOTE_RULE>
 unset internet-access <LAB_INTERNET_RULE>
 ~~~
 
-Do not delete a shared Network/Permission/Service Object while other Rules reference it. Inspect the resulting policy and audit. An AI Rule deletion does not automatically revoke OAuth credentials, and a credential revoke does not remove all host policy references. For the operator owner, inspect **mcp-owner-full-access** before treating a scoped identity as fully revoked.
+Do not delete a shared Network/Permission/Service Object while other Rules reference it. Inspect the resulting policy and audit. An AI Rule deletion does not automatically revoke OAuth credentials, and a credential revoke does not remove all host policy references. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules.
 
 ### 3. Uninstall the Agent and retire its Server inventory
 

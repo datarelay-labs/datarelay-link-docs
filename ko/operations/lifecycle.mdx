@@ -79,13 +79,13 @@ system diagnostics
 해당 실습 Identity의 인증을 철회하면 Claude/ChatGPT 연결이 끊길 수 있습니다. 아래 명령은 **폐기 승인된 Identity와 실습용 Rule에만** 적용합니다.
 
 ~~~text
-system credential revoke ai-identity <IDENTITY>
+set ai-identity <IDENTITY> revoke
 unset ai-access <LAB_AI_RULE>
 unset remote-access <LAB_REMOTE_RULE>
 unset internet-access <LAB_INTERNET_RULE>
 ~~~
 
-공용 Network/Permission/Service Object를 다른 Rule에서 쓰고 있다면 삭제하지 마세요. Rule 삭제만으로 OAuth 토큰이 반드시 철회되는 것도 아니고, OAuth 철회만으로 모든 Host 정책 참조가 삭제되는 것도 아닙니다. Owner에게 **mcp-owner-full-access**가 존재하는지도 확인합니다.
+공용 Network/Permission/Service Object를 다른 Rule에서 쓰고 있다면 삭제하지 마세요. Rule 삭제만으로 OAuth 토큰이 반드시 철회되는 것도 아니고, OAuth 철회만으로 모든 Host 정책 참조가 삭제되는 것도 아닙니다. 최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요.
 
 ### 3. Agent 패키지 제거와 Server 측 Host 폐기
 

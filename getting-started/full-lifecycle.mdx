@@ -92,7 +92,7 @@ Copy the tested commands from [Ubuntu APT updates](/use-cases/ubuntu-updates), [
 Use a **single443 Server** with publicly trusted certificate and DNS; MCP is **https://your-fqdn/mcp**, not the Direct-mode relay on TCP/443. Follow [MCP client setup](/guides/mcp-clients).
 
 - Create distinct OAuth AI identities for Claude and ChatGPT; verify and approve only the intended pending OAuth request.
-- For a read-only Managed Host, permit only `host-info,process-read`, and optionally a separate path-bound `file-read`. The first approved owner may already have `mcp-owner-full-access`; **adding a read-only rule never removes a broader owner grant**. Use a distinct non-owner identity to prove least privilege.
+- For a read-only Managed Host, permit only `host-info,process-read`, and optionally a separate path-bound `file-read`. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. Use a distinct non-owner identity to prove least privilege.
 - A full-control Managed Host grant includes seven capabilities: `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`. It is high risk and subject to the target OS account.
 - `server:self` is separate from Managed Hosts. It requires an explicit AI Access grant **and** an enabled local execution profile/OS account; file scope/cwd does not sandbox shell commands.
 - Prove real external-client OAuth, tool discovery, an allowed operation, an out-of-scope DENY, and audit. Protocol tests alone do not certify client compatibility or a stable release.

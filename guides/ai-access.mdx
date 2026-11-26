@@ -11,12 +11,12 @@ Authentication establishes **who the AI Identity is**. AI Access controls **whic
 
 ## Configure least privilege
 
-Run on Server REPL; branch-a is an actual enrolled Managed Host name.
+Run on Server REPL; in AI MCP Setup select Connect or manage AI service and verify auditor-ai before configuring the Rule. branch-a is an actual enrolled Managed Host name.
 
 ~~~text
-set ai-identity auditor-ai
+set ai-mcp
 set permission-object observer permissions host-info,process-read
-set ai-access auditor-host mode whitelist source auditor-ai destination branch-a permission observer enabled
+set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled
 test ai-access source auditor-ai destination branch-a permission observer
 show ai-access-log identity auditor-ai
@@ -28,32 +28,32 @@ AI Access is **WHITELIST-only**. No policy, no match and disabled enforcement me
 
 ~~~text
 set permission-object app-reader permissions file-read
-set ai-access app-read mode whitelist source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
+set ai-access app-read source auditor-ai destination branch-a permission app-reader paths '/var/log/myapp/**' enabled
 test ai-access source auditor-ai destination branch-a permission file-read path /var/log/myapp/health.log
 test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
 ~~~
 
-The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require paths. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
+The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require absolute paths (`/**`, `/home/**`, `/home/**,/opt/**`). `show ai-identity <NAME>` lists the configured rules for that Identity. Editing a named Rule replaces its source/destination; create another Rule to add another grant. `unset ai-access <RULE>` removes one Rule; `unset ai-access policy` resets all Rules only after confirmation. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
 
 ## Full-control profile — explicitly approved, high risk
 
-**Use only on systems you own and authorize.** Full means all **seven Managed Host MCP capability names** (host-info, process-read, file-read, file-write, file-upload, file-download and command-exec). It is **not** a blanket bypass of OS permissions or the AI client's approval flow. Every full-control grant should be time-bound, audited and assigned to a dedicated authenticated identity. The initially approved owner may already have the built-in **mcp-owner-full-access** rule for enrolled Managed Hosts; inspect it before adding another rule.
+**Use only on systems you own and authorize.** Full means all **seven Managed Host MCP capability names** (host-info, process-read, file-read, file-write, file-upload, file-download and command-exec). It is **not** a blanket bypass of OS permissions or the AI client's approval flow. Every full-control grant should be time-bound, audited and assigned to a dedicated authenticated identity. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules.
 
 1. Complete [Server install](/getting-started/server-installation), [MCP HTTPS/OAuth setup](/guides/mcp-clients), and [Managed Host enrollment](/guides/enrollment) for an Agent target. Create the identity (or use your already OAuth-bound dedicated owner identity) in **Server REPL**:
 
 ~~~text
 set ai-identity operator-ai
-system credential configure ai-identity operator-ai authentication oauth
+set ai-identity operator-ai authentication oauth
 show ai-identities
 show managed-hosts
 show ai-access
 ~~~
 
-2. Once the identity is **authenticated via the approved OAuth request**, assign all seven capabilities **only to your named Managed Host**. Replace branch-a with an actual enrolled name. The path scope below is deliberately very broad: the product's operator-owner bootstrap also uses /*; do not use it for least-privilege accounts.
+2. Once the identity is **authenticated via the approved OAuth request**, assign all seven capabilities **only to your named Managed Host**. Replace branch-a with an actual enrolled name. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules.
 
 ~~~text
 set permission-object mcp-full-host permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
-set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission mcp-full-host paths '/*' enabled
+set ai-access operator-full-host source operator-ai destination branch-a permission mcp-full-host paths '/**' enabled
 set ai-access enabled
 show ai-access
 test ai-access source operator-ai destination branch-a permission command-exec
@@ -65,7 +65,7 @@ The first two tests should be **ALLOW** when the correct objects, identity and R
 3. **Server itself is a different target.** Only when Server-local administrative control is explicitly required, add a separate **server:self** rule. This exposes general shell/Git/job capabilities through the Server's configured OS execution user; **cwd and path patterns do not sandbox command-exec**. Do not grant this to an audit/read-only identity.
 
 ~~~text
-set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission mcp-full-host paths '/*' enabled
+set ai-access operator-full-server source operator-ai destination server:self permission mcp-full-host paths '/**' enabled
 test ai-access source operator-ai destination server:self permission command-exec
 test ai-access source operator-ai destination server:self permission file-read path /tmp/drlink-mcp-check.txt
 show ai-access
@@ -77,25 +77,27 @@ To **remove** these grants, review impact and then on the Server run **unset ai-
 
 For a guided full-control scenario, follow [AI full-control playbook](/use-cases/ai-full-access). For restricted read-only access, follow [read-only AI](/use-cases/ai-readonly).
 
-## Two target types
+## Destination scopes
 
 | Target | Execution path | Example |
 | --- | --- | --- |
 | Managed Host | Server → trusted Agent → target OS | Internal host/process/log inspection |
 | server:self | Server-local operations | Files, shell, Git and asynchronous jobs |
+| Managed Host Group | Current and future trusted group members | `managed-host-group:<name>` |
+| All trusted Managed Hosts | Current and future trusted Agents, excludes Server | `managed-hosts:trusted` |
 
 Server-local operations require their own AI Access grant and run with the product execution account. Administrative authority is not granted by OAuth alone. See the [Server control lab](/use-cases/ai-server-control).
 
-## Initial owner and OAuth lifecycle
+## AI connection and OAuth lifecycle
 
-The first approved OAuth owner may receive **mcp-owner-full-access** with all seven Managed Host capabilities. Adding one observer Rule does not remove earlier broad grants. Use a separate scoped identity and inspect all matching rules.
+OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. Adding one observer Rule does not remove earlier broad grants. Use a separate scoped identity and inspect all matching rules.
 
 ~~~text
-system credential configure ai-identity auditor-ai authentication oauth
-system credential approve-oauth <PENDING-ID> auditor-ai
-system credential deny-oauth <PENDING-ID>
-system credential rotate ai-identity auditor-ai
-system credential revoke ai-identity auditor-ai
+set ai-identity auditor-ai authentication oauth
+set ai-identity auditor-ai approve <PENDING-ID>
+set ai-identity <IDENTITY> deny <PENDING-ID>
+set ai-identity auditor-ai rotate
+set ai-identity auditor-ai revoke
 ~~~
 
 Rotate/revoke can interrupt clients. Inspect actual ALLOW/DENY using `show ai-access-log` and identity/destination/permission filters. Keep tokens, private keys and enrollment tickets out of prompts, public docs and support output.

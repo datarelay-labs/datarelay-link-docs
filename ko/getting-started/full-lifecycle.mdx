@@ -93,7 +93,7 @@ Internet Access는 **WHITELIST 전용·기본 DENY**이며 enforcement가 disabl
 **single443 Server + 공개 DNS + 신뢰된 HTTPS 인증서**를 사용합니다. MCP URL은 `https://설정한-FQDN/mcp`이고 Direct 모드의 443 Relay는 MCP HTTPS가 아닙니다. [MCP 연결](/ko/guides/mcp-clients)을 따르세요.
 
 - Claude와 ChatGPT에 **별도 OAuth AI Identity**를 권장합니다. 실제 클라이언트·Pending ID를 확인하고 OAuth를 승인합니다.
-- 읽기 전용 권한은 `host-info,process-read`, 필요한 경우 경로를 제한한 `file-read`만 부여합니다. **최초 OAuth Owner에 `mcp-owner-full-access`가 있을 수 있으므로**, 기존 전체 권한에 읽기 Rule을 추가해도 읽기 전용이 되지 않습니다. 별도 비Owner Identity로 검증하세요.
+- 읽기 전용 권한은 `host-info,process-read`, 필요한 경우 경로를 제한한 `file-read`만 부여합니다. 최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. 별도 비Owner Identity로 검증하세요.
 - Managed Host 전체 제어 권한 7개는 `host-info,process-read,file-read,file-write,file-upload,file-download,command-exec`이며 위험도가 높고 실행 OS 계정 권한에도 제한됩니다.
 - `server:self`는 별도 AI Access Rule과 Server 로컬 실행 프로파일·OS 계정 설정이 필요합니다. 작업 디렉터리나 파일 경로 제한이 shell 실행을 격리하지는 않습니다.
 - 실제 외부 클라이언트에서 OAuth, Tool 조회, 허용 작업, 비허용 작업의 **DENY**, 감사 로그를 검증합니다. 프로토콜 테스트만으로 실제 클라이언트 호환성이나 안정 릴리스를 보증하지 않습니다.

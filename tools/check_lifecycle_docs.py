@@ -30,15 +30,15 @@ REQUIRED = {
         "90drlink-proxy", "NAT",
     ),
     "guides/mcp-clients": (
-        "single443", "OAuth", "real owner/UI",
+        "single443", "OAuth", "real owner/UI", "AI MCP Setup", "set ai-mcp", "Retry",
     ),
     "guides/ai-access": (
-        "mcp-owner-full-access", "server:self", "host-info,process-read",
+        "managed-hosts:trusted", "managed-host-group:", "DENY", "server:self", "host-info,process-read",
         "command-exec",
     ),
     "operations/lifecycle": (
         "unset managed-host <HOST>", "system uninstall",
-        "Reserved Public IPv4", "credential revoke", "ALLOW ALL",
+        "Reserved Public IPv4", "set ai-identity <IDENTITY> revoke", "ALLOW ALL",
     ),
     "getting-started/full-lifecycle": (
         "Reserved Public", "set enrollment zero-touch",
@@ -56,9 +56,9 @@ KO_REQUIRED = {
     "getting-started/oci-network-vm": ("Reserved Public", "WHITELIST", "6099", "7000"),
     "guides/remote-access": ("ALLOW ALL", "WHITELIST", "test remote-access", "nonmatching-source-object"),
     "guides/internet-access": ("WHITELIST", "DENY", "system diagnostics", "NO_PROXY", "90drlink-proxy", "NAT"),
-    "guides/mcp-clients": ("single443", "OAuth", "Owner/UI"),
-    "guides/ai-access": ("mcp-owner-full-access", "server:self", "host-info,process-read", "command-exec"),
-    "operations/lifecycle": ("unset managed-host <HOST>", "system uninstall", "Reserved Public IPv4", "credential revoke", "ALLOW ALL"),
+    "guides/mcp-clients": ("single443", "OAuth", "Owner/UI", "AI MCP Setup", "set ai-mcp", "Retry"),
+    "guides/ai-access": ("managed-hosts:trusted", "managed-host-group:", "DENY", "server:self", "host-info,process-read", "command-exec"),
+    "operations/lifecycle": ("unset managed-host <HOST>", "system uninstall", "Reserved Public IPv4", "set ai-identity <IDENTITY> revoke", "ALLOW ALL"),
     "getting-started/full-lifecycle": ("Reserved Public", "set enrollment zero-touch", "WHITELIST", "Internet Access", "Claude", "ChatGPT", "system uninstall", "OCI"),
 }
 

@@ -21,7 +21,7 @@ for prefix in ('', 'ko/'):
     full=(root/(prefix+'use-cases/ai-full-access.mdx')).read_text()
     for cap in ('host-info','process-read','file-read','file-write','file-upload','file-download','command-exec'):
         assert cap in full, ('Full MCP capability missing',prefix,cap)
-    for item in ('server:self','mcp-owner-full-access','unset ai-access','test ai-access','OAuth'):
+    for item in ('server:self','DENY','unset ai-access','test ai-access','OAuth'):
         assert item in full, ('Full MCP procedure missing',prefix,item)
 
 for lang in ['en','ko']:

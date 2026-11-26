@@ -67,17 +67,17 @@ show managed-host branch-a
 
 ~~~text
 set ai-identity operator-ai
-system credential configure ai-identity operator-ai authentication oauth
+set ai-identity operator-ai authentication oauth
 show ai-identity operator-ai
 ~~~
 
 [Claude 또는 ChatGPT](/ko/guides/mcp-clients)에 `https://mcp.example.net/mcp`를 등록합니다. 브라우저에서 실제 클라이언트와 요청 Identity를 확인한 다음 **Server OS 셸**에서 다음을 실행합니다.
 
 ~~~bash
-sudo drlink system credential approve-oauth <PENDING-ID> operator-ai
+sudo drlink set ai-identity operator-ai approve <PENDING-ID>
 ~~~
 
-최초 승인한 Owner에게는 Managed Host에 대한 `mcp-owner-full-access` Rule이 이미 존재할 수 있습니다. OAuth 연결만으로 임의의 Server 권한이 생기는 것은 아니므로 기존 Rule 전체를 확인한 뒤 추가합니다. 읽기 전용 검증에는 별도 non-owner Identity를 쓰세요.
+최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. OAuth 연결만으로 임의의 Server 권한이 생기는 것은 아니므로 기존 Rule 전체를 확인한 뒤 추가합니다. 읽기 전용 검증에는 별도 non-owner Identity를 쓰세요.
 
 ## 4단계 — Managed Host에 7개 전체 권한 부여
 
@@ -87,7 +87,7 @@ sudo drlink system credential approve-oauth <PENDING-ID> operator-ai
 
 ~~~text
 set permission-object operator-full permissions host-info,process-read,file-read,file-write,file-upload,file-download,command-exec
-set ai-access operator-full-host mode whitelist source operator-ai destination branch-a permission operator-full paths '/*' enabled
+set ai-access operator-full-host source operator-ai destination branch-a permission operator-full paths '/**' enabled
 set ai-access enabled
 show permission-object operator-full
 show ai-access operator-full-host
@@ -102,7 +102,7 @@ test ai-access source operator-ai destination branch-a permission file-read path
 이 설정은 Managed Host만 제어할 때 **필요하지 않습니다**. Server 자체의 파일·명령·Git·Job 제어가 필요한 경우에만 **별도 Rule**을 추가합니다.
 
 ~~~text
-set ai-access operator-full-server mode whitelist source operator-ai destination server:self permission operator-full paths '/*' enabled
+set ai-access operator-full-server source operator-ai destination server:self permission operator-full paths '/**' enabled
 show ai-access operator-full-server
 test ai-access source operator-ai destination server:self permission command-exec
 test ai-access source operator-ai destination server:self permission file-read path /etc/hostname
