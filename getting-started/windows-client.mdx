@@ -40,3 +40,19 @@ Create only additional Remote Services on the Windows Agent Host after inspectin
 ## Lifecycle
 
 Use Agent lifecycle operations such as pause, resume, restart, product update, engine update, diagnostics, support bundle, and uninstall as exposed by the Windows CLI/package.
+
+## Update an enrolled Agent
+
+Upgrade the Server first. On the already enrolled Windows Agent Host, use elevated PowerShell:
+
+```powershell
+drlink system update product
+drlink system version
+drlink system diagnostics
+```
+
+Product update downloads the Server-qualified bootstrap over the existing pinned HTTPS management connection, verifies immutable provenance and SHA256, and preserves Agent identity, existing services and ports. Do not rerun Zero-Touch enrollment. If Source HEAD is UNKNOWN or mismatched, inspect the actual update result; do not edit provenance files. Relay Engine updates are separate (`drlink system update engine`).
+
+## AI execution
+
+Connected does not mean AI executor ready. The Windows lifecycle worker claims AI jobs only when an administrator explicitly opts into an existing protected local execution profile. AI Access remains the Server-side rule authority. The local account SID, allowed drive paths and command opt-in are independent OS execution constraints. Installation/update protects the product-owned executable/code tree from untrusted modification, without changing OS ancestor ACLs, enrollment or the existing profile. Diagnostics distinguishes an unsafe installed ACL from missing or invalid opt-in. An installed and authorized Windows Agent must be verified through actual tool calls. See [MCP tools](/reference/mcp-tools).

@@ -11,10 +11,11 @@ description: "Identity, 정책, 파일 범위와 Server 자체 제어."
 
 ## 최소 권한 설정
 
-Server REPL에서 AI MCP Setup의 Connect or manage AI service를 선택해 auditor-ai를 인증한 뒤 Rule을 설정합니다. branch-a는 실제 등록된 Managed Host 이름입니다.
+Server REPL에서 `set mcp-server`로 MCP Endpoint를 확인하고 `set ai-identity`로 auditor-ai를 연결·인증한 뒤 Rule을 설정합니다. branch-a는 실제 등록된 Managed Host 이름입니다.
 
 ~~~text
-set ai-mcp
+set mcp-server
+set ai-identity auditor-ai
 set permission-object observer permissions host-info,process-read
 set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled

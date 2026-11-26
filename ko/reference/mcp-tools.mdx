@@ -36,7 +36,7 @@ DataRelay Link가 제공하는 MCP 도구의 이름·필수 인자·권한을 �
 
 Server 자체의 셸·Git·서비스·패키지 작업은 설정된 OS 계정 권한과 AI Access를 따릅니다. **cwd는 시작 위치 검증이지 셸의 파일시스템 샌드박스가 아닙니다.**
 
-Server 설치 및 제품 업데이트는 기존 명시적 실행 프로필이 없으면 비관리자 전용 실행 계정과 작업 디렉터리를 준비하되 원격 실행을 활성화하지 않습니다. 기존 `set ai-mcp` → Configure local Server execution account에서 OS 실행 계정과 경로를 한 번 승인합니다. UID 0은 별도의 명시적 로컬 승인이 필요합니다. 새로운 AI Access Rule은 생성하지 않으며 기존 프로필을 보존합니다. `system diagnostics mcp`는 실행 환경의 비활성화·미완성·구성 상태를 구분하며 실제 호출은 기존 AI Access Rule을 따릅니다.
+Server 설치 및 제품 업데이트는 기존 명시적 실행 프로필이 없으면 비관리자 전용 실행 계정과 작업 디렉터리를 준비하되 원격 실행을 활성화하지 않습니다. `set mcp-server` → Server execution에서 OS 실행 계정과 경로를 한 번 승인합니다. UID 0은 별도의 명시적 로컬 승인이 필요합니다. 새로운 AI Access Rule은 생성하지 않으며 기존 프로필을 보존합니다. `system diagnostics mcp`는 실행 환경의 비활성화·미완성·구성 상태를 구분하며 실제 호출은 기존 AI Access Rule을 따릅니다.
 
 ## 인자와 결과
 
@@ -51,3 +51,5 @@ argv는 문자열 배열이며 server_git의 첫 값은 git입니다. path와 cw
 poll/input/stop도 현재 command-exec 권한과 동일 identity/job ownership을 다시 확인합니다. 다른 identity의 job_id를 안다고 제어할 수 없습니다. file-read/write/upload/download는 별도 권한과 Rule의 paths, 실제 OS 권한을 충족해야 합니다.
 
 [실행 가능한 Server 제어 실습](/ko/use-cases/ai-server-control) · [클라이언트 연결](/ko/guides/mcp-clients)
+
+Windows 설치/업데이트는 제품 실행 코드 트리의 ACL을 보호하며 기존 Agent ID, 상태, 실행 프로필과 상위 OS 디렉터리 ACL은 보존합니다. `system diagnostics`에서 로컬 활성화 여부와 안전하지 않은 코드 ACL을 구분하고 Server에서는 실제 Executor 준비 상태를 확인하세요.

@@ -1,15 +1,15 @@
 ---
-title: "AI MCP Setup"
+title: "MCP Server Settings and AI Identities"
 description: "Public TLS, OAuth consent and real tool calls from both clients."
 ---
 
-# AI MCP Setup
+# MCP Server Settings and AI Identities
 
 ## First-time registration checklist
 
 - Install the **Linux Server** in single443 mode; finish DNS, public HTTPS certificate, firewall TCP/443 (and TCP/80 if AUTO_ACME HTTP-01 issuance needs it). Verify the public MCP discovery endpoints before adding a client.
 - Decide **Managed Host** (enroll the Agent first, with no Remote Service required for AI) versus **server:self** (no Agent; separate Server-local AI Access Rule).
-- Use AI MCP Setup to verify the exact AI Identity through OAuth first; then review a separate least-privilege or expressly approved full-control WHITELIST Rule.
+- Configure endpoint/TLS with `set mcp-server`. For control of This Server, explicitly approve Server execution. Use `set ai-identity` to verify the exact AI Identity through OAuth; then review a separate least-privilege or expressly approved full-control WHITELIST Rule.
 - Register the URL in Claude or ChatGPT and verify **real allowed and denied** tool calls. OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules. See [Full-control playbook](/use-cases/ai-full-access).
 
 
@@ -29,7 +29,7 @@ sudo drlink show ai-identities
 sudo drlink show ai-access
 ~~~
 
-Use `set ai-mcp` → MCP Server settings, or MCP Bridge settings / diagnostics to review the same endpoint and TLS configuration. Keep an already working certificate. For first setup only, use your DNS name/email in Server REPL. AUTO_ACME HTTP-01 needs public TCP/80 during issuance; imported certificates use user-certificate and certificate import.
+Use `set mcp-server` → Public endpoint and TLS to configure connectivity; Diagnostics is read-only. For control of This Server, select Server execution, review Run as User and existing local roots, and approve. Installation prepares `drlink-mcp` and `/var/lib/drlink-mcp` but does not enable remote execution. Keep an already working certificate. For first setup only, use your DNS name/email in Server REPL. AUTO_ACME HTTP-01 needs public TCP/80 during issuance; imported certificates use user-certificate and certificate import.
 
 ~~~text
 set server mcp hostname mcp.example.net
@@ -50,7 +50,7 @@ curl -i -X POST https://mcp.example.net/mcp   -H 'Content-Type: application/json
 
 ## Step 2 — prepare identity and authorization
 
-On the Server, run `set ai-mcp` → Connect or manage AI service and select ChatGPT or Claude; enter a separate identity name. A name or OAuth login alone does not grant authorization. Prefer distinct identities for the two clients.
+On the Server, run `set ai-identity`, enter a separate Identity name and choose ChatGPT or Claude. A name or OAuth login alone does not grant authorization. Prefer distinct identities for the two clients.
 
 OAuth authentication, including the first connection, grants no access by itself. Without an explicitly reviewed matching Rule, access is DENY. Inspect all existing rules before describing an identity as read-only. Review [AI Access permissions](/guides/ai-access), [read-only access](/use-cases/ai-readonly), [full-control MCP](/use-cases/ai-full-access) or the separately authorized [Server control lab](/use-cases/ai-server-control).
 
@@ -71,6 +71,8 @@ sudo drlink set ai-identity claude-lab approve <PENDING-ID>
 ~~~
 
 Bind ChatGPT's request to chatgpt-lab. After approving the copied Pending request ID, return to the browser and select Retry to finish. Reject an unwanted request with `set ai-identity <IDENTITY> deny <PENDING-ID>`. If the request is not found, check the Server and expiry before retrying. Never paste tokens into chat.
+
+After the browser exchange is verified, optionally create the separately reviewed Rule from the Identity wizard, or run `set ai-access`. Use `test ai-access` and `system diagnostics mcp` to distinguish policy from actual execution readiness.
 
 ## Step 6 — verify actual allowed and denied calls
 

@@ -44,7 +44,9 @@ DataRelay Link의 get_server로 연결된 Server를 확인해줘.
 파일이나 설정은 바꾸지 말고 Server 이름과 접근 가능 여부만 알려줘.
 ~~~
 
-이후 파일·Git·작업 실행은 제품에 설정된 OS 계정으로 수행됩니다. 예시 작업 디렉터리는 /tmp/drlink-mcp-tutorial입니다. 제품에 승인된 작업 경로가 따로 있다면 예제와 Rule의 경로를 함께 바꾸세요. command-exec는 해당 OS 계정의 명령 실행 권한이며 작업 디렉터리 밖 접근을 막는 샌드박스가 아닙니다.
+이후 파일·Git·작업 실행은 제품에 설정된 OS 계정으로 수행됩니다. 예시 작업 디렉터리는 /var/lib/drlink-mcp/tutorial입니다. 제품에 승인된 작업 경로가 따로 있다면 예제와 Rule의 경로를 함께 바꾸세요. command-exec는 해당 OS 계정의 명령 실행 권한이며 작업 디렉터리 밖 접근을 막는 샌드박스가 아닙니다.
+
+Server에서 `sudo drlink set mcp-server` → Server execution을 선택하고 준비된 Run as User (`drlink-mcp`)와 기존 로컬 root (`/var/lib/drlink-mcp`)를 확인한 뒤 명시적으로 승인합니다. AI Access 차단을 해결하기 위해 로컬 계정 권한을 임의 확대하지 마세요.
 
 ## 2단계 — 별도 identity와 Rule을 검증
 
@@ -52,10 +54,10 @@ DataRelay Link의 get_server로 연결된 Server를 확인해줘.
 
 ~~~text
 set permission-object mcp-lab-ops permissions host-info,process-read,file-read,file-write,command-exec
-set ai-access mcp-lab-server source mcp-lab destination server:self permission mcp-lab-ops paths '/tmp/drlink-mcp-tutorial/**',/tmp enabled
+set ai-access mcp-lab-server source mcp-lab destination server:self permission mcp-lab-ops paths '/var/lib/drlink-mcp/tutorial/**',/var/lib/drlink-mcp enabled
 set ai-access enabled
-test ai-access source mcp-lab destination server:self permission command-exec path /tmp
-test ai-access source mcp-lab destination server:self permission file-read path /tmp/drlink-mcp-tutorial/note.txt
+test ai-access source mcp-lab destination server:self permission command-exec path /var/lib/drlink-mcp
+test ai-access source mcp-lab destination server:self permission file-read path /var/lib/drlink-mcp/tutorial/note.txt
 test ai-access source mcp-lab destination server:self permission file-read path /etc/shadow
 show ai-access
 ~~~
@@ -67,21 +69,21 @@ show ai-access
 Server에서 아직 사용하지 않는 실습 디렉터리인지 먼저 확인하세요. 아래는 일반 제품 MCP 도구 호출입니다. 다른 작업이 쓰는 디렉터리라면 고유한 이름으로 바꾸고 Rule의 경로도 함께 변경합니다.
 
 ~~~json
-{"tool":"server_exec","arguments":{"cwd":"/tmp","command":"mkdir -p /tmp/drlink-mcp-tutorial"}}
+{"tool":"server_exec","arguments":{"cwd":"/var/lib/drlink-mcp","command":"mkdir -p /var/lib/drlink-mcp/tutorial"}}
 ~~~
 
 아래 JSON은 MCP 도구 **이름과 인자**이며 셸에 붙이는 명령이 아닙니다. Claude 또는 ChatGPT에 이 도구 호출을 요청합니다. 파일이 이미 있다면 다른 고유 이름을 사용하세요.
 
 ~~~text
 DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
-실습 디렉터리 /tmp/drlink-mcp-tutorial에 note.txt가 없는지 확인하고,
+실습 디렉터리 /var/lib/drlink-mcp/tutorial에 note.txt가 없는지 확인하고,
 새 파일에 DRLink MCP tutorial을 저장한 뒤 읽어서 동일한지 확인해줘.
 다른 파일은 바꾸지 마.
 ~~~
 
 ~~~json
-{"tool":"server_write_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt","content":"DRLink MCP tutorial"}}
-{"tool":"server_read_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt"}}
+{"tool":"server_write_file","arguments":{"path":"/var/lib/drlink-mcp/tutorial/note.txt","content":"DRLink MCP tutorial"}}
+{"tool":"server_read_file","arguments":{"path":"/var/lib/drlink-mcp/tutorial/note.txt"}}
 ~~~
 
 결과가 base64를 포함하면 반환 스키마에 따라 디코딩하고 원문과 비교합니다. 실패한 도구 호출을 성공한 파일 작업으로 기록하지 마세요.
@@ -91,10 +93,10 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 3단계에서 만든 note.txt만 있는 전용 디렉터리이며 **기존 Git 저장소가 아닌지** 확인합니다. 아래 init은 그 공간에만 실행하고 note.txt만 추가합니다. 실제 저장소·글로벌 Git 설정을 바꾸지 않습니다.
 
 ~~~json
-{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","init"]}}
-{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","add","note.txt"]}}
-{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","-c","user.name=DRLink Lab","-c","user.email=lab@example.net","commit","-m","Add MCP tutorial note"]}}
-{"tool":"server_git","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["git","log","-1","--oneline"]}}
+{"tool":"server_git","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","argv":["git","init"]}}
+{"tool":"server_git","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","argv":["git","add","note.txt"]}}
+{"tool":"server_git","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","argv":["git","-c","user.name=DRLink Lab","-c","user.email=lab@example.net","commit","-m","Add MCP tutorial note"]}}
+{"tool":"server_git","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","argv":["git","log","-1","--oneline"]}}
 ~~~
 
 각 작업의 완료 state와 exit_status=0, 마지막 commit을 확인합니다. 원격 push는 실제 remote·네트워크·그 OS 계정의 Git 인증 및 사용자 승인이 추가로 필요합니다. MCP OAuth는 GitHub 자격 증명이 아닙니다. push 전에는 사용할 remote와 해당 저장소의 접근 권한을 확인하세요.
@@ -102,7 +104,7 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 ## 5단계 — 비동기 stdin·EOF와 커서 출력
 
 ~~~json
-{"tool":"server_run","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","argv":["python3","-u","-c","import sys; print('READY', flush=True); line=sys.stdin.readline(); print('ECHO:'+line.strip(), flush=True)"],"timeout_seconds":60,"wait_ms":1000}}
+{"tool":"server_run","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","argv":["python3","-u","-c","import sys; print('READY', flush=True); line=sys.stdin.readline(); print('ECHO:'+line.strip(), flush=True)"],"timeout_seconds":60,"wait_ms":1000}}
 ~~~
 
 **running**, READY와 **job_id**를 확인하고 60초 안에 다음 호출을 합니다. 실제 반환 job_id로 바꾸세요. READY를 받았을 때 반환된 stdout.next_cursor를 다음 poll에 사용합니다(예제에서는 6). 시스템이 Python을 다른 경로로 설치했다면 해당 argv를 사용합니다.
@@ -117,9 +119,9 @@ DRLink MCP의 get_server로 대상 Server를 먼저 확인해줘.
 ## 6단계 — 본인이 만든 작업 중지·정리
 
 ~~~json
-{"tool":"server_exec","arguments":{"cwd":"/tmp/drlink-mcp-tutorial","command":"sleep 30","timeout_seconds":45,"wait_ms":0}}
+{"tool":"server_exec","arguments":{"cwd":"/var/lib/drlink-mcp/tutorial","command":"sleep 30","timeout_seconds":45,"wait_ms":0}}
 {"tool":"server_job_stop","arguments":{"job_id":"<sleep-job-id>"}}
-{"tool":"server_delete_file","arguments":{"path":"/tmp/drlink-mcp-tutorial/note.txt"}}
+{"tool":"server_delete_file","arguments":{"path":"/var/lib/drlink-mcp/tutorial/note.txt"}}
 ~~~
 
 중지 후 completed와 종료 신호에 따른 음수 exit_status가 나올 수 있습니다. exit 0 정상 완료와 구분하세요. **이 실습에서 반환된 job_id만** 중지합니다. 실습 저장소 .git 정리는 소유 운영자가 경로를 확인한 뒤 처리하며 다른 저장소는 지우지 않습니다.

@@ -11,10 +11,11 @@ Authentication establishes **who the AI Identity is**. AI Access controls **whic
 
 ## Configure least privilege
 
-Run on Server REPL; in AI MCP Setup select Connect or manage AI service and verify auditor-ai before configuring the Rule. branch-a is an actual enrolled Managed Host name.
+Run on the Server REPL. Verify the MCP endpoint using `set mcp-server`, then connect and verify auditor-ai using `set ai-identity` before configuring the Rule. branch-a is an actual enrolled Managed Host name.
 
 ~~~text
-set ai-mcp
+set mcp-server
+set ai-identity auditor-ai
 set permission-object observer permissions host-info,process-read
 set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled

@@ -9,7 +9,7 @@ description: "현재 Server와 Agent의 조회·설정·정책·운영·OAuth·�
 
 Linux 셸에서 **sudo drlink**로 REPL에 들어가면 아래 명령을 그대로 입력합니다. 일반 셸에서 실행할 때는 각 줄 앞에 **sudo drlink**를 붙이세요. 꺾쇠괄호 값은 실제 값으로 바꿔야 합니다. 이름까지만 입력한 **set**은 생성/수정 마법사를 열고, 필드를 모두 준 명령은 필요한 영향도 확인 후 직접 적용합니다.
 
-Server는 Managed Host/등록, Object/Group, AI MCP Setup/Identity, 정책, 감사·백업·복구와 Server ConfigurationBundle을 관리합니다. Agent는 자신의 Remote Service, Agent 수명주기, 진단 및 Agent ConfigurationBundle을 관리합니다. 잘못된 역할의 명령은 적절한 실행 위치를 안내합니다. [ConfigurationBundle](/ko/drlink/configuration-bundle)을 참고하세요.
+Server는 Managed Host/등록, Object/Group, MCP Server Settings / AI Identity, 정책, 감사·백업·복구와 Server ConfigurationBundle을 관리합니다. Agent는 자신의 Remote Service, Agent 수명주기, 진단 및 Agent ConfigurationBundle을 관리합니다. 잘못된 역할의 명령은 적절한 실행 위치를 안내합니다. [ConfigurationBundle](/ko/drlink/configuration-bundle)을 참고하세요.
 
 ## 명령 입력과 도움말
 
@@ -134,7 +134,7 @@ set internet-access <RULE>
 set internet-access enabled
 set internet-access disabled
 
-set ai-mcp
+set mcp-server
 set ai-identity <IDENTITY>
 
 set permission-object <PERMISSION>
