@@ -57,9 +57,7 @@
             "group": "Getting Started",
             "pages": [
               "index",
-              "getting-started/overview",
               "getting-started/concepts",
-              "getting-started/oci-free-tier-server",
               "getting-started/oci-network-vm",
               "getting-started/oci-drlink-install",
               "getting-started/quickstart",
@@ -132,7 +130,6 @@
           {
             "group": "CLI & Configuration",
             "pages": [
-              "drlink/overview",
               "drlink/cli-reference",
               "drlink/configuration-bundle"
             ],
@@ -153,7 +150,6 @@
               "operations/maintenance",
               "operations/updates",
               "operations/backup-restore",
-              "operations/diagnostics",
               "operations/lifecycle",
               "troubleshooting/overview",
               "feedback/index"
@@ -168,9 +164,7 @@
               "reference/alternatives",
               "reference/platforms",
               "reference/network-ports",
-              "reference/release-status",
               "reference/glossary",
-              "reference/limitations",
               "reference/license"
             ],
             "icon": "shield-halved"
@@ -184,9 +178,7 @@
             "group": "시작하기",
             "pages": [
               "ko/index",
-              "ko/getting-started/overview",
               "ko/getting-started/concepts",
-              "ko/getting-started/oci-free-tier-server",
               "ko/getting-started/oci-network-vm",
               "ko/getting-started/oci-drlink-install",
               "ko/getting-started/quickstart",
@@ -259,7 +251,6 @@
           {
             "group": "CLI & Configuration",
             "pages": [
-              "ko/drlink/overview",
               "ko/drlink/cli-reference",
               "ko/drlink/configuration-bundle"
             ],
@@ -278,7 +269,6 @@
             "group": "운영 & 문제 해결",
             "pages": [
               "ko/operations/overview",
-              "ko/operations/diagnostics",
               "ko/operations/backup-restore",
               "ko/operations/lifecycle",
               "ko/operations/updates",
@@ -295,9 +285,7 @@
               "ko/reference/alternatives",
               "ko/security/overview",
               "ko/reference/network-ports",
-              "ko/reference/release-status",
               "ko/reference/glossary",
-              "ko/reference/limitations",
               "ko/reference/license"
             ],
             "icon": "shield-halved"
@@ -315,5 +303,55 @@
   "appearance": {
     "default": "system",
     "strict": false
-  }
+  },
+  "redirects": [
+    {
+      "source": "/getting-started/overview",
+      "destination": "/getting-started/concepts"
+    },
+    {
+      "source": "/drlink/overview",
+      "destination": "/drlink/cli-reference"
+    },
+    {
+      "source": "/operations/diagnostics",
+      "destination": "/operations/maintenance"
+    },
+    {
+      "source": "/reference/release-status",
+      "destination": "/operations/updates"
+    },
+    {
+      "source": "/reference/limitations",
+      "destination": "/reference/platforms"
+    },
+    {
+      "source": "/getting-started/oci-free-tier-server",
+      "destination": "/getting-started/oci-network-vm"
+    },
+    {
+      "source": "/ko/getting-started/overview",
+      "destination": "/ko/getting-started/concepts"
+    },
+    {
+      "source": "/ko/drlink/overview",
+      "destination": "/ko/drlink/cli-reference"
+    },
+    {
+      "source": "/ko/operations/diagnostics",
+      "destination": "/ko/operations/overview"
+    },
+    {
+      "source": "/ko/reference/release-status",
+      "destination": "/ko/operations/updates"
+    },
+    {
+      "source": "/ko/reference/limitations",
+      "destination": "/ko/reference/platforms"
+    },
+    {
+      "source": "/ko/getting-started/oci-free-tier-server",
+      "destination": "/ko/getting-started/oci-network-vm"
+    }
+  ]
 }

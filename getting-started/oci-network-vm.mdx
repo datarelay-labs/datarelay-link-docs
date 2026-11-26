@@ -7,6 +7,21 @@ icon: "cloud"
 
 # Part I — Build the OCI network and VM
 
+<Note>
+  OCI Console labels, Free Tier eligibility, capacity, and pricing can change. Check the current Console's **Always Free Eligible** indicator and cost estimate before creating resources. Oracle also documents that idle Always Free compute instances may be reclaimed after a sustained low-usage period, so do not treat a Free Tier VM as an SLA-backed production host without reviewing the current OCI policy.
+</Note>
+
+```mermaid
+flowchart TD
+    U[Remote user] -->|SSH / HTTP / HTTPS / TCP service port| PUB[OCI Reserved Public IPv4]
+    C[Remote DataRelay Link client\nbehind NAT/firewall] -->|Outbound TCP 443 / WSS| PUB
+    PUB --> VM[Ubuntu 24.04\nDataRelay Link server]
+    VM -->|public 443| FE[single-443 frontend]
+    FE -->|loopback 7000| RS[relay backend]
+    FE -->|loopback 6099| ENR[Enrollment / management]
+    VM --> PORTS[Remote Service endpoint pool\n6000-6098]
+```
+
 ## 1. Open Virtual Cloud Networks
 
 From the OCI Home page, enter **Networking → Virtual Cloud Networks**. The image below is the **original Picture 1** from the field-deployment Word guide; it is used without conversion or downscaling.

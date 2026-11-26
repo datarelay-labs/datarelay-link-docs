@@ -21,3 +21,18 @@ The intended scale remains roughly a few systems to a few dozen Managed Hosts. D
 ## Network boundary
 
 Agent Hosts normally connect outbound to the Server. DataRelay Link does not require every Managed Host to have a public IP or inbound NAT rule.
+
+## Product limitations
+
+DataRelay Link focuses on a specific set of secure-connectivity problems rather than trying to replace every network or security platform.
+
+- It is not a VPN mesh or full-network overlay.
+- It is not a full SWG/SASE/TLS-inspection product.
+- It does not automatically configure customer cloud firewalls, external NAT/DNAT, or DNS-provider records.
+- Remote Service supports TCP and Fixed TCP Service Objects; UDP and Service Groups are rejected for that use.
+- Internet Access v2.4 is TCP/HTTP/HTTPS CONNECT oriented; UDP is rejected.
+- Internet Access destination cannot be a Managed Host, directly or indirectly through a Network Group.
+- Dual-role host behavior is outside the current supported scope.
+- Server and Agent ConfigurationBundles are independently atomic; there is no distributed Server plus multi-Agent transaction.
+- MCP/AI Access does not bypass target OS permissions or Agent identity.
+- Stable support claims require release-specific qualification evidence.

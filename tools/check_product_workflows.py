@@ -11,6 +11,17 @@ def check(root, product_root=None):
     pages = sorted(root.rglob("*.mdx"))
     errors = []
     links = 0
+    config = json.loads((root / "docs.json").read_text())
+    nav = [page for lang in config["navigation"]["languages"] for group in lang["groups"] for page in group["pages"]]
+    actual = {str(page.relative_to(root).with_suffix("")) for page in pages}
+    if set(nav) != actual or len(nav) != len(actual):
+        errors.append("Published pages and navigation must have a one-to-one mapping")
+    seen_redirects = set()
+    for redirect in config.get("redirects", []):
+        source, destination = redirect["source"], redirect["destination"]
+        if source in seen_redirects or source.lstrip("/") in actual or destination.lstrip("/") not in actual or source.startswith("/ko/") != destination.startswith("/ko/"):
+            errors.append(f"Invalid or duplicate consolidation redirect: {source} -> {destination}")
+        seen_redirects.add(source)
     retired_entry = re.compile(r'/i/<(?:handle|ticket|credential)>|22-character (?:handle|locator|filename)|(?:trusted public hostname or verified numeric|verified (?:numeric.IP/private.CA|Private CA fingerprint))|검증된 숫자 IP/Private CA|Private CA fingerprint와 인증서 IP SAN|generated one-time bootstrap|(?:command|launcher) (?:length|character) (?:limit|bound|budget)|drlink-bootstrap\.exe|sudo drlink enroll ', re.I)
     entry_examples = (
         'curl -kfsS https://remote.xdr.ooo/A3xK9mP2|sudo bash',

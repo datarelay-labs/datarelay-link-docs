@@ -11,7 +11,7 @@ icon: "list-checks"
 
 ## 1. OCI 네트워크, VM, 공인 IP 준비
 
-[OCI Always Free 준비](/ko/getting-started/oci-free-tier-server)와 [VCN·Ubuntu VM·Reserved Public IPv4](/ko/getting-started/oci-network-vm)를 순서대로 진행합니다. 생성 전에 OCI Console에서 현재 Free/Eligible 여부, Shape·스토리지 과금 조건을 확인하세요.
+[OCI Always Free 준비 및 VCN·Ubuntu VM·Reserved Public IPv4](/ko/getting-started/oci-network-vm)를 진행합니다. 생성 전에 OCI Console에서 현재 Free/Eligible 여부, Shape·스토리지 과금 조건을 확인하세요.
 
 - VCN, Internet Gateway, Route, Public Subnet을 생성하고 VM에 Reserved Public IPv4를 연결합니다.
 - 관리 SSH 포트는 실제 관리자의 공인 IP로 제한합니다.
@@ -102,7 +102,7 @@ Internet Access는 **WHITELIST 전용·기본 DENY**이며 enforcement가 disabl
 
 ## 7. 증적 수집 및 복구
 
-설치 소스·버전, 공인 포트, 프록시 리스너, Agent 목록, 정책 모드, 실제 허용·차단 통신, Server 감사 결과를 보존합니다. 정책 DENY와 네트워크 timeout, OS 권한 오류를 구분합니다. 재설치·수정 전에는 [백업·복원](/ko/operations/backup-restore)과 [진단](/ko/operations/diagnostics)을 확인하세요.
+설치 소스·버전, 공인 포트, 프록시 리스너, Agent 목록, 정책 모드, 실제 허용·차단 통신, Server 감사 결과를 보존합니다. 정책 DENY와 네트워크 timeout, OS 권한 오류를 구분합니다. 재설치·수정 전에는 [백업·복원](/ko/operations/backup-restore)과 [진단](/ko/operations/overview)을 확인하세요.
 
 ## 8. Agent·Server·OCI 자원 정리
 

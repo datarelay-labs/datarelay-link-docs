@@ -7,6 +7,8 @@ icon: "diagram-project"
 
 # 개념과 동작 원리
 
+DataRelay Link는 전체 네트워크 대신 필요한 연결만 제공합니다. Remote Service는 실제 연결 및 고정 endpoint를 제공하며 Access Rule 자체는 터널이나 endpoint를 만들지 않습니다.
+
 ## 한 문장으로 이해하기
 
 > Managed Host에 DRLink Agent를 설치하면 Agent가 Server로 아웃바운드 연결합니다. 필요한 Remote Service만 만들고, Server에서 Remote/Internet/AI Access 정책을 관리합니다.
@@ -54,3 +56,5 @@ HEALTHY, DEGRADED, DISABLED를 사용합니다. 일시적인 대상 연결, Serv
 | AI Access | WHITELIST 전용 | DENY | DENY ALL |
 
 WHITELIST는 매칭 허용 Rule이 없으면 DENY입니다. BLACKLIST는 Remote Access에서만 지원하며 매칭하면 DENY, 미일치면 ALLOW입니다. Rule 순서와 Rule별 action은 없습니다. 정책 초기화는 Mode/Rule을 삭제하고 각 정책의 초기 상태로 돌아갑니다. AI 인증은 정책 상태와 별도로 항상 필요합니다.
+
+신규 Agent는 [Zero-Touch](/ko/guides/zero-touch)에서 SSH/RDP 또는 필요한 서비스를 선택하고 생성된 명령을 한 번 실행합니다. 자동 생성된 서비스를 `show remote-services`로 확인하고 추가 서비스만 수동 생성합니다. [빠른 시작](/ko/getting-started/quickstart) · [CLI Reference](/ko/drlink/cli-reference) · [Architecture](/ko/reference/architecture).

@@ -17,7 +17,7 @@ system version
 system diagnostics
 system audit
 system revisions
-system backup
+show managed-hosts
 ```
 
 ## Agent Host
@@ -41,3 +41,5 @@ system apply configuration <FILE|->
 ```
 
 복구가 필요해도 기준 상태를 직접 수정하지 마십시오. revision을 확인하고 제품의 백업/복구 절차를 사용합니다.
+
+Policy ALLOW와 실제 서비스 연결은 별개입니다. 권한은 `test` 명령으로, 연결은 Agent 및 Remote Service 상태로 확인하세요. 지원 요청은 정제된 support bundle을 사용하고 등록 ticket, bearer/OAuth secret, private key, 비밀 포함 DB를 공유하지 마세요. [백업/복구](/ko/operations/backup-restore)에서 백업 절차를 확인합니다.
