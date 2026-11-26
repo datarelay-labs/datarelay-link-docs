@@ -32,9 +32,11 @@ The table lists DataRelay Link MCP tool names, required arguments and permission
 
 ## Targets and OS account
 
-Use an endpoint returned by **list_hosts/get_host** for a Managed Host. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require explicit Server management permission.
+Use the exact name or full `client_id` returned by **list_hosts** as the Managed Host endpoint. Both identifiers use the same AI Access policy; prefixes and ambiguous matches are denied. Agent connectivity and AI executor readiness are separate; a Windows lifecycle heartbeat alone does not establish an AI executor. The Windows native executor is disabled unless an administrator separately configures a protected local profile bound to its account SID, with explicit allowed drive paths and a separate command-execution opt-in. File operations must satisfy both server and local scopes. UNC, device paths, alternate streams and reparse-point traversal are denied. Native Windows qualification remains required. **server_*** and get_server target the Server and do not take endpoint. Generic endpoint=server:self operations require explicit Server management permission. `system diagnostics mcp` reports allowlisted running Bridge gates without exposing credentials or changing permissions; Unknown means runtime verification was unavailable.
 
 Server-local shell, Git, service and package commands use the configured OS account and AI Access. **cwd is an initial-directory check, not a filesystem sandbox for a general shell.**
+
+Server installation and product updates prepare a dedicated non-admin execution account and workspace when no explicit profile exists, without enabling remote execution. Use `set mcp-server` → Server execution to approve the OS execution account and roots once. UID 0 requires separate explicit local approval. No additional AI Access Rule is created. Existing profiles are preserved. `system diagnostics mcp` distinguishes disabled or incomplete execution setup from a configured profile; live calls still require the existing AI Access Rule.
 
 ## Arguments and results
 
@@ -49,3 +51,5 @@ argv is a string array; server_git begins with git. Paths/cwd are absolute. Insp
 Poll/input/stop recheck current command-exec, identity and job ownership. Another identity cannot control a job simply by knowing its ID. Direct file operations require their own permission, rule-bound paths and OS access.
 
 [Server control lab](/use-cases/ai-server-control) · [Client setup](/guides/mcp-clients)
+
+Windows installation and updates harden the installed executable/code tree ACL while preserving Agent identity, state, the existing execution profile and OS ancestor ACLs. Inspect local opt-in versus unsafe code ACL with `system diagnostics`, and verify Server-observed executor readiness separately.

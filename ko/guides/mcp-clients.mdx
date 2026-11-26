@@ -1,15 +1,15 @@
 ---
-title: "AI MCP Setup"
+title: "MCP Server Settings 및 AI Identity"
 description: "인증서부터 OAuth 승인·실제 도구 호출까지."
 ---
 
-# AI MCP Setup
+# MCP Server Settings 및 AI Identity
 
 ## 최초 등록 순서
 
 - Linux Server를 **single443 모드**로 설치하고 DNS, 공인 HTTPS 인증서, 외부 TCP/443, AUTO_ACME HTTP-01을 쓸 때 필요한 TCP/80을 구성합니다. 외부 MCP Discovery를 먼저 확인합니다.
 - **Managed Host**면 Agent를 등록합니다(AI 호출만 한다면 Remote Service 불필요). **server:self**는 Agent 없이 가능하지만 Server 전용 AI Access Rule을 별도로 만들어야 합니다.
-- AI MCP Setup에서 해당 클라이언트의 실제 OAuth 요청을 승인하고 Identity 인증을 완료한 뒤, [최소 권한/최대 권한](/ko/guides/ai-access)에 맞는 WHITELIST Rule을 별도로 검토합니다.
+- `set mcp-server`로 Endpoint/TLS를 구성하고 Server 자체 제어가 필요하면 Server execution을 명시적으로 승인합니다. `set ai-identity`에서 해당 클라이언트의 실제 OAuth 요청을 승인하고 Identity 인증을 완료한 뒤, [최소 권한/최대 권한](/ko/guides/ai-access)에 맞는 WHITELIST Rule을 별도로 검토합니다.
 - Claude·ChatGPT에서 MCP URL을 등록하고 **실제 허용/차단 도구 호출**로 확인합니다. 최초 OAuth 인증만으로 Managed Host나 Server 셸 권한이 생기지 않습니다. [최대 권한 시나리오](/ko/use-cases/ai-full-access)를 참조하세요.
 
 
@@ -31,7 +31,7 @@ sudo drlink show ai-access
 
 인증서 설정을 이미 마쳤다면 재발급하지 않습니다. 처음 설정할 때만 Server REPL에서 실제 DNS/이메일로 아래를 실행하세요. AUTO_ACME HTTP-01은 발급 시 공개 TCP/80 접근이 필요합니다. 사용자 인증서는 user-certificate 모드와 certificate import를 사용합니다.
 
-`set ai-mcp` → MCP Server settings 또는 MCP Bridge settings / diagnostics에서 공통 엔드포인트와 TLS를 검토합니다.
+`set mcp-server` → Public endpoint and TLS에서 공개 엔드포인트와 TLS를 구성합니다. Diagnostics는 상태 확인용입니다. Server 자체 제어가 필요하면 Server execution에서 Run as User 및 승인된 로컬 경로를 검토하고 승인합니다. 설치 시 준비된 기본값은 `drlink-mcp`와 `/var/lib/drlink-mcp`이며, 준비만으로 원격 실행은 활성화되지 않습니다.
 
 ~~~text
 set server mcp hostname mcp.example.net
@@ -52,7 +52,7 @@ curl -i -X POST https://mcp.example.net/mcp   -H 'Content-Type: application/json
 
 ## 2단계 — AI Identity와 권한을 구분하기
 
-Server에서 `set ai-mcp` → Connect or manage AI service를 선택하고 ChatGPT 또는 Claude의 개별 Identity 이름을 입력합니다. 이름만 입력하거나 OAuth 로그인만 완료했다고 권한이 생기는 것은 아닙니다. 각 클라이언트는 별도의 identity로 연결하는 것이 좋습니다.
+Server에서 `set ai-identity`를 실행하고 개별 Identity 이름 및 ChatGPT 또는 Claude를 선택합니다. 이름만 입력하거나 OAuth 로그인만 완료했다고 권한이 생기는 것은 아닙니다. 각 클라이언트는 별도의 identity로 연결하는 것이 좋습니다.
 
 최초 OAuth 연결을 포함해 인증만으로는 권한이 부여되지 않습니다. 별도로 승인한 Rule이 없으면 DENY입니다. 기존 Rule 전체를 확인하세요. 읽기 전용 계정이라면 기존 Rule을 모두 확인하고 [AI Access 권한 설정](/ko/guides/ai-access), [읽기 전용 시나리오](/ko/use-cases/ai-readonly) 또는 [MCP 전체 권한 시나리오](/ko/use-cases/ai-full-access)를 따르세요. **server:self** 관리 권한은 별도이며 [Server 제어 실습](/ko/use-cases/ai-server-control)에 설명합니다.
 
@@ -73,6 +73,8 @@ sudo drlink set ai-identity claude-lab approve <PENDING-ID>
 ~~~
 
 ChatGPT 연결에는 해당 요청을 chatgpt-lab에 바인딩합니다. 승인 후 브라우저에서 Retry를 선택하여 연결을 완료하세요. 거부할 요청은 `set ai-identity <IDENTITY> deny <PENDING-ID>`로 처리합니다. **OAuth request not found**는 다른 Server 또는 만료된 ID를 먼저 확인합니다. 토큰을 대화창에 붙여넣지 마세요.
+
+브라우저의 OAuth 교환이 검증되면 Identity Wizard에서 별도 Rule을 검토해 생성하거나 `set ai-access`를 실행합니다. `test ai-access`와 `system diagnostics mcp`로 정책 허용과 실제 실행 준비 상태를 구분합니다.
 
 ## 6단계 — 실제 도구와 허용·거부 확인
 

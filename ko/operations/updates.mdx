@@ -26,7 +26,7 @@ system update product
 system update engine
 ```
 
-제품 내장 업데이트 명령을 사용합니다. 표시되는 버전과 재시작 영향을 확인하고, Server 백업을 보관한 뒤 완료 후 서비스 연결을 점검하세요.
+제품 내장 업데이트 명령을 사용합니다. Windows에서는 관리자 PowerShell에서 `drlink system update product`를 실행합니다. 현장 개선 후보 버전의 설치된 Agent는 등록된 Server에서 CA 검증 HTTPS로 manifest와 SHA256SUMS를 내려받고, 릴리스 채널과 불변 소스 및 bootstrap SHA256을 검증한 뒤 재등록 없이 업그레이드합니다. `drlink system update product -Check`는 소프트웨어 적용 없이 메타데이터만 확인합니다. 명시적으로 Pause한 Agent는 업데이트 후에도 Pause 상태를 유지합니다. 소프트웨어 갱신 실패 시 보호된 백업에서 기존 관리 파일과 출처 정보를 복원하며, 롤백 실패 시 표시된 백업을 보존하고 복구한 후 재시도합니다. 정식 릴리스 전 실제 Windows 검증이 필요합니다. 표시되는 버전과 재시작 영향을 확인하고, Server 백업을 보관한 뒤 완료 후 서비스 연결을 점검하세요.
 
 정상 업그레이드에서는 Managed Host/Agent identity, enrollment 신뢰 관계, Remote Service identity, endpoint 예약, control-plane 상태, 정책과 릴리스 출처가 유지되어야 합니다.
 

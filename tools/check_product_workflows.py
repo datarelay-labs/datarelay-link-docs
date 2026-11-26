@@ -29,6 +29,9 @@ def check(root, product_root=None):
     )
     for page in pages:
         text = page.read_text()
+        # Retired MCP setup nouns must never return to published instructions.
+        if re.search(r"\bai-mcp\b|AI MCP Setup|Connect or manage AI service|MCP Bridge settings / diagnostics", text):
+            errors.append(f"{page.relative_to(root)}: retired MCP setup workflow")
         for no, line in enumerate(text.splitlines(), 1):
             if retired_entry.search(line):
                 errors.append(f"{page.relative_to(root)}:{no}: retired Zero-Touch entry guidance")

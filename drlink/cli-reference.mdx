@@ -9,7 +9,7 @@ This reference lists the public Server and Agent commands. See the [MCP tool ref
 
 Enter **sudo drlink** for the role-aware REPL. Inside it, omit the sudo drlink prefix. From a Linux shell, prefix each command with **sudo drlink**. Angle-bracket values are placeholders; replace them before running. Bare named **set** opens Guided Create/Edit; complete forms apply directly after any required impact confirmation.
 
-The Server owns Managed Hosts/enrollment, Objects/Groups, AI MCP Setup/Identity, policies, audit/backup/restore and Server ConfigurationBundle. The Agent owns its Remote Services, lifecycle, diagnostics and Agent ConfigurationBundle. Wrong-role operations should identify the correct context. See [ConfigurationBundle](/drlink/configuration-bundle).
+The Server owns Managed Hosts/enrollment, Objects/Groups, MCP Server Settings / AI Identity, policies, audit/backup/restore and Server ConfigurationBundle. The Agent owns its Remote Services, lifecycle, diagnostics and Agent ConfigurationBundle. Wrong-role operations should identify the correct context. See [ConfigurationBundle](/drlink/configuration-bundle).
 
 ## Command model
 
@@ -47,10 +47,15 @@ Tab completion
 
 ## Server: inspect
 
+`show managed-host-groups` lists groups and member counts. `show managed-host-group <GROUP>` lists the group metadata and its actual members, including full HOST ID, NAME, and HOSTNAME; an empty group is explicitly identified. Tab completes current group names even when the group has no members. Managed Host selection displays one row per host, with the full Host ID.
+
+`show managed-services` lists all Server-managed Remote Service mappings, sorted by public port, with Managed Host, service name, target address/port and status. Disabled and pending mappings are included; released mappings are excluded. This is a read-only Server command.
+
 ~~~text
 show status
 
 show managed-hosts
+show managed-services
 show managed-host <HOST>
 show managed-host <HOST> agent
 show managed-host <HOST> addresses
@@ -129,7 +134,7 @@ set internet-access <RULE>
 set internet-access enabled
 set internet-access disabled
 
-set ai-mcp
+set mcp-server
 set ai-identity <IDENTITY>
 
 set permission-object <PERMISSION>

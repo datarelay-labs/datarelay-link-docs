@@ -11,10 +11,11 @@ Authentication establishes **who the AI Identity is**. AI Access controls **whic
 
 ## Configure least privilege
 
-Run on Server REPL; in AI MCP Setup select Connect or manage AI service and verify auditor-ai before configuring the Rule. branch-a is an actual enrolled Managed Host name.
+Run on the Server REPL. Verify the MCP endpoint using `set mcp-server`, then connect and verify auditor-ai using `set ai-identity` before configuring the Rule. branch-a is an actual enrolled Managed Host name.
 
 ~~~text
-set ai-mcp
+set mcp-server
+set ai-identity auditor-ai
 set permission-object observer permissions host-info,process-read
 set ai-access auditor-host source auditor-ai destination branch-a permission observer enabled
 set ai-access enabled
@@ -33,7 +34,7 @@ test ai-access source auditor-ai destination branch-a permission file-read path 
 test ai-access source auditor-ai destination branch-a permission file-read path /etc/shadow
 ~~~
 
-The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require absolute paths (`/**`, `/home/**`, `/home/**,/opt/**`). `show ai-identity <NAME>` lists the configured rules for that Identity. Editing a named Rule replaces its source/destination; create another Rule to add another grant. `unset ai-access <RULE>` removes one Rule; `unset ai-access policy` resets all Rules only after confirmation. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
+The first policy test allows the in-scope path; file existence and OS permissions remain separate. The second denies unless another rule grants it. File permissions require absolute paths (`/**`, `/home/**`, `/home/**,/opt/**`). `show ai-identity <NAME>` lists the configured rules for that Identity. In the interactive CLI, press Tab after `set ai-access ` to list existing Rule names and create/edit guidance. Enter a new Rule name to create it or select an existing name to edit it. Editing a named Rule replaces its source/destination; create another Rule to add another grant. `unset ai-access <RULE>` removes one Rule; `unset ai-access policy` resets all Rules only after confirmation. Granting command-exec grants the OS account's shell authority; it is stronger than file-path restrictions and is not read-only.
 
 ## Full-control profile — explicitly approved, high risk
 
@@ -78,6 +79,8 @@ To **remove** these grants, review impact and then on the Server run **unset ai-
 For a guided full-control scenario, follow [AI full-control playbook](/use-cases/ai-full-access). For restricted read-only access, follow [read-only AI](/use-cases/ai-readonly).
 
 ## Destination scopes
+
+The guided Destination picker shows enrolled Managed Hosts (including offline hosts), Network Groups containing Managed Hosts, Managed Host Groups, Server-self, and the explicit all-trusted scope. Automatically generated `enrolled-target-*` and other routed LAN Network Objects are not AI execution targets and are omitted; their Remote Service references and existing policy records remain unchanged.
 
 | Target | Execution path | Example |
 | --- | --- | --- |
