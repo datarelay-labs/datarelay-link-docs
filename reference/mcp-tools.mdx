@@ -36,6 +36,8 @@ On the field-convergence candidate, use the exact name or full `client_id` retur
 
 Server-local shell, Git, service and package commands use the configured OS account and AI Access. **cwd is an initial-directory check, not a filesystem sandbox for a general shell.**
 
+Server installation and product updates prepare a dedicated non-admin execution account and workspace when no explicit profile exists, without enabling remote execution. Use the existing `set ai-mcp` → Configure local Server execution account to approve the OS execution account and roots once. UID 0 requires separate explicit local approval. No additional AI Access Rule is created. Existing profiles are preserved. `system diagnostics mcp` distinguishes disabled or incomplete execution setup from a configured profile; live calls still require the existing AI Access Rule.
+
 ## Arguments and results
 
 | Tools | Optional arguments / behavior |
